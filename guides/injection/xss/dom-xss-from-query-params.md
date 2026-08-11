@@ -1,4 +1,4 @@
-# Browser Query Parameters 
+# DOM XSS from Browser Query Parameters
 
 ## Rule
 
@@ -6,13 +6,13 @@ Treat browser query parameters as untrusted input.
 Do not pass data from `window.location.search`, `URLSearchParams`, or equivalent URL APIs into HTML sinks such as `innerHTML`, `outerHTML`, `insertAdjacentHTML`, or `document.write`.
 
 ## Why This Matters
-****
+
 Query parameters are fully attacker-controlled.
 If the application inserts them into the DOM as HTML, the browser may parse attacker markup and execute JavaScript in the victim's session.
 
 ## Vulnerable Pattern
 
-```**html**
+```html
 <div id="message"></div>
 
 <script>

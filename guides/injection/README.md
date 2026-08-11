@@ -4,4 +4,4 @@ Injection flaws happen when untrusted data is interpreted as code, markup, or co
 
 ## Categories
 
-- Cross-site scripting (XSS)
+- [Cross-site scripting (XSS)](xss/README.md)
