@@ -28,7 +28,7 @@ All guides are located in the `guides` directory. Each category has its own subd
 - Keep filenames and titles parallel with related guides so similar cases are easy to compare.
 - Make sure each guide still contains a concrete vulnerable pattern, an attack example, a safer pattern, and review hints.
 - If you touch GitHub Actions, keep actions pinned, make sure workflow lint/security checks still make sense and follow the exisitng code style and structure.
-- Keep existing structure and style in the repository, including headings, code blocks, and formatting. Avoid introducing new styles or conventions unless they are clearly documented and reported.
+- Keep existing structure, style and formatting in the repository overall. Avoid introducing new styles or conventions unless they are clearly documented and reported.
 
 ### Writing guides
 
