@@ -1,4 +1,8 @@
-# URL-derived Input to Navigation Sink (`javascript:` URL)
+---
+title: URL-derived Input to Navigation Sink (javascript: URL)
+impact: MEDIUM
+tags: xss, javascript-protocol, url-input, navigation-sink, href
+---
 
 ## Rule
 

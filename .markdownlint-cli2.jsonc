@@ -49,8 +49,6 @@
         // Asserts stable heading structure for guides which is important to keep the doc machine and human readable.
         "required-headings": {
           "headings": [
-            // Stands for the name of the flaw.
-            "?",
             "## Rule",
             "## Why This Matters",
             "## Vulnerable Pattern",

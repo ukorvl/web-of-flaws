@@ -1,4 +1,8 @@
-# URL-derived Input to HTML Sink (`innerHTML`)
+---
+title: URL-derived Input to HTML Sink (innerHTML)
+impact: HIGH
+tags: xss, dom-xss, url-input, query-params, innerhtml
+---
 
 ## Rule
 

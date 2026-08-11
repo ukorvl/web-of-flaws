@@ -8,7 +8,7 @@ The repository is organized into categories based on security topics and vulnera
 
 A purpose of this repository is to enable coding agents to learn from the guides and apply the knowledge to identify and fix vulnerabilities in web applications. Humans also are supposed to benefit from it by learning about common web vulnerabilities and how to mitigate them. Consider this repository as a knowledge base for both humans and agents to improve web security.
 
-A guide can be either a single markdown file or a directory containing multiple files. The markdown files are structured with headings that indicate the different sections of the guide. Look at the rules in `.markdownlint-cli2.jsonc` for more details on the expected structure of the guides.
+A guide can be either a single markdown file or a directory containing multiple files. Guide markdown files should start with YAML frontmatter that includes `title`, `impact`, and `tags`, followed by the standard heading structure. Look at the rules in `.markdownlint-cli2.jsonc` for more details on the expected structure of the guides.
 
 ## Environment
 
@@ -33,6 +33,7 @@ All guides are located in the `guides` directory. Each category has its own subd
 ### Writing guides
 
 - For new guide pages under `guides/` (excluding `README.md` index files), keep the required heading structure from `.markdownlint-cli2.jsonc`.
+- For new guide pages under `guides/` (excluding `README.md` index files), start with YAML frontmatter containing `title`, `impact`, and `tags`.
 - When you add a new guide or move an exisitng one, update the nearest category `README.md` to include a link to the new guide.
 - When you add a new category, update the main `README.md` to include a link to the new category.
 - When adding code examples ensure they are complete, self-contained, and clearly demonstrate the vulnerability or safer pattern. Use comments to explain key points in the code. Make code self-explanatory and avoid unnecessary complexity. Keep in mind that humans should be able to understand the code without needing to run it, and agents should be able to parse it easily.
