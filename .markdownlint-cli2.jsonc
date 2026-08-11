@@ -1,0 +1,70 @@
+{
+  "$schema": "https://raw.githubusercontent.com/DavidAnson/markdownlint-cli2/v0.23.2/schema/markdownlint-cli2-config-schema.json",
+  "config": {
+    "default": true,
+    "line-length": false,
+    "ul-style": {
+      "style": "dash"
+    },
+    "no-duplicate-heading": {
+      // Allow duplicate headings that are not siblings.
+      "siblings_only": true
+    },
+    "code-block-style": {
+      "style": "fenced"
+    },
+    "code-fence-style": {
+      "style": "backtick"
+    },
+    "emphasis-style": {
+      "style": "asterisk"
+    },
+    "strong-style": {
+      "style": "asterisk"
+    },
+    // Enforce the proper names of technologies and libraries used in the project. This helps maintain consistency and clarity in documentation.
+    "proper-names": {
+      "names": [
+        "GitHub",
+        "JavaScript",
+        "TypeScript",
+        "Node.js",
+        "React",
+        "Vue",
+        "WebAssembly"
+      ],
+      "code_blocks": false,
+      "html_elements": false
+    }
+  },
+  "globs": ["**/*.md", "!node_modules"],
+  "overrides": [
+    {
+      "combine": "merge",
+      "filter": [
+        "guides/**/*.md",
+        "!guides/**/README.md"
+      ],
+      "config": {
+        // Asserts stable heading structure for guides which is important to keep the doc machine and human readable.
+        "required-headings": {
+          "headings": [
+            // Stands for the name of the flaw.
+            "?",
+            "## Rule",
+            "## Why This Matters",
+            "## Vulnerable Pattern",
+            "## Example Attack",
+            "## Why The Attack Works",
+            "## Safer Pattern",
+            // Place any other headings here.
+            "*",
+            "## Review Hints",
+            "## Quick Checklist"
+          ],
+          "match_case": true
+        }
+      }
+    }
+  ]
+}

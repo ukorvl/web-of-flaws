@@ -9,4 +9,5 @@ why it is exploitable, and how to fix it with concrete code.
 - Categories are grouped by security topic and vulnerability family.
 
 ## License
+
 This repository is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
