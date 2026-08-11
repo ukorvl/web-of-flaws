@@ -4,5 +4,5 @@ XSS guides focus on cases where attacker-controlled input reaches browser execut
 
 ## Rules
 
-- [DOM XSS from browser query parameters](dom-xss-from-query-params.md)
-- [Reflected XSS via `javascript:` URLs](reflected-xss-via-javascript-protocol.md)
+- [URL-derived input to HTML sink (`innerHTML`)](url-derived-input-to-html-sink-innerhtml.md)
+- [URL-derived input to navigation sink (`javascript:` URL)](url-derived-input-to-navigation-sink-javascript-url.md)

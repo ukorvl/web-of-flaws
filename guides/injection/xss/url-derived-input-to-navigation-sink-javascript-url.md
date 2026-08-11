@@ -1,4 +1,4 @@
-# Reflected XSS via `javascript:` URLs
+# URL-derived Input to Navigation Sink (`javascript:` URL)
 
 ## Rule
 

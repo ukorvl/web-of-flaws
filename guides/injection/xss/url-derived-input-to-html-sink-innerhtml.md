@@ -1,4 +1,4 @@
-# DOM XSS from Browser Query Parameters
+# URL-derived Input to HTML Sink (`innerHTML`)
 
 ## Rule
 
