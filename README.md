@@ -7,6 +7,8 @@ why it is exploitable, and how to fix it with concrete code.
 ## Repository Shape
 
 - Categories are grouped by security topic and vulnerability family.
+- [Injection](guides/injection/README.md)
+- [Sensitive Data Exposure](guides/sensitive-data-exposure/README.md)
 
 ## License
 
