@@ -50,14 +50,17 @@
         "required-headings": {
           "headings": [
             "## Rule",
+            "## Mental Model",
             "## Why This Matters",
             "## Vulnerable Pattern",
             "## Example Attack",
             "## Why The Attack Works",
             "## Safer Pattern",
-            // Place any other headings here.
+            "## Detection",
+            "## False Positives",
+            // Place any optional notes here, such as framework or scope notes.
             "*",
-            "## Review Hints",
+            "## References",
             "## Quick Checklist"
           ],
           "match_case": true
