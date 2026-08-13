@@ -9,7 +9,7 @@ why it is exploitable, and how to fix it with concrete code.
 The repository is designed to be agent-friendly. Each guide is structured in a consistent way, with clear sections for the risky pattern, safer replacement, and detection metadata.
 
 - Machine-readable rule catalog: [catalog/rules.json](catalog/rules.json)
-- Rule guides carry stable IDs, standards mappings, detection metadata, references, kind, tags and severity. This data is stored in YAML frontmatter at the top of each guide to help agents work with the rules programmatically.
+- Rule guides carry stable IDs, standards mappings, detection metadata, kind, tags and severity. This data is stored in YAML frontmatter at the top of each guide to help agents work with the rules programmatically.
 
 ## Repository Shape
 

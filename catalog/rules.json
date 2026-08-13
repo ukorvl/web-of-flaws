@@ -70,15 +70,7 @@
           "label": "MDN: Element.innerHTML",
           "url": "https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML"
         }
-      ],
-      "fixtures": {
-        "positive": [
-          "evals/fixtures/WOF-XSS-001/vulnerable.html"
-        ],
-        "negative": [
-          "evals/fixtures/WOF-XSS-001/safe.html"
-        ]
-      }
+      ]
     },
     {
       "id": "WOF-XSS-002",
@@ -151,15 +143,7 @@
           "label": "MDN: javascript: URLs",
           "url": "https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Schemes/javascript"
         }
-      ],
-      "fixtures": {
-        "positive": [
-          "evals/fixtures/WOF-XSS-002/vulnerable.html"
-        ],
-        "negative": [
-          "evals/fixtures/WOF-XSS-002/safe.html"
-        ]
-      }
+      ]
     },
     {
       "id": "WOF-SDE-001",
@@ -238,15 +222,7 @@
           "label": "SOPS documentation",
           "url": "https://getsops.io/docs/"
         }
-      ],
-      "fixtures": {
-        "positive": [
-          "evals/fixtures/WOF-SDE-001/vulnerable.js"
-        ],
-        "negative": [
-          "evals/fixtures/WOF-SDE-001/safe.js"
-        ]
-      }
+      ]
     }
   ]
 }
