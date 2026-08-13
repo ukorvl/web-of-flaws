@@ -1,18 +1,60 @@
 ---
+id: WOF-XSS-001
 title: URL-derived Input to HTML Sink (innerHTML)
-impact: HIGH
-tags: xss, dom-xss, url-input, query-params, innerhtml
+kind: vulnerability
+severity: high
+exploitability: high
+standards:
+  cwe:
+    - CWE-79
+  owasp_top_10:
+    - A05:2025 Injection
+platforms:
+  - browser
+languages:
+  - html
+  - javascript
+  - typescript
+detection:
+  type: dataflow
+  methods:
+    - grep
+    - ast
+    - taint-analysis
+    - semantic-review
+sources:
+  - window.location.search
+  - window.location.hash
+  - window.location.href
+  - URLSearchParams
+  - document.referrer
+sinks:
+  - Element.innerHTML
+  - Element.outerHTML
+  - Element.insertAdjacentHTML()
+  - Document.write()
+tags:
+  - xss
+  - dom-xss
+  - url-input
+  - query-params
+  - innerhtml
 ---
 
 ## Rule
 
-Treat browser query parameters as untrusted input.
-Do not pass data from `window.location.search`, `URLSearchParams`, or equivalent URL APIs into HTML sinks such as `innerHTML`, `outerHTML`, `insertAdjacentHTML`, or `document.write`.
+Treat browser URL data as untrusted input.
+Do not pass data from `window.location.search`, `window.location.hash`, `URLSearchParams`, or equivalent URL APIs into HTML parsing sinks such as `innerHTML`, `outerHTML`, `insertAdjacentHTML`, or `document.write`.
+
+## Mental Model
+
+This is a client-side dataflow rule.
+The browser URL is attacker-controlled, and HTML parsing sinks are execution boundaries: once untrusted data crosses that boundary as HTML instead of text, the browser may create executable DOM.
 
 ## Why This Matters
 
-Query parameters are fully attacker-controlled.
-If the application inserts them into the DOM as HTML, the browser may parse attacker markup and execute JavaScript in the victim's session.
+Query strings, fragments, and related URL values are easy for an attacker to control and share with victims.
+If an application inserts those values into the DOM as HTML, the browser may parse attacker markup and execute JavaScript in the victim's session.
 
 ## Vulnerable Pattern
 
@@ -20,9 +62,11 @@ If the application inserts them into the DOM as HTML, the browser may parse atta
 <div id="message"></div>
 
 <script>
+  // URL input is attacker-controlled.
   const params = new URLSearchParams(window.location.search);
   const name = params.get("name") || "guest";
 
+  // Problem: `innerHTML` parses the string as HTML, not plain text.
   document.getElementById("message").innerHTML = "Hello " + name;
 </script>
 ```
@@ -36,10 +80,10 @@ https://example.com/welcome?name=%3Cimg%20src%3Dx%20onerror%3Dalert(document.dom
 ## Why The Attack Works
 
 1. The attacker controls the `name` query parameter.
-2. The page reads it directly from the URL.
-3. The value is written into `innerHTML`.
-4. The browser parses the attacker-controlled string as markup.
-5. The `onerror` handler executes JavaScript.
+2. The page reads that value directly from the browser URL.
+3. The value is written into an HTML parsing sink.
+4. The browser interprets the attacker-controlled string as markup, not as inert text.
+5. The injected event handler executes JavaScript in the page context.
 
 ## Safer Pattern
 
@@ -52,29 +96,46 @@ If the page only needs to show text, write text instead of HTML.
   const params = new URLSearchParams(window.location.search);
   const name = params.get("name") || "guest";
 
+  // Safe for plain text: the browser creates a text node instead of parsing HTML.
   document.getElementById("message").textContent = "Hello " + name;
 </script>
 ```
 
-## Modern Frameworks (React, Vue, etc.)
+If HTML is truly required, sanitize it with a well-reviewed library and enforce a narrow policy for what markup is allowed.
 
-Modern frameworks reduce this risk in many common cases, but they do not eliminate it completely.
-React and Vue usually escape interpolated values by default, so code like `Hello {name}` in React or `{{ name }}` in Vue is typically rendered as text rather than executable HTML.
-The risk returns when developers bypass those defaults with HTML rendering escape hatches such as React's `dangerouslySetInnerHTML` or Vue's `v-html`, especially if the content comes from query parameters or other URL-derived input.
+## Detection
 
-## If HTML Is Truly Required
+Detection type: `dataflow`.
 
-Only allow a small, explicit subset of markup and sanitize it with a well-reviewed sanitizer.
-Do not build your own sanitizer with regexes.
+- Candidate collection: use grep or AST queries to find `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, and framework escape hatches such as `dangerouslySetInnerHTML` or `v-html`.
+- Confirmation: trace whether the sink can receive attacker-controlled URL data such as query parameters, fragments, `location.href`, or `document.referrer`.
+- Higher-confidence findings usually show the source and sink in the same function, component, or render path.
+- A scanner should find candidates; the agent or reviewer should confirm that untrusted data can actually reach the sink without being converted to safe text or sanitized under a trusted policy.
 
-## Review Hints
+## False Positives
 
-- Treat `window.location.search`, `window.location.href`, `location.hash`, `document.referrer`, and `URLSearchParams` as untrusted input sources.
-- Flag any flow from URL-derived input into `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, or framework escape hatches such as `dangerouslySetInnerHTML`.
-- Prefer `textContent`, `createTextNode`, strict allowlists, and validated attribute assignment.
+- Writing a constant template string such as `element.innerHTML = "<b>Welcome</b>"` is not the same issue because no attacker-controlled input crosses the sink.
+- A sink that only accepts `TrustedHTML` or the output of a vetted sanitizer under an enforced Trusted Types policy may be acceptable, though the policy and sanitization still need review.
+- Server-generated HTML fragments can still be dangerous, but they are not URL-derived DOM XSS unless attacker-controlled URL data can influence the fragment.
+
+## Framework Notes
+
+React and Vue reduce this risk for normal text interpolation because they escape content by default.
+The risk returns when developers bypass those defaults with APIs such as React's `dangerouslySetInnerHTML` or Vue's `v-html`, especially if the value ultimately comes from URL-derived input.
+
+## References
+
+- [MITRE CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')](https://cwe.mitre.org/data/definitions/79.html)
+- [OWASP Top 10 2025 A05: Injection](https://owasp.org/Top10/2025/A05_2025-Injection/)
+- [OWASP DOM based XSS Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html)
+- [MDN: `Element.innerHTML`](https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML)
+- [MDN: `Node.textContent`](https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent)
+- [React docs: `dangerouslySetInnerHTML`](https://react.dev/reference/react-dom/components/common#dangerously-setting-the-inner-html)
+- [Vue Security Guide](https://vuejs.org/guide/best-practices/security.html)
 
 ## Quick Checklist
 
-- URL-derived data is not rendered with HTML sinks.
-- Plain text output uses `textContent` or an equivalent safe API.
-- Any allowed HTML is sanitized by a trusted library and constrained by policy.
+- URL-derived data never flows into HTML parsing sinks as a raw string.
+- Plain text output uses `textContent`, text nodes, or an equivalent safe API.
+- Required HTML rendering uses sanitization and a narrowly scoped trust policy.
+- Findings are confirmed by actual source-to-sink flow, not by sink name alone.

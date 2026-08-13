@@ -1,0 +1,252 @@
+{
+  "schema_version": 1,
+  "rules": [
+    {
+      "id": "WOF-XSS-001",
+      "path": "guides/injection/xss/url-derived-input-to-html-sink-innerhtml.md",
+      "title": "URL-derived Input to HTML Sink (innerHTML)",
+      "kind": "vulnerability",
+      "severity": "high",
+      "exploitability": "high",
+      "standards": {
+        "cwe": [
+          "CWE-79"
+        ],
+        "owasp_top_10": [
+          "A05:2025 Injection"
+        ]
+      },
+      "platforms": [
+        "browser"
+      ],
+      "languages": [
+        "html",
+        "javascript",
+        "typescript"
+      ],
+      "detection": {
+        "type": "dataflow",
+        "methods": [
+          "grep",
+          "ast",
+          "taint-analysis",
+          "semantic-review"
+        ]
+      },
+      "sources": [
+        "window.location.search",
+        "window.location.hash",
+        "window.location.href",
+        "URLSearchParams",
+        "document.referrer"
+      ],
+      "sinks": [
+        "Element.innerHTML",
+        "Element.outerHTML",
+        "Element.insertAdjacentHTML()",
+        "Document.write()"
+      ],
+      "tags": [
+        "xss",
+        "dom-xss",
+        "url-input",
+        "query-params",
+        "innerhtml"
+      ],
+      "references": [
+        {
+          "label": "CWE-79",
+          "url": "https://cwe.mitre.org/data/definitions/79.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 A05: Injection",
+          "url": "https://owasp.org/Top10/2025/A05_2025-Injection/"
+        },
+        {
+          "label": "OWASP DOM based XSS Prevention Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html"
+        },
+        {
+          "label": "MDN: Element.innerHTML",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML"
+        }
+      ],
+      "fixtures": {
+        "positive": [
+          "evals/fixtures/WOF-XSS-001/vulnerable.html"
+        ],
+        "negative": [
+          "evals/fixtures/WOF-XSS-001/safe.html"
+        ]
+      }
+    },
+    {
+      "id": "WOF-XSS-002",
+      "path": "guides/injection/xss/url-derived-input-to-navigation-sink-javascript-url.md",
+      "title": "URL-derived Input to Navigation Sink (javascript: URL)",
+      "kind": "vulnerability",
+      "severity": "medium",
+      "exploitability": "medium",
+      "standards": {
+        "cwe": [
+          "CWE-79"
+        ],
+        "owasp_top_10": [
+          "A05:2025 Injection"
+        ]
+      },
+      "platforms": [
+        "browser"
+      ],
+      "languages": [
+        "html",
+        "javascript",
+        "typescript"
+      ],
+      "detection": {
+        "type": "dataflow",
+        "methods": [
+          "grep",
+          "ast",
+          "taint-analysis",
+          "semantic-review"
+        ]
+      },
+      "sources": [
+        "window.location.search",
+        "window.location.hash",
+        "window.location.href",
+        "URLSearchParams",
+        "document.referrer"
+      ],
+      "sinks": [
+        "HTMLAnchorElement.href",
+        "Element.setAttribute(\"href\", ...)",
+        "HTMLFormElement.action",
+        "HTMLButtonElement.formAction",
+        "window.location",
+        "window.open()"
+      ],
+      "tags": [
+        "xss",
+        "javascript-protocol",
+        "url-input",
+        "navigation-sink",
+        "href"
+      ],
+      "references": [
+        {
+          "label": "CWE-79",
+          "url": "https://cwe.mitre.org/data/definitions/79.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 A05: Injection",
+          "url": "https://owasp.org/Top10/2025/A05_2025-Injection/"
+        },
+        {
+          "label": "OWASP DOM based XSS Prevention Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html"
+        },
+        {
+          "label": "MDN: javascript: URLs",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Schemes/javascript"
+        }
+      ],
+      "fixtures": {
+        "positive": [
+          "evals/fixtures/WOF-XSS-002/vulnerable.html"
+        ],
+        "negative": [
+          "evals/fixtures/WOF-XSS-002/safe.html"
+        ]
+      }
+    },
+    {
+      "id": "WOF-SDE-001",
+      "path": "guides/sensitive-data-exposure/hard-coded-secrets.md",
+      "title": "Hard-coded Secrets",
+      "kind": "vulnerability",
+      "severity": "high",
+      "exploitability": "medium",
+      "standards": {
+        "cwe": [
+          "CWE-798",
+          "CWE-321"
+        ],
+        "owasp_top_10": [
+          "A04:2025 Cryptographic Failures",
+          "A07:2025 Authentication Failures"
+        ]
+      },
+      "platforms": [
+        "server",
+        "browser",
+        "ci-cd",
+        "infrastructure"
+      ],
+      "languages": [
+        "javascript",
+        "typescript",
+        "yaml",
+        "dotenv"
+      ],
+      "detection": {
+        "type": "semantic-pattern",
+        "methods": [
+          "grep",
+          "entropy-analysis",
+          "ast",
+          "semantic-review"
+        ]
+      },
+      "indicators": [
+        "variables or config keys named SECRET, TOKEN, PASSWORD, API_KEY, or PRIVATE_KEY",
+        "PEM blocks and private key material",
+        "cloud, SaaS, and database credential formats"
+      ],
+      "tags": [
+        "sensitive-data-exposure",
+        "secrets-management",
+        "secrets",
+        "source-code",
+        "credentials",
+        "jwt",
+        "source-maps"
+      ],
+      "references": [
+        {
+          "label": "CWE-798",
+          "url": "https://cwe.mitre.org/data/definitions/798.html"
+        },
+        {
+          "label": "CWE-321",
+          "url": "https://cwe.mitre.org/data/definitions/321.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 A04: Cryptographic Failures",
+          "url": "https://owasp.org/Top10/2025/A04_2025-Cryptographic_Failures/"
+        },
+        {
+          "label": "OWASP Top 10 2025 A07: Authentication Failures",
+          "url": "https://owasp.org/Top10/2025/A07_2025-Authentication_Failures/"
+        },
+        {
+          "label": "OWASP Secrets Management Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"
+        },
+        {
+          "label": "SOPS documentation",
+          "url": "https://getsops.io/docs/"
+        }
+      ],
+      "fixtures": {
+        "positive": [
+          "evals/fixtures/WOF-SDE-001/vulnerable.js"
+        ],
+        "negative": [
+          "evals/fixtures/WOF-SDE-001/safe.js"
+        ]
+      }
+    }
+  ]
+}
