@@ -44,7 +44,7 @@ tags:
 
 ## Rule
 
-Do not hard-code passwords, API tokens, signing keys, database credentials, or other secrets in source code, templates, test fixtures, or client-side bundles.
+Do not hard-code passwords, API tokens, signing keys, database credentials, or other secrets in source code, templates, sample data files, or client-side bundles.
 Load secrets from controlled runtime configuration or a dedicated secret manager instead.
 
 ## Mental Model
@@ -194,7 +194,7 @@ Detection type: `semantic-pattern`.
 
 - Clearly fake placeholders such as `YOUR_API_KEY_HERE` or `example-not-a-real-secret` should not be reported as production secret leaks.
 - Code that reads `process.env.JWT_SECRET` is not a hard-coded secret finding just because the variable name contains `SECRET`.
-- Test fixtures with synthetic values can still be poor examples, but they are not the same severity as committed production credentials unless they are real or reused outside the test boundary.
+- Synthetic sample values can still be poor examples, but they are not the same severity as committed production credentials unless they are real or reused outside the test boundary.
 
 ## Scope Notes
 
