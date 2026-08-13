@@ -9,8 +9,8 @@ standards:
     - CWE-798
     - CWE-321
   owasp_top_10:
-    - A04:2025 Cryptographic Failures
-    - A07:2025 Authentication Failures
+    - "A04:2025 Cryptographic Failures"
+    - "A07:2025 Authentication Failures"
 platforms:
   - server
   - browser

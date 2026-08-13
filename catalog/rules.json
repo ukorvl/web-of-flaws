@@ -146,6 +146,84 @@
       ]
     },
     {
+      "id": "WOF-CSRF-001",
+      "path": "guides/request-authenticity/attacker-controlled-input-to-authenticated-request-sink-client-side-csrf.md",
+      "title": "Attacker-controlled Input to Authenticated Request Sink (Client-side CSRF)",
+      "kind": "vulnerability",
+      "severity": "high",
+      "exploitability": "medium",
+      "standards": {
+        "cwe": [
+          "CWE-352"
+        ],
+        "owasp_top_10": [
+          "A01:2025 Broken Access Control"
+        ]
+      },
+      "platforms": [
+        "browser"
+      ],
+      "languages": [
+        "html",
+        "javascript",
+        "typescript"
+      ],
+      "detection": {
+        "type": "dataflow",
+        "methods": [
+          "grep",
+          "ast",
+          "taint-analysis",
+          "semantic-review"
+        ]
+      },
+      "sources": [
+        "window.location.search",
+        "window.location.hash",
+        "MessageEvent.data",
+        "window.name",
+        "document.referrer"
+      ],
+      "sinks": [
+        "fetch()",
+        "XMLHttpRequest.open()",
+        "XMLHttpRequest.send()",
+        "axios(...)",
+        "jQuery.ajax()",
+        "HTMLFormElement.submit()"
+      ],
+      "tags": [
+        "csrf",
+        "client-side-csrf",
+        "confused-deputy",
+        "url-input",
+        "postmessage",
+        "authenticated-request"
+      ],
+      "references": [
+        {
+          "label": "CWE-352",
+          "url": "https://cwe.mitre.org/data/definitions/352.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 A01: Broken Access Control",
+          "url": "https://owasp.org/Top10/2025/A01_2025-Broken_Access_Control/"
+        },
+        {
+          "label": "OWASP Cross-Site Request Forgery Prevention Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html"
+        },
+        {
+          "label": "MDN: Window.fetch()",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/fetch"
+        },
+        {
+          "label": "MDN: Window.postMessage()",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage"
+        }
+      ]
+    },
+    {
       "id": "WOF-SDE-001",
       "path": "guides/sensitive-data-exposure/hard-coded-secrets.md",
       "title": "Hard-coded Secrets",

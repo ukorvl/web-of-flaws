@@ -8,7 +8,7 @@ standards:
   cwe:
     - CWE-79
   owasp_top_10:
-    - A05:2025 Injection
+    - "A05:2025 Injection"
 platforms:
   - browser
 languages:
