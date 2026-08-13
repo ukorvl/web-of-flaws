@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "last_verified": "2026-08-13",
+  "policy": {
+    "default_action": "deny",
+    "requirements": [
+      "Every new external link added under guides/ must use an allowlisted domain.",
+      "If a new guide-reference domain is necessary, add it here with scope and rationale before using it in guides/.",
+      "Every new or changed external URL added under guides/ must be opened and verified to resolve to the intended document.",
+      "Prefer canonical destination URLs for guide references over links that only work through redirects."
+    ]
+  },
+  "domains": [
+    {
+      "domain": "cwe.mitre.org",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official MITRE CWE definitions and mappings."
+    },
+    {
+      "domain": "owasp.org",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official OWASP Top 10, ASVS, and project documentation."
+    },
+    {
+      "domain": "cheatsheetseries.owasp.org",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official OWASP Cheat Sheet Series guidance."
+    },
+    {
+      "domain": "developer.mozilla.org",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official MDN Web Docs for browser and web platform behavior."
+    },
+    {
+      "domain": "react.dev",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official React documentation when framework-specific behavior matters."
+    },
+    {
+      "domain": "vuejs.org",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official Vue documentation when framework-specific behavior matters."
+    },
+    {
+      "domain": "getsops.io",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official SOPS documentation for encrypted secret-management workflows."
+    },
+    {
+      "domain": "example.com",
+      "scopes": [
+        "example-urls"
+      ],
+      "purpose": "Reserved host for non-live sample URLs in attack or demo examples."
+    }
+  ]
+}
