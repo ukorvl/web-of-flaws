@@ -224,6 +224,76 @@
       ]
     },
     {
+      "id": "WOF-PM-001",
+      "path": "guides/cross-origin-communication/postmessage-receiver-without-exact-origin-validation.md",
+      "title": "postMessage Receiver Without Exact Origin Validation",
+      "kind": "vulnerability",
+      "severity": "high",
+      "exploitability": "medium",
+      "standards": {
+        "cwe": [
+          "CWE-346",
+          "CWE-940"
+        ],
+        "owasp_top_10": [
+          "A07:2025 Authentication Failures"
+        ]
+      },
+      "platforms": [
+        "browser"
+      ],
+      "languages": [
+        "html",
+        "javascript",
+        "typescript"
+      ],
+      "detection": {
+        "type": "semantic-pattern",
+        "methods": [
+          "grep",
+          "ast",
+          "semantic-review"
+        ]
+      },
+      "indicators": [
+        "window.addEventListener(\"message\", ...) or window.onmessage = ...",
+        "handlers that process event.data without checking event.origin",
+        "origin checks using substring, prefix, suffix, regex, or wildcard matching instead of exact allowlisted origins",
+        "message-driven actions that complete payments, approve wallet flows, link accounts, navigate, or invoke backend mutations"
+      ],
+      "tags": [
+        "postmessage",
+        "origin-validation",
+        "iframe",
+        "widget",
+        "payment",
+        "wallet",
+        "cross-origin"
+      ],
+      "references": [
+        {
+          "label": "CWE-346",
+          "url": "https://cwe.mitre.org/data/definitions/346.html"
+        },
+        {
+          "label": "CWE-940",
+          "url": "https://cwe.mitre.org/data/definitions/940.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 A07: Authentication Failures",
+          "url": "https://owasp.org/Top10/2025/A07_2025-Authentication_Failures/"
+        },
+        {
+          "label": "OWASP HTML5 Security Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html"
+        },
+        {
+          "label": "MDN: Window.postMessage()",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage"
+        }
+      ]
+    },
+    {
       "id": "WOF-SDE-001",
       "path": "guides/sensitive-data-exposure/hard-coded-secrets.md",
       "title": "Hard-coded Secrets",
