@@ -28,3 +28,7 @@ pnpm-debug.log*
 .env
 .env.*
 !.env.example
+
+# skills
+.agents/skills/*
+skills-lock.json

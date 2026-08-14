@@ -2,6 +2,76 @@
   "schema_version": 1,
   "rules": [
     {
+      "id": "WOF-PM-001",
+      "path": "guides/cross-origin-communication/postmessage-receiver-without-exact-origin-validation.md",
+      "title": "postMessage Receiver Without Exact Origin Validation",
+      "kind": "vulnerability",
+      "severity": "high",
+      "exploitability": "medium",
+      "standards": {
+        "cwe": [
+          "CWE-346",
+          "CWE-940"
+        ],
+        "owasp_top_10": [
+          "A07:2025 Authentication Failures"
+        ]
+      },
+      "platforms": [
+        "browser"
+      ],
+      "languages": [
+        "html",
+        "javascript",
+        "typescript"
+      ],
+      "detection": {
+        "type": "semantic-pattern",
+        "methods": [
+          "grep",
+          "ast",
+          "semantic-review"
+        ]
+      },
+      "indicators": [
+        "window.addEventListener(\"message\", ...) or window.onmessage = ...",
+        "handlers that process event.data without checking event.origin",
+        "origin checks using substring, prefix, suffix, regex, or wildcard matching instead of exact allowlisted origins",
+        "message-driven actions that complete payments, approve wallet flows, link accounts, navigate, or invoke backend mutations"
+      ],
+      "tags": [
+        "postmessage",
+        "origin-validation",
+        "iframe",
+        "widget",
+        "payment",
+        "wallet",
+        "cross-origin"
+      ],
+      "references": [
+        {
+          "label": "MITRE CWE-346: Origin Validation Error",
+          "url": "https://cwe.mitre.org/data/definitions/346.html"
+        },
+        {
+          "label": "MITRE CWE-940: Improper Verification of Source of a Communication Channel",
+          "url": "https://cwe.mitre.org/data/definitions/940.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 A07: Authentication Failures",
+          "url": "https://owasp.org/Top10/2025/A07_2025-Authentication_Failures/"
+        },
+        {
+          "label": "OWASP HTML5 Security Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html"
+        },
+        {
+          "label": "MDN: `Window.postMessage()`",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage"
+        }
+      ]
+    },
+    {
       "id": "WOF-XSS-001",
       "path": "guides/injection/xss/url-derived-input-to-html-sink-innerhtml.md",
       "title": "URL-derived Input to HTML Sink (innerHTML)",
@@ -55,7 +125,7 @@
       ],
       "references": [
         {
-          "label": "CWE-79",
+          "label": "MITRE CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
           "url": "https://cwe.mitre.org/data/definitions/79.html"
         },
         {
@@ -67,8 +137,20 @@
           "url": "https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html"
         },
         {
-          "label": "MDN: Element.innerHTML",
+          "label": "MDN: `Element.innerHTML`",
           "url": "https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML"
+        },
+        {
+          "label": "MDN: `Node.textContent`",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent"
+        },
+        {
+          "label": "React docs: `dangerouslySetInnerHTML`",
+          "url": "https://react.dev/reference/react-dom/components/common#dangerously-setting-the-inner-html"
+        },
+        {
+          "label": "Vue Security Guide",
+          "url": "https://vuejs.org/guide/best-practices/security.html"
         }
       ]
     },
@@ -128,7 +210,7 @@
       ],
       "references": [
         {
-          "label": "CWE-79",
+          "label": "MITRE CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
           "url": "https://cwe.mitre.org/data/definitions/79.html"
         },
         {
@@ -140,8 +222,12 @@
           "url": "https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html"
         },
         {
-          "label": "MDN: javascript: URLs",
+          "label": "MDN: `javascript:` URLs",
           "url": "https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Schemes/javascript"
+        },
+        {
+          "label": "Vue Security Guide",
+          "url": "https://vuejs.org/guide/best-practices/security.html"
         }
       ]
     },
@@ -202,7 +288,7 @@
       ],
       "references": [
         {
-          "label": "CWE-352",
+          "label": "MITRE CWE-352: Cross-Site Request Forgery (CSRF)",
           "url": "https://cwe.mitre.org/data/definitions/352.html"
         },
         {
@@ -214,81 +300,11 @@
           "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html"
         },
         {
-          "label": "MDN: Window.fetch()",
+          "label": "MDN: `Window.fetch()`",
           "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/fetch"
         },
         {
-          "label": "MDN: Window.postMessage()",
-          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage"
-        }
-      ]
-    },
-    {
-      "id": "WOF-PM-001",
-      "path": "guides/cross-origin-communication/postmessage-receiver-without-exact-origin-validation.md",
-      "title": "postMessage Receiver Without Exact Origin Validation",
-      "kind": "vulnerability",
-      "severity": "high",
-      "exploitability": "medium",
-      "standards": {
-        "cwe": [
-          "CWE-346",
-          "CWE-940"
-        ],
-        "owasp_top_10": [
-          "A07:2025 Authentication Failures"
-        ]
-      },
-      "platforms": [
-        "browser"
-      ],
-      "languages": [
-        "html",
-        "javascript",
-        "typescript"
-      ],
-      "detection": {
-        "type": "semantic-pattern",
-        "methods": [
-          "grep",
-          "ast",
-          "semantic-review"
-        ]
-      },
-      "indicators": [
-        "window.addEventListener(\"message\", ...) or window.onmessage = ...",
-        "handlers that process event.data without checking event.origin",
-        "origin checks using substring, prefix, suffix, regex, or wildcard matching instead of exact allowlisted origins",
-        "message-driven actions that complete payments, approve wallet flows, link accounts, navigate, or invoke backend mutations"
-      ],
-      "tags": [
-        "postmessage",
-        "origin-validation",
-        "iframe",
-        "widget",
-        "payment",
-        "wallet",
-        "cross-origin"
-      ],
-      "references": [
-        {
-          "label": "CWE-346",
-          "url": "https://cwe.mitre.org/data/definitions/346.html"
-        },
-        {
-          "label": "CWE-940",
-          "url": "https://cwe.mitre.org/data/definitions/940.html"
-        },
-        {
-          "label": "OWASP Top 10 2025 A07: Authentication Failures",
-          "url": "https://owasp.org/Top10/2025/A07_2025-Authentication_Failures/"
-        },
-        {
-          "label": "OWASP HTML5 Security Cheat Sheet",
-          "url": "https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html"
-        },
-        {
-          "label": "MDN: Window.postMessage()",
+          "label": "MDN: `Window.postMessage()`",
           "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage"
         }
       ]
@@ -347,11 +363,11 @@
       ],
       "references": [
         {
-          "label": "CWE-798",
+          "label": "MITRE CWE-798: Use of Hard-coded Credentials",
           "url": "https://cwe.mitre.org/data/definitions/798.html"
         },
         {
-          "label": "CWE-321",
+          "label": "MITRE CWE-321: Use of Hard-coded Cryptographic Key",
           "url": "https://cwe.mitre.org/data/definitions/321.html"
         },
         {
