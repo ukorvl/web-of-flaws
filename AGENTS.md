@@ -12,7 +12,7 @@ A guide can be either a single markdown file or a directory containing multiple 
 
 ## Environment
 
-This is a docs-first repository with no app runtime or build step. The main local tool is `markdownlint-cli2`; run `npx markdownlint-cli2 "**/*.md"` and use `--fix` when appropriate. Follow `.editorconfig` for whitespace and indentation, and keep in mind that CI checks Markdown style, links, and GitHub Actions security.
+This is a docs-first repository with no app runtime or build step. `python3` and `markdownlint-cli2` should be present in the environment. If either command is missing, report that directly instead of silently falling back to another toolchain. The main local Markdown tool is `markdownlint-cli2`; run `markdownlint-cli2 "**/*.md"` and use `--fix` when appropriate. Follow `.editorconfig` for whitespace and indentation, and keep in mind that CI checks Markdown style, links, and GitHub Actions security.
 
 ## Workspace structure
 
@@ -22,8 +22,10 @@ All guides are located in the `guides` directory. Each category has its own subd
 
 ### General rules
 
-- Run `npx markdownlint-cli2 "**/*.md"` and fix any issues, or explicitly note anything left unresolved.
-- If you changed Markdown heavily, prefer `npx markdownlint-cli2 --fix "**/*.md"` before final review.
+- Run `markdownlint-cli2 "**/*.md"` and fix any issues, or explicitly note anything left unresolved.
+- Run `python3 scripts/lint_repo.py` and fix any reported metadata or allowlist issues before marking guide changes as done.
+- Run `python3 scripts/generate_catalog.py --check`, or regenerate `catalog/rules.json` with `python3 scripts/generate_catalog.py` if the check reports drift.
+- If you changed Markdown heavily, prefer `markdownlint-cli2 --fix "**/*.md"` before final review.
 - Verify any new or changed links in guides are valid and relevant; avoid placeholders unless they are clearly marked.
 - Before adding any real external documentation link in `guides/`, confirm that its domain is listed in `catalog/allowed-reference-domains.json`. If it is not listed, add it there with a clear scope and rationale before using it in a guide.
 - Every new or changed real external URL in `guides/` must be checked by opening it and confirming that it resolves to the intended document. Prefer canonical final URLs over links that only work through redirects.
@@ -40,7 +42,7 @@ All guides are located in the `guides` directory. Each category has its own subd
 - For real links in guides, use only domains that are allowlisted for `guide-references` or `example-urls` in `catalog/allowed-reference-domains.json`. Do not treat example hostnames inside code snippets, inline code, or plain-text attack examples as allowlist entries that must be registered.
 - When you add a new guide or move an exisitng one, update the nearest category `README.md` to include a link to the new guide.
 - When you add a new category, update the main `README.md` to include a link to the new category.
-- When you add or materially change a guide, update `catalog/rules.json`.
+- When you add or materially change a guide, treat the guide Markdown as the source of truth and regenerate `catalog/rules.json` with `python3 scripts/generate_catalog.py` instead of editing the catalog by hand.
 - When you add, remove, or rename a guide category or subcategory, run `python3 scripts/sync_guide_labels.py` so `.github/labeler.yaml` and `.github/labels.yaml` stay aligned with the current `guides/` tree.
 - When you add a new external reference domain for guides, update `catalog/allowed-reference-domains.json` and verify the exact URLs you introduced.
 - When adding code examples ensure they are complete, self-contained, and clearly demonstrate the vulnerability or safer pattern. Use comments to explain key points in the code. Make code self-explanatory and avoid unnecessary complexity. Keep in mind that humans should be able to understand the code without needing to run it, and agents should be able to parse it easily.
@@ -52,3 +54,12 @@ All guides are located in the `guides` directory. Each category has its own subd
 - Remember the repo's review philosophy: scanners should find candidates, while agents confirm whether the candidate is a real vulnerability, weakness, or hardening gap. Use `False Positives` sections to keep the KB from turning into security noise.
 - When working with YAML frontmatter ensure that the syntax is correct and all required fields are present. Don't invent new fields or change the expected structure without a clear reason. Use existing guides and `catalog/rules.json` as a reference for the correct format.
 - Quote YAML frontmatter string values whenever they contain `:`, `#`, leading special characters, or other parser-sensitive content. In particular, quote values like `javascript:` so they remain valid for strict YAML parsers.
+
+### Writing scripts
+
+- Prefer small Python scripts over JavaScript or multi-language tooling for repository automation. Keep dependencies minimal and use the standard library unless an extra package is clearly justified.
+- Treat guide Markdown files and the live `guides/` tree as the source of truth. Repository scripts should derive generated outputs such as `catalog/rules.json`, `.github/labeler.yaml`, and guide-related entries in `.github/labels.yaml` from that source instead of duplicating metadata by hand.
+- Keep generated output deterministic and exact. If a script supports `--check`, it should render the same bytes that are committed to the repository, so CI can compare files without false drift.
+- Keep repository script logs concise but visible. Long-running or validation-oriented commands should print enough status to make failures understandable from the log.
+- Add short comments to Python scripts when the transformation, validation rule, or emitted file structure is not immediately obvious. Prefer brief intent-revealing comments over verbose narration.
+- Keep unit tests for Python repository scripts in `scripts/tests`.
