@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     runs-on: ubuntu-24.04 # pinned for determinism
@@ -23,6 +27,9 @@ jobs:
         with:
           prek-version: 0.4.13 # pinned for determinism
 
+      - name: Check guide label configs
+        run: node scripts/sync-guide-labels.mjs --check
+
       - name: Check Markdown links
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
@@ -34,3 +41,4 @@ jobs:
           advanced-security: false
           min-severity: medium
           min-confidence: medium
+          version: v1.29.0 # pinned for determinism
