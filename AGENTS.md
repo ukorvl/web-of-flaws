@@ -25,8 +25,9 @@ All guides are located in the `guides` directory. Each category has its own subd
 - Run `npx markdownlint-cli2 "**/*.md"` and fix any issues, or explicitly note anything left unresolved.
 - If you changed Markdown heavily, prefer `npx markdownlint-cli2 --fix "**/*.md"` before final review.
 - Verify any new or changed links in guides are valid and relevant; avoid placeholders unless they are clearly marked.
-- Before adding any external link in `guides/`, confirm that its domain is listed in `catalog/allowed-reference-domains.json`. If it is not listed, add it there with a clear scope and rationale before using it in a guide.
-- Every new or changed external URL in `guides/` must be checked by opening it and confirming that it resolves to the intended document. Prefer canonical final URLs over links that only work through redirects.
+- Before adding any real external documentation link in `guides/`, confirm that its domain is listed in `catalog/allowed-reference-domains.json`. If it is not listed, add it there with a clear scope and rationale before using it in a guide.
+- Every new or changed real external URL in `guides/` must be checked by opening it and confirming that it resolves to the intended document. Prefer canonical final URLs over links that only work through redirects.
+- The domain allowlist applies to real links in rendered guide content, such as Markdown links, bare reference URLs, and other live documentation/example URLs meant to be followed by readers or tooling. It does not apply to illustrative hostnames that appear only inside fenced code blocks, inline code, or non-clickable attack examples.
 - Keep filenames and titles parallel with related guides so similar cases are easy to compare.
 - Make sure each guide still contains a concrete vulnerable pattern, an attack example, a safer pattern, explicit detection guidance, false-positive guidance, and references.
 - If you touch GitHub Actions, keep actions pinned, make sure workflow lint/security checks still make sense and follow the exisitng code style and structure.
@@ -36,7 +37,7 @@ All guides are located in the `guides` directory. Each category has its own subd
 
 - For new guide pages under `guides/` (excluding `README.md` index files), keep the required heading structure from `.markdownlint-cli2.jsonc`.
 - For new guide pages under `guides/` (excluding `README.md` index files), start with YAML frontmatter containing a stable `id`, `kind`, `severity`, `exploitability`, standards mappings, detection metadata, and `tags`. Keep the frontmatter consistent with existing guides. Look at `catalog/rules.json` for the expected structure.
-- For links in guides, use only domains that are allowlisted for `guide-references` or `example-urls` in `catalog/allowed-reference-domains.json`.
+- For real links in guides, use only domains that are allowlisted for `guide-references` or `example-urls` in `catalog/allowed-reference-domains.json`. Do not treat example hostnames inside code snippets, inline code, or plain-text attack examples as allowlist entries that must be registered.
 - When you add a new guide or move an exisitng one, update the nearest category `README.md` to include a link to the new guide.
 - When you add a new category, update the main `README.md` to include a link to the new category.
 - When you add or materially change a guide, update `catalog/rules.json`.
