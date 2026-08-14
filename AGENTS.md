@@ -41,6 +41,7 @@ All guides are located in the `guides` directory. Each category has its own subd
 - When you add a new guide or move an exisitng one, update the nearest category `README.md` to include a link to the new guide.
 - When you add a new category, update the main `README.md` to include a link to the new category.
 - When you add or materially change a guide, update `catalog/rules.json`.
+- When you add, remove, or rename a guide category or subcategory, run `python3 scripts/sync_guide_labels.py` so `.github/labeler.yaml` and `.github/labels.yaml` stay aligned with the current `guides/` tree.
 - When you add a new external reference domain for guides, update `catalog/allowed-reference-domains.json` and verify the exact URLs you introduced.
 - When adding code examples ensure they are complete, self-contained, and clearly demonstrate the vulnerability or safer pattern. Use comments to explain key points in the code. Make code self-explanatory and avoid unnecessary complexity. Keep in mind that humans should be able to understand the code without needing to run it, and agents should be able to parse it easily.
 - When writing attack examples, ensure they are realistic and demonstrate how an attacker could exploit the vulnerability. Avoid using overly complex or contrived examples that may confuse readers. Use comments to explain the attack steps and the impact of the vulnerability.

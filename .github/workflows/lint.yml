@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -28,7 +28,7 @@ jobs:
           prek-version: 0.4.13 # pinned for determinism
 
       - name: Check guide label configs
-        run: node scripts/sync-guide-labels.mjs --check
+        run: python3 scripts/sync_guide_labels.py --check
 
       - name: Check Markdown links
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
@@ -41,4 +41,4 @@ jobs:
           advanced-security: false
           min-severity: medium
           min-confidence: medium
-          version: v1.29.0 # pinned for determinism
+          version: v1.23.1 # pinned for determinism
