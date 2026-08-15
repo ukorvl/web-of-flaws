@@ -72,6 +72,78 @@
       ]
     },
     {
+      "id": "WOF-XSS-003",
+      "path": "guides/injection/xss/attacker-controlled-html-to-window-document-property-lookup-dom-clobbering.md",
+      "title": "Attacker-controlled HTML to `window`/`document` Property Lookup (DOM Clobbering)",
+      "kind": "vulnerability",
+      "severity": "high",
+      "exploitability": "medium",
+      "standards": {
+        "cwe": [
+          "CWE-79"
+        ],
+        "owasp_top_10": [
+          "A05:2025 Injection"
+        ]
+      },
+      "platforms": [
+        "browser"
+      ],
+      "languages": [
+        "html",
+        "javascript",
+        "typescript"
+      ],
+      "detection": {
+        "type": "semantic-pattern",
+        "methods": [
+          "grep",
+          "ast",
+          "semantic-review"
+        ]
+      },
+      "indicators": [
+        "attacker-controlled HTML reaches DOM parsing sinks such as `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, or framework raw-HTML escape hatches",
+        "code reads `window.NAME`, `document.NAME`, or bare global identifiers as if they were trusted configuration, navigation targets, or script URLs",
+        "security-sensitive names are reused as HTML `id` or `name` values",
+        "sanitization removes scripts but leaves named properties that can still collide with application state or browser APIs"
+      ],
+      "tags": [
+        "xss",
+        "dom-clobbering",
+        "html-injection",
+        "named-properties",
+        "window",
+        "document"
+      ],
+      "references": [
+        {
+          "label": "MITRE CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+          "url": "https://cwe.mitre.org/data/definitions/79.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 A05: Injection",
+          "url": "https://owasp.org/Top10/2025/A05_2025-Injection/"
+        },
+        {
+          "label": "OWASP DOM Clobbering Prevention Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/DOM_Clobbering_Prevention_Cheat_Sheet.html"
+        },
+        {
+          "label": "OWASP DOM based XSS Prevention Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html"
+        },
+        {
+          "label": "MDN: `Element.innerHTML`",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML"
+        },
+        {
+          "label": "Vue Security Guide",
+          "url": "https://vuejs.org/guide/best-practices/security.html"
+        }
+      ]
+    },
+    {
       "id": "WOF-XSS-001",
       "path": "guides/injection/xss/url-derived-input-to-html-sink-innerhtml.md",
       "title": "URL-derived Input to HTML Sink (innerHTML)",
