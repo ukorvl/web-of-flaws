@@ -4,4 +4,4 @@ Cross-origin communication guides focus on trust boundaries between windows, ifr
 
 ## Rules
 
-- [postMessage receiver without exact origin validation](postmessage-receiver-without-exact-origin-validation.md)
+- [Untrusted postMessage sender to privileged handler](untrusted-postmessage-sender-to-privileged-handler.md)
