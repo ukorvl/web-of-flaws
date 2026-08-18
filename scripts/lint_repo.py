@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from urllib.parse import urlparse
 import json
+import re
 import sys
 
 from generate_catalog import build_rules
@@ -10,6 +11,7 @@ from guide_tools import (
     GuideValidationError,
     MARKDOWN_LINK_RE,
     URL_RE,
+    iter_guide_rule_paths,
     iter_guide_markdown_paths,
     iter_rendered_lines,
 )
@@ -17,6 +19,10 @@ from guide_tools import (
 
 ROOT = Path(__file__).resolve().parents[1]
 COMMAND = "python3 scripts/lint_repo.py"
+LOCAL_MARKDOWN_LINK_RE = re.compile(
+    r"\[([^\]]+)\]\((?P<target>(?![a-z][a-z0-9+.-]*:|//)[^)\s]+\.md)(?:#[^)]+)?\)",
+    re.IGNORECASE,
+)
 
 
 def load_allowed_domains(root: Path) -> dict[str, set[str]]:
@@ -45,6 +51,60 @@ def rendered_urls_with_scopes(markdown: str) -> list[tuple[str, int, str]]:
     return urls
 
 
+def iter_guide_readme_paths(root: Path) -> list[Path]:
+    return sorted((root / "guides").rglob("README.md"))
+
+
+def local_markdown_links(path: Path) -> list[tuple[str, int]]:
+    links: list[tuple[str, int]] = []
+    markdown = path.read_text(encoding="utf-8")
+    for line_number, _stripped, scrubbed in iter_rendered_lines(markdown):
+        for match in LOCAL_MARKDOWN_LINK_RE.finditer(scrubbed):
+            links.append((match.group("target"), line_number))
+    return links
+
+
+def nearest_readme_for(path: Path, root: Path) -> Path | None:
+    guides_root = root / "guides"
+    current = path.parent
+    while current == guides_root or guides_root in current.parents:
+        candidate = current / "README.md"
+        if candidate.exists():
+            return candidate
+        if current == guides_root:
+            break
+        current = current.parent
+    return None
+
+
+def lint_guide_indexes(root: Path) -> list[str]:
+    errors: list[str] = []
+    counts: dict[tuple[Path, Path], int] = {}
+
+    for readme in iter_guide_readme_paths(root):
+        for target, line_number in local_markdown_links(readme):
+            resolved = (readme.parent / target).resolve()
+            if not resolved.exists() or not resolved.is_file():
+                errors.append(f"{readme}:{line_number}: linked markdown target does not exist: {target}")
+                continue
+            counts[(readme.resolve(), resolved)] = counts.get((readme.resolve(), resolved), 0) + 1
+
+    for rule_path in iter_guide_rule_paths(root):
+        nearest_readme = nearest_readme_for(rule_path, root)
+        if nearest_readme is None:
+            errors.append(f"{rule_path}: could not find nearest README.md index")
+            continue
+
+        count = counts.get((nearest_readme.resolve(), rule_path.resolve()), 0)
+        if count != 1:
+            relative_readme = nearest_readme.relative_to(root).as_posix()
+            errors.append(
+                f"{rule_path}: nearest index {relative_readme} must link to this guide exactly once (found {count})"
+            )
+
+    return errors
+
+
 def lint(root: Path) -> list[str]:
     errors: list[str] = []
 
@@ -52,6 +112,8 @@ def lint(root: Path) -> list[str]:
         build_rules(root)
     except GuideValidationError as error:
         errors.extend(str(error).splitlines())
+
+    errors.extend(lint_guide_indexes(root))
 
     allowed_domains = load_allowed_domains(root)
     for path in iter_guide_markdown_paths(root):

@@ -50,8 +50,26 @@ def build_valid_repo(root: Path) -> None:
         }
         """,
     )
-    write(root / "guides/injection/README.md", "# Injection\n")
-    write(root / "guides/injection/xss/README.md", "# Cross-site scripting (XSS)\n")
+    write(
+        root / "guides/injection/README.md",
+        """
+        # Injection
+
+        ## Categories
+
+        - [Cross-site scripting (XSS)](xss/README.md)
+        """,
+    )
+    write(
+        root / "guides/injection/xss/README.md",
+        """
+        # Cross-site scripting (XSS)
+
+        ## Rules
+
+        - [URL-derived input to HTML sink (`innerHTML`)](url-derived-input-to-html-sink-innerhtml.md)
+        """,
+    )
     write(
         root / "guides/injection/xss/url-derived-input-to-html-sink-innerhtml.md",
         """
@@ -106,7 +124,16 @@ def build_valid_repo(root: Path) -> None:
         ## Quick Checklist
         """,
     )
-    write(root / "guides/sensitive-data-exposure/README.md", "# Sensitive Data Exposure\n")
+    write(
+        root / "guides/sensitive-data-exposure/README.md",
+        """
+        # Sensitive Data Exposure
+
+        ## Rules
+
+        - [Hard-coded secrets](hard-coded-secrets.md)
+        """,
+    )
     write(
         root / "guides/sensitive-data-exposure/hard-coded-secrets.md",
         """
