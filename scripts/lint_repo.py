@@ -19,6 +19,7 @@ from guide_tools import (
 
 ROOT = Path(__file__).resolve().parents[1]
 COMMAND = "python3 scripts/lint_repo.py"
+# TODO: Parse or reject reference-style local links; broken README refs can bypass this inline-link regex.
 LOCAL_MARKDOWN_LINK_RE = re.compile(
     r"\[([^\]]+)\]\((?P<target>(?![a-z][a-z0-9+.-]*:|//)[^)\s]+\.md)(?:#[^)]+)?\)",
     re.IGNORECASE,
@@ -89,6 +90,7 @@ def lint_guide_indexes(root: Path) -> list[str]:
                 continue
             counts[(readme.resolve(), resolved)] = counts.get((readme.resolve(), resolved), 0) + 1
 
+    # TODO: Lint category README.md entries too; parent indexes can currently omit nested categories silently.
     for rule_path in iter_guide_rule_paths(root):
         nearest_readme = nearest_readme_for(rule_path, root)
         if nearest_readme is None:
