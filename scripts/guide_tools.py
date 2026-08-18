@@ -48,6 +48,7 @@ GUIDE_LANGUAGES = {
 }
 DETECTION_TYPES = {"dataflow", "semantic-pattern"}
 DETECTION_METHODS = {"grep", "ast", "taint-analysis", "semantic-review", "entropy-analysis"}
+DETECTION_KEYS = {"type", "methods", "candidate_tokens"}
 URL_RE = re.compile(r"(?:https?:)?//[^\s)>`]+", re.IGNORECASE)
 MARKDOWN_LINK_RE = re.compile(r"\[([^\]]+)\]\(((?:https?:)?//[^)\s]+)\)", re.IGNORECASE)
 CODE_FENCE_RE = re.compile(r"^([`~]{3,})")
@@ -300,6 +301,10 @@ def validate_frontmatter(frontmatter: dict, path: Path) -> list[str]:
         errors.append(f"{path}: detection must be a mapping")
         return errors
 
+    extra_detection_keys = sorted(set(detection) - DETECTION_KEYS)
+    if extra_detection_keys:
+        errors.append(f"{path}: unexpected detection keys: {', '.join(extra_detection_keys)}")
+
     detection_type = detection.get("type")
     if detection_type not in DETECTION_TYPES:
         errors.append(f"{path}: detection.type must be one of {sorted(DETECTION_TYPES)}")
@@ -313,6 +318,15 @@ def validate_frontmatter(frontmatter: dict, path: Path) -> list[str]:
                 errors.append(f"{path}: detection.methods entries must be non-empty strings")
             elif method not in DETECTION_METHODS:
                 errors.append(f"{path}: detection method {method!r} must be one of {sorted(DETECTION_METHODS)}")
+
+    candidate_tokens = detection.get("candidate_tokens")
+    if candidate_tokens is not None:
+        if not isinstance(candidate_tokens, list) or not candidate_tokens:
+            errors.append(f"{path}: detection.candidate_tokens must be a non-empty list")
+        else:
+            for token in candidate_tokens:
+                if not isinstance(token, str) or not token.strip():
+                    errors.append(f"{path}: detection.candidate_tokens entries must be non-empty strings")
 
     if detection_type == "dataflow":
         errors.extend(validate_non_empty_string_list(frontmatter.get("sources"), path, "sources", "dataflow guides must declare non-empty sources"))

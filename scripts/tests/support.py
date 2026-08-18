@@ -76,6 +76,9 @@ def build_valid_repo(root: Path) -> None:
           methods:
             - grep
             - ast
+          candidate_tokens:
+            - innerHTML
+            - URLSearchParams
         sources:
           - window.location.search
         sinks:
@@ -127,6 +130,9 @@ def build_valid_repo(root: Path) -> None:
           methods:
             - grep
             - semantic-review
+          candidate_tokens:
+            - SECRET
+            - BEGIN PRIVATE KEY
         indicators:
           - variables or config keys named SECRET
         tags:

@@ -28,6 +28,16 @@ detection:
     - entropy-analysis
     - ast
     - semantic-review
+  candidate_tokens:
+    - SECRET
+    - TOKEN
+    - PASSWORD
+    - API_KEY
+    - PRIVATE_KEY
+    - BEGIN PRIVATE KEY
+    - AKIA
+    - sk_live_
+    - JWT_SECRET
 indicators:
   - variables or config keys named SECRET, TOKEN, PASSWORD, API_KEY, or PRIVATE_KEY
   - PEM blocks and private key material

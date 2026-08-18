@@ -1,5 +1,37 @@
 # Contributing to Web of Flaws
 
+- [Contributing to Web of Flaws](#contributing-to-web-of-flaws)
+  - [Getting Started](#getting-started)
+  - [Repository Structure](#repository-structure)
+  - [Adding a New Guide](#adding-a-new-guide)
+  - [Rule IDs](#rule-ids)
+  - [Frontmatter](#frontmatter)
+  - [Rule Kinds](#rule-kinds)
+    - [`vulnerability`](#vulnerability)
+    - [`weakness`](#weakness)
+    - [`hardening`](#hardening)
+  - [Severity and Exploitability](#severity-and-exploitability)
+  - [Detection Models](#detection-models)
+    - [Dataflow](#dataflow)
+    - [Semantic Pattern](#semantic-pattern)
+  - [Required Guide Structure](#required-guide-structure)
+  - [Writing the Rule](#writing-the-rule)
+  - [Mental Model](#mental-model)
+  - [Vulnerable Pattern](#vulnerable-pattern)
+  - [Example Attack](#example-attack)
+  - [Why The Attack Works](#why-the-attack-works)
+  - [Safer Pattern](#safer-pattern)
+  - [Detection](#detection)
+  - [False Positives](#false-positives)
+  - [Framework Notes](#framework-notes)
+  - [References](#references)
+  - [Updating Category Indexes](#updating-category-indexes)
+  - [Generated Files](#generated-files)
+  - [Validation](#validation)
+  - [Pull Requests](#pull-requests)
+  - [Changes to the Rule Format](#changes-to-the-rule-format)
+  - [Contribution Philosophy](#contribution-philosophy)
+
 Thanks for contributing to Web of Flaws.
 
 Web of Flaws is a structured knowledge base of web security flaws, vulnerable patterns, attack paths, and safer replacements. It is designed to be useful both to humans learning web security and to coding agents reviewing real-world code.
@@ -130,6 +162,10 @@ detection:
     - ast
     - taint-analysis
     - semantic-review
+  candidate_tokens:
+    - fetch(
+    - XMLHttpRequest
+    - location.search
 
 sources:
   - window.location.search
@@ -222,6 +258,9 @@ methods:
   - semantic-review
 ```
 
+Optional `candidate_tokens` may be added under `detection` to give scanners and coding agents cheap lexical hints for candidate discovery.
+These hints should narrow the search space, not prove exploitation on their own.
+
 A scanner should identify candidate flows.
 
 A human or coding agent should confirm whether the flow is actually exploitable.
@@ -233,6 +272,8 @@ Use `semantic-pattern` when the weakness depends primarily on the presence and s
 Declare `indicators` instead of inventing artificial sources and sinks.
 
 The rule must explain what additional context is necessary to confirm the finding.
+
+When a rule has obvious low-cost lexical signals, add optional `detection.candidate_tokens` entries such as API names, sink names, protocol markers, or event names.
 
 ## Required Guide Structure
 
