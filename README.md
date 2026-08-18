@@ -15,7 +15,8 @@ The repository is designed to be agent-friendly. Each guide is structured in a c
 
 ## Repository Shape
 
-- Categories are grouped by security topic and vulnerability family.
+Categories are grouped by security topic and vulnerability family.
+
 - [Cross-origin Communication](guides/cross-origin-communication/README.md)
 - [Injection](guides/injection/README.md)
 - [Request Authenticity](guides/request-authenticity/README.md)
