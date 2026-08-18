@@ -2,7 +2,7 @@
 id: WOF-SDE-001
 title: Hard-coded Secrets
 kind: vulnerability
-severity: high
+default_severity: high
 exploitability: medium
 standards:
   cwe:

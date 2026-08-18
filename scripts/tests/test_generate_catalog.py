@@ -44,7 +44,7 @@ class GenerateCatalogTests(TestCase):
                 id: WOF-XSS-001
                 title: Duplicate
                 kind: vulnerability
-                severity: low
+                default_severity: low
                 exploitability: low
                 standards:
                   cwe:
@@ -117,7 +117,7 @@ class GenerateCatalogTests(TestCase):
                 id:
                 title: URL-derived Input to HTML Sink (innerHTML)
                 kind: vulnerability
-                severity: high
+                default_severity: high
                 exploitability: high
                 standards:
                   cwe:

@@ -2,7 +2,7 @@
 id: WOF-PM-001
 title: "postMessage Receiver Without Exact Origin Validation"
 kind: vulnerability
-severity: high
+default_severity: high
 exploitability: medium
 standards:
   cwe:

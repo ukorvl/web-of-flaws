@@ -2,7 +2,7 @@
 id: WOF-CSRF-001
 title: "Attacker-controlled Input to Authenticated Request Sink (Client-side CSRF)"
 kind: vulnerability
-severity: high
+default_severity: high
 exploitability: medium
 standards:
   cwe:

@@ -39,7 +39,7 @@ class GuideToolsTests(TestCase):
                 title: ""
                 kind:
                   nested: value
-                severity: high
+                default_severity: high
                 exploitability:
                 standards:
                   cwe:
@@ -83,7 +83,7 @@ class GuideToolsTests(TestCase):
                 id: WOF-XSS-001
                 title: URL-derived Input to HTML Sink
                 kind: vulnerability
-                severity: high
+                default_severity: high
                 exploitability: high
                 standards:
                   cwe:
@@ -121,7 +121,7 @@ class GuideToolsTests(TestCase):
                 id: WOF-XSS-001
                 title: URL-derived Input to HTML Sink
                 kind: vulnerability
-                severity: high
+                default_severity: high
                 exploitability: high
                 standards:
                   cwe:

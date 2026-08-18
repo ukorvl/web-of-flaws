@@ -2,7 +2,7 @@
 id: WOF-XSS-003
 title: "Attacker-controlled HTML to `window`/`document` Property Lookup (DOM Clobbering)"
 kind: vulnerability
-severity: high
+default_severity: high
 exploitability: medium
 standards:
   cwe:
