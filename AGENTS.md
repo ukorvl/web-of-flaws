@@ -20,46 +20,12 @@ All guides are located in the `guides` directory. Each category has its own subd
 
 ## Before marking things as done
 
-### General rules
+- Follow [CONTRIBUTING.md](CONTRIBUTING.md) for the canonical repository rules on guide structure, validation commands, generated files, labels, and contributor workflow.
+- If you change guides, generated files, or link allowlists, run the checks required by `CONTRIBUTING.md` before marking the task done and report anything you could not verify.
 
-- Run `markdownlint-cli2 "**/*.md"` and fix any issues, or explicitly note anything left unresolved.
-- Run `python3 scripts/lint_repo.py` and fix any reported metadata or allowlist issues before marking guide changes as done.
-- Run `python3 scripts/generate_catalog.py --check`, or regenerate `catalog/rules.json` with `python3 scripts/generate_catalog.py` if the check reports drift.
-- If you changed Markdown heavily, prefer `markdownlint-cli2 --fix "**/*.md"` before final review.
-- Verify any new or changed links in guides are valid and relevant; avoid placeholders unless they are clearly marked.
-- Before adding any real external documentation link in `guides/`, confirm that its domain is listed in `catalog/allowed-reference-domains.json`. If it is not listed, add it there with a clear scope and rationale before using it in a guide.
-- Every new or changed real external URL in `guides/` must be checked by opening it and confirming that it resolves to the intended document. Prefer canonical final URLs over links that only work through redirects.
-- The domain allowlist applies to real links in rendered guide content, such as Markdown links, bare reference URLs, and other live documentation/example URLs meant to be followed by readers or tooling. It does not apply to illustrative hostnames that appear only inside fenced code blocks, inline code, or non-clickable attack examples.
-- Keep filenames and titles parallel with related guides so similar cases are easy to compare.
-- Make sure each guide still contains a concrete vulnerable pattern, an attack example, a safer pattern, explicit detection guidance, false-positive guidance, and references.
-- If you touch GitHub Actions, keep actions pinned, make sure workflow lint/security checks still make sense and follow the exisitng code style and structure.
-- Keep existing structure, style and formatting in the repository overall. Avoid introducing new styles or conventions unless they are clearly documented and reported.
+### Other resources
 
-### Writing guides
-
-- For new guide pages under `guides/` (excluding `README.md` index files), keep the required heading structure from `.markdownlint-cli2.jsonc`.
-- For new guide pages under `guides/` (excluding `README.md` index files), start with YAML frontmatter containing a stable `id`, `kind`, `severity`, `exploitability`, standards mappings, detection metadata, and `tags`. Keep the frontmatter consistent with existing guides. Look at `catalog/rules.json` for the expected structure.
-- For real links in guides, use only domains that are allowlisted for `guide-references` or `example-urls` in `catalog/allowed-reference-domains.json`. Do not treat example hostnames inside code snippets, inline code, or plain-text attack examples as allowlist entries that must be registered.
-- When you add a new guide or move an exisitng one, update the nearest category `README.md` to include a link to the new guide.
-- When you add a new category, update the main `README.md` to include a link to the new category.
-- When you add or materially change a guide, treat the guide Markdown as the source of truth and regenerate `catalog/rules.json` with `python3 scripts/generate_catalog.py` instead of editing the catalog by hand.
-- When you add, remove, or rename a guide category or subcategory, run `python3 scripts/sync_guide_labels.py` so `.github/labeler.yaml` and `.github/labels.yaml` stay aligned with the current `guides/` tree.
-- When you add a new external reference domain for guides, update `catalog/allowed-reference-domains.json` and verify the exact URLs you introduced.
-- When adding code examples ensure they are complete, self-contained, and clearly demonstrate the vulnerability or safer pattern. Use comments to explain key points in the code. Make code self-explanatory and avoid unnecessary complexity. Keep in mind that humans should be able to understand the code without needing to run it, and agents should be able to parse it easily.
-- When writing attack examples, ensure they are realistic and demonstrate how an attacker could exploit the vulnerability. Avoid using overly complex or contrived examples that may confuse readers. Use comments to explain the attack steps and the impact of the vulnerability.
-- Never invent vulnerabilities or safer patterns. Only document real-world examples that have been observed in practice. If you are unsure about the validity of a vulnerability or safer pattern, consult with other security experts or refer to reputable sources, and include those sources in the guide's `References` section.
-- In general , keep the guides concise and focused on the specific vulnerability or safer pattern being discussed. Avoid including unrelated information or tangential topics. Don't be too wordy.
-- Ensure you use modern language features and specifications when writing code examples. For example, use ES6+ features in JavaScript, and avoid deprecated or outdated syntax.
-- Try to keep guide in one markdown file if possible. If the guide is too long or complex, consider splitting it into multiple files within a directory, but ensure that the structure is clear and consistent with the rest of the repository.
-- Remember the repo's review philosophy: scanners should find candidates, while agents confirm whether the candidate is a real vulnerability, weakness, or hardening gap. Use `False Positives` sections to keep the KB from turning into security noise.
-- When working with YAML frontmatter ensure that the syntax is correct and all required fields are present. Don't invent new fields or change the expected structure without a clear reason. Use existing guides and `catalog/rules.json` as a reference for the correct format.
-- Quote YAML frontmatter string values whenever they contain `:`, `#`, leading special characters, or other parser-sensitive content. In particular, quote values like `javascript:` so they remain valid for strict YAML parsers.
-
-### Writing scripts
-
-- Prefer small Python scripts over JavaScript or multi-language tooling for repository automation. Keep dependencies minimal and use the standard library unless an extra package is clearly justified.
-- Treat guide Markdown files and the live `guides/` tree as the source of truth. Repository scripts should derive generated outputs such as `catalog/rules.json`, `.github/labeler.yaml`, and guide-related entries in `.github/labels.yaml` from that source instead of duplicating metadata by hand.
-- Keep generated output deterministic and exact. If a script supports `--check`, it should render the same bytes that are committed to the repository, so CI can compare files without false drift.
-- Keep repository script logs concise but visible. Long-running or validation-oriented commands should print enough status to make failures understandable from the log.
-- Add short comments to Python scripts when the transformation, validation rule, or emitted file structure is not immediately obvious. Prefer brief intent-revealing comments over verbose narration.
-- Keep unit tests for Python repository scripts in `scripts/tests`.
+- [Contributing guide](CONTRIBUTING.md)
+- [.markdownlint-cli2.jsonc](.markdownlint-cli2.jsonc)
+- [catalog/rules.json](catalog/rules.json)
+- [catalog/allowed-reference-domains.json](catalog/allowed-reference-domains.json)
