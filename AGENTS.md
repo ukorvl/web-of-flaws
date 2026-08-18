@@ -8,7 +8,7 @@ The repository is organized into categories based on security topics and vulnera
 
 A purpose of this repository is to enable coding agents to learn from the guides and apply the knowledge to identify and fix vulnerabilities in web applications. Humans also are supposed to benefit from it by learning about common web vulnerabilities and how to mitigate them. Consider this repository as a knowledge base for both humans and agents to improve web security.
 
-A guide can be either a single markdown file or a directory containing multiple files. Guide markdown files should start with YAML frontmatter that includes standard properties of each guide, followed by the standard heading structure. Dataflow rules should declare explicit `sources` and `sinks`; pattern rules should declare `indicators`. Look at `.markdownlint-cli2.jsonc`, `CONTRIBUTING.md`, `catalog/rules.json`, and `catalog/allowed-reference-domains.json` for the expected guide structure.
+Each rule guide is exactly one Markdown file. Guide markdown files should start with YAML frontmatter that includes standard properties of each guide, followed by the standard heading structure. Dataflow rules should declare explicit `sources` and `sinks`; pattern rules should declare `indicators`. Look at `.markdownlint-cli2.jsonc`, `CONTRIBUTING.md`, `catalog/rules.json`, and `catalog/allowed-reference-domains.json` for the expected guide structure.
 
 ## Environment
 
@@ -16,7 +16,7 @@ This is a docs-first repository with no app runtime or build step. `python3` and
 
 ## Workspace structure
 
-All guides are located in the `guides` directory. Each category has its own subdirectory, and each guide is either a markdown file or a directory containing multiple files.
+All guides are located in the `guides` directory. Each category has its own subdirectory, and each rule guide is a single Markdown file. Category directories and nested category directories may contain `README.md` index files, but rules themselves are not split across multiple files.
 
 ## Before marking things as done
 

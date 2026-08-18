@@ -91,7 +91,8 @@ guides/
 
 Each category contains a `README.md` that acts as an index.
 
-Individual vulnerability rules are Markdown files with YAML frontmatter.
+Each individual rule is one Markdown file with YAML frontmatter.
+Category directories may contain `README.md` index files, but rules themselves are not split across multiple files.
 
 `catalog/rules.json` is generated from these guide files and must not be edited manually.
 
@@ -105,7 +106,7 @@ Before creating a new rule:
 4. Choose the narrowest existing category that fits the rule.
 5. Add the guide to the nearest category `README.md`.
 
-Prefer one Markdown file per rule.
+Use exactly one Markdown file per rule.
 
 ## Rule IDs
 
