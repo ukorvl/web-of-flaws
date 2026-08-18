@@ -76,6 +76,59 @@ class GenerateCatalogTests(TestCase):
 
             self.assertIn("duplicate rule id 'WOF-XSS-001'", str(error.exception))
 
+    def test_build_rules_requires_matching_standard_references(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "guides/injection/xss/url-derived-input-to-html-sink-innerhtml.md",
+                """
+                ---
+                id: WOF-XSS-001
+                title: URL-derived Input to HTML Sink (innerHTML)
+                kind: vulnerability
+                default_severity: high
+                exploitability: high
+                standards:
+                  cwe:
+                    - CWE-79
+                  owasp_top_10:
+                    - "A05:2025 Injection"
+                platforms:
+                  - browser
+                languages:
+                  - html
+                detection:
+                  type: dataflow
+                  methods:
+                    - grep
+                sources:
+                  - window.location.search
+                sinks:
+                  - Element.innerHTML
+                tags:
+                  - xss
+                ---
+
+                ## References
+
+                - [CWE-352](https://cwe.mitre.org/data/definitions/352.html)
+                - [OWASP Top 10 2025 A01: Broken Access Control](https://owasp.org/Top10/2025/A01_2025-Broken_Access_Control/)
+                """,
+            )
+
+            with self.assertRaises(guide_tools.GuideValidationError) as error:
+                generate_catalog.build_rules(root)
+
+            self.assertIn(
+                "standards.cwe entry 'CWE-79' must have matching reference https://cwe.mitre.org/data/definitions/79.html",
+                str(error.exception),
+            )
+            self.assertIn(
+                "standards.owasp_top_10 entry 'A05:2025 Injection' must have matching reference https://owasp.org/Top10/2025/A05_2025-Injection/",
+                str(error.exception),
+            )
+
     def test_main_sync_and_check_modes(self) -> None:
         with TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

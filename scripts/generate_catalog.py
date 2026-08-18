@@ -2,17 +2,79 @@ from __future__ import annotations
 
 from pathlib import Path
 import json
+import re
 import sys
+from urllib.parse import urlparse
 
 from guide_tools import GuideValidationError, iter_guide_rule_paths, load_guide, parse_references, validate_frontmatter
 
 
 ROOT = Path(__file__).resolve().parents[1]
 COMMAND = "python3 scripts/generate_catalog.py"
+CWE_ID_RE = re.compile(r"^CWE-(\d+)$")
+OWASP_TOP_10_RE = re.compile(r"^(A\d{2}):(\d{4}) (.+)$")
 
 
 def catalog_path(root: Path) -> Path:
     return root / "catalog" / "rules.json"
+
+
+def canonical_reference_url(url: str) -> str:
+    parsed = urlparse(url)
+    return f"{parsed.scheme.lower()}://{parsed.netloc.lower()}{parsed.path}"
+
+
+def expected_cwe_reference(cwe_id: str) -> str | None:
+    match = CWE_ID_RE.fullmatch(cwe_id)
+    if not match:
+        return None
+    return f"https://cwe.mitre.org/data/definitions/{match.group(1)}.html"
+
+
+def expected_owasp_top_10_reference(entry: str) -> str | None:
+    match = OWASP_TOP_10_RE.fullmatch(entry)
+    if not match:
+        return None
+    category, year, title = match.groups()
+    title_slug = re.sub(r"\s+", "_", title.strip())
+    return f"https://owasp.org/Top10/{year}/{category}_{year}-{title_slug}/"
+
+
+def validate_standard_references(
+    frontmatter: dict,
+    references: list[dict[str, str]],
+    path: Path,
+) -> list[str]:
+    errors: list[str] = []
+    standards = frontmatter.get("standards")
+    if not isinstance(standards, dict):
+        return errors
+
+    reference_urls = {
+        canonical_reference_url(reference["url"])
+        for reference in references
+        if isinstance(reference, dict) and isinstance(reference.get("url"), str)
+    }
+
+    for cwe_id in standards.get("cwe", []):
+        if not isinstance(cwe_id, str):
+            continue
+        expected = expected_cwe_reference(cwe_id)
+        if expected and expected not in reference_urls:
+            errors.append(
+                f"{path}: standards.cwe entry {cwe_id!r} must have matching reference {expected}"
+            )
+
+    for entry in standards.get("owasp_top_10", []):
+        if not isinstance(entry, str):
+            continue
+        expected = expected_owasp_top_10_reference(entry)
+        if expected and expected not in reference_urls:
+            errors.append(
+                f"{path}: standards.owasp_top_10 entry {entry!r} must have matching reference {expected}"
+            )
+
+    return errors
 
 
 def build_rules(root: Path) -> list[dict]:
@@ -27,6 +89,8 @@ def build_rules(root: Path) -> list[dict]:
         references = parse_references(body)
         if not references:
             errors.append(f"{path}: guide must declare at least one reference under ## References")
+        else:
+            errors.extend(validate_standard_references(frontmatter, references, path))
 
         relative_path = path.relative_to(root).as_posix()
         rule_id = frontmatter.get("id")
