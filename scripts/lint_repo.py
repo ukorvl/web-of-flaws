@@ -24,6 +24,7 @@ LOCAL_MARKDOWN_LINK_RE = re.compile(
     r"\[([^\]]+)\]\((?P<target>(?![a-z][a-z0-9+.-]*:|//)[^)\s]+\.md)(?:#[^)]+)?\)",
     re.IGNORECASE,
 )
+HTML_COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
 
 
 def load_allowed_domains(root: Path) -> dict[str, set[str]]:
@@ -56,9 +57,16 @@ def iter_guide_readme_paths(root: Path) -> list[Path]:
     return sorted((root / "guides").rglob("README.md"))
 
 
+def strip_html_comments_preserve_lines(markdown: str) -> str:
+    def replace(match: re.Match[str]) -> str:
+        return "".join("\n" if character == "\n" else " " for character in match.group(0))
+
+    return HTML_COMMENT_RE.sub(replace, markdown)
+
+
 def local_markdown_links(path: Path) -> list[tuple[str, int]]:
     links: list[tuple[str, int]] = []
-    markdown = path.read_text(encoding="utf-8")
+    markdown = strip_html_comments_preserve_lines(path.read_text(encoding="utf-8"))
     for line_number, _stripped, scrubbed in iter_rendered_lines(markdown):
         for match in LOCAL_MARKDOWN_LINK_RE.finditer(scrubbed):
             links.append((match.group("target"), line_number))
