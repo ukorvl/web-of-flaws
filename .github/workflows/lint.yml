@@ -30,7 +30,7 @@ jobs:
       - name: Check Markdown links
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
-          args: --no-progress --verbose './*.md' './**/*.md'
+          args: --no-progress --verbose --max-retries 6 --retry-wait-time 2 './*.md' './**/*.md'
           lycheeVersion: v0.24.2 # pinned for determinism
 
       - name: Run zizmor
