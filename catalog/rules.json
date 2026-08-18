@@ -6,7 +6,7 @@
       "path": "guides/cross-origin-communication/postmessage-receiver-without-exact-origin-validation.md",
       "title": "postMessage Receiver Without Exact Origin Validation",
       "kind": "vulnerability",
-      "severity": "high",
+      "default_severity": "high",
       "exploitability": "medium",
       "standards": {
         "cwe": [
@@ -83,7 +83,7 @@
       "path": "guides/injection/xss/attacker-controlled-html-to-window-document-property-lookup-dom-clobbering.md",
       "title": "Attacker-controlled HTML to `window`/`document` Property Lookup (DOM Clobbering)",
       "kind": "vulnerability",
-      "severity": "high",
+      "default_severity": "high",
       "exploitability": "medium",
       "standards": {
         "cwe": [
@@ -165,7 +165,7 @@
       "path": "guides/injection/xss/url-derived-input-to-html-sink-innerhtml.md",
       "title": "URL-derived Input to HTML Sink (innerHTML)",
       "kind": "vulnerability",
-      "severity": "high",
+      "default_severity": "high",
       "exploitability": "high",
       "standards": {
         "cwe": [
@@ -261,7 +261,7 @@
       "path": "guides/injection/xss/url-derived-input-to-navigation-sink-javascript-url.md",
       "title": "URL-derived Input to Navigation Sink (javascript: URL)",
       "kind": "vulnerability",
-      "severity": "medium",
+      "default_severity": "medium",
       "exploitability": "medium",
       "standards": {
         "cwe": [
@@ -351,7 +351,7 @@
       "path": "guides/request-authenticity/attacker-controlled-input-to-authenticated-request-sink-client-side-csrf.md",
       "title": "Attacker-controlled Input to Authenticated Request Sink (Client-side CSRF)",
       "kind": "vulnerability",
-      "severity": "high",
+      "default_severity": "high",
       "exploitability": "medium",
       "standards": {
         "cwe": [
@@ -441,7 +441,7 @@
       "path": "guides/sensitive-data-exposure/hard-coded-secrets.md",
       "title": "Hard-coded Secrets",
       "kind": "vulnerability",
-      "severity": "high",
+      "default_severity": "high",
       "exploitability": "medium",
       "standards": {
         "cwe": [

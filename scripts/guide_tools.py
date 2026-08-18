@@ -8,7 +8,7 @@ GUIDE_RULE_KEYS = {
     "id",
     "title",
     "kind",
-    "severity",
+    "default_severity",
     "exploitability",
     "standards",
     "platforms",
@@ -20,7 +20,7 @@ GUIDE_RULE_KEYS = {
     "tags",
 }
 GUIDE_KINDS = {"vulnerability", "weakness", "hardening-gap"}
-GUIDE_SEVERITIES = {"low", "medium", "high", "critical"}
+GUIDE_DEFAULT_SEVERITIES = {"low", "medium", "high", "critical"}
 GUIDE_EXPLOITABILITY = {"low", "medium", "high"}
 GUIDE_PLATFORMS = {
     "browser",
@@ -243,7 +243,7 @@ def validate_frontmatter(frontmatter: dict, path: Path) -> list[str]:
     if extra_keys:
         errors.append(f"{path}: unexpected frontmatter keys: {', '.join(extra_keys)}")
 
-    for key in ("id", "title", "kind", "severity", "exploitability", "standards", "platforms", "languages", "detection", "tags"):
+    for key in ("id", "title", "kind", "default_severity", "exploitability", "standards", "platforms", "languages", "detection", "tags"):
         if key not in frontmatter:
             errors.append(f"{path}: missing frontmatter key {key}")
 
@@ -257,9 +257,16 @@ def validate_frontmatter(frontmatter: dict, path: Path) -> list[str]:
     if kind is not None and kind not in GUIDE_KINDS:
         errors.append(f"{path}: kind must be one of {sorted(GUIDE_KINDS)}")
 
-    severity = validate_required_string(frontmatter.get("severity"), path, "severity", errors)
-    if severity is not None and severity not in GUIDE_SEVERITIES:
-        errors.append(f"{path}: severity must be one of {sorted(GUIDE_SEVERITIES)}")
+    default_severity = validate_required_string(
+        frontmatter.get("default_severity"),
+        path,
+        "default_severity",
+        errors,
+    )
+    if default_severity is not None and default_severity not in GUIDE_DEFAULT_SEVERITIES:
+        errors.append(
+            f"{path}: default_severity must be one of {sorted(GUIDE_DEFAULT_SEVERITIES)}"
+        )
 
     exploitability = validate_required_string(frontmatter.get("exploitability"), path, "exploitability", errors)
     if exploitability is not None and exploitability not in GUIDE_EXPLOITABILITY:

@@ -10,7 +10,7 @@
     - [`vulnerability`](#vulnerability)
     - [`weakness`](#weakness)
     - [`hardening`](#hardening)
-  - [Severity and Exploitability](#severity-and-exploitability)
+  - [Default Severity and Exploitability](#default-severity-and-exploitability)
   - [Detection Models](#detection-models)
     - [Dataflow](#dataflow)
     - [Semantic Pattern](#semantic-pattern)
@@ -138,7 +138,7 @@ Example dataflow rule:
 id: WOF-CSRF-001
 title: "Attacker-controlled Input to Authenticated Request Sink (Client-side CSRF)"
 kind: vulnerability
-severity: high
+default_severity: high
 exploitability: medium
 
 standards:
@@ -216,15 +216,13 @@ Use for defense-in-depth recommendations where the absence of the control should
 
 Do not classify every missing security control as a vulnerability.
 
-## Severity and Exploitability
+## Default Severity and Exploitability
 
-`severity` describes the typical impact of a **confirmed instance** of the rule.
+`default_severity` describes the default or typical impact of a **confirmed instance** of the rule.
 
-`exploitability` describes how feasible exploitation typically is.
+`exploitability` describes the default or typical ease of exploitation for a **confirmed instance** of the rule.
 
-These values are defaults for the pattern, not guaranteed severity ratings for every finding.
-
-Actual severity always depends on application context.
+These are rule-level defaults, not per-finding scanner verdicts.
 
 ## Detection Models
 

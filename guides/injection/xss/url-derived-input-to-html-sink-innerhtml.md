@@ -2,7 +2,7 @@
 id: WOF-XSS-001
 title: URL-derived Input to HTML Sink (innerHTML)
 kind: vulnerability
-severity: high
+default_severity: high
 exploitability: high
 standards:
   cwe:

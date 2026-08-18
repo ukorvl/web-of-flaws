@@ -2,7 +2,7 @@
 id: WOF-XSS-002
 title: "URL-derived Input to Navigation Sink (javascript: URL)"
 kind: vulnerability
-severity: medium
+default_severity: medium
 exploitability: medium
 standards:
   cwe:
