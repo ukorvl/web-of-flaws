@@ -64,6 +64,7 @@ class LintRepoTests(TestCase):
                 ## References
 
                 - [CWE-798](https://cwe.mitre.org/data/definitions/798.html)
+                - [OWASP Top 10 2025 A07: Authentication Failures](https://owasp.org/Top10/2025/A07_2025-Authentication_Failures/)
                 """,
             )
 
@@ -246,6 +247,57 @@ class LintRepoTests(TestCase):
             self.assertEqual(code, 1)
             self.assertIn("dataflow guides must declare non-empty sources", stderr)
             self.assertIn("dataflow guides must declare non-empty sinks", stderr)
+
+    def test_standard_reference_mismatch_is_reported(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "guides/sensitive-data-exposure/hard-coded-secrets.md",
+                """
+                ---
+                id: WOF-SDE-001
+                title: Hard-coded Secrets
+                kind: vulnerability
+                default_severity: high
+                exploitability: medium
+                standards:
+                  cwe:
+                    - CWE-798
+                  owasp_top_10:
+                    - "A07:2025 Authentication Failures"
+                platforms:
+                  - server
+                languages:
+                  - javascript
+                detection:
+                  type: semantic-pattern
+                  methods:
+                    - grep
+                indicators:
+                  - secret
+                tags:
+                  - secrets
+                ---
+
+                ## References
+
+                - [CWE-352](https://cwe.mitre.org/data/definitions/352.html)
+                - [OWASP Top 10 2025 A01: Broken Access Control](https://owasp.org/Top10/2025/A01_2025-Broken_Access_Control/)
+                """,
+            )
+
+            code, _stdout, stderr = run_main(lint_repo, root)
+
+            self.assertEqual(code, 1)
+            self.assertIn(
+                "standards.cwe entry 'CWE-798' must have matching reference https://cwe.mitre.org/data/definitions/798.html",
+                stderr,
+            )
+            self.assertIn(
+                "standards.owasp_top_10 entry 'A07:2025 Authentication Failures' must have matching reference https://owasp.org/Top10/2025/A07_2025-Authentication_Failures/",
+                stderr,
+            )
 
     def test_missing_nearest_readme_link_fails(self) -> None:
         with TemporaryDirectory() as tmpdir:

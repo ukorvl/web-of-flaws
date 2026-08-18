@@ -432,6 +432,8 @@ For example, React's `dangerouslySetInnerHTML`, Vue's `v-html`, and raw DOM `inn
 
 Every guide must contain authoritative references supporting the vulnerability and recommended mitigation.
 
+Every `standards.cwe` and `standards.owasp_top_10` entry must also have a matching canonical reference URL under `## References`.
+
 Prefer primary or well-established security sources such as:
 
 - MITRE CWE;
