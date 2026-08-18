@@ -54,6 +54,8 @@ class GuideToolsTests(TestCase):
                   type: semantic-pattern
                   methods:
                     - ""
+                  candidate_tokens:
+                    - ""
                 indicators:
                   - ""
                 tags:
@@ -71,6 +73,7 @@ class GuideToolsTests(TestCase):
         self.assertIn("guide.md: exploitability must be a non-empty string", errors)
         self.assertIn("guide.md: languages entries must be non-empty strings", errors)
         self.assertIn("guide.md: detection.methods entries must be non-empty strings", errors)
+        self.assertIn("guide.md: detection.candidate_tokens entries must be non-empty strings", errors)
         self.assertIn("guide.md: indicators entries must be non-empty strings", errors)
 
     def test_validate_frontmatter_rejects_empty_sources_and_sinks_entries(self) -> None:
@@ -110,6 +113,46 @@ class GuideToolsTests(TestCase):
 
         self.assertIn("guide.md: sources entries must be non-empty strings", errors)
         self.assertIn("guide.md: sinks entries must be non-empty strings", errors)
+
+    def test_validate_frontmatter_rejects_unexpected_detection_keys(self) -> None:
+        frontmatter = guide_tools.parse_yaml_mapping(
+            dedent(
+                """
+                id: WOF-XSS-001
+                title: URL-derived Input to HTML Sink
+                kind: vulnerability
+                severity: high
+                exploitability: high
+                standards:
+                  cwe:
+                    - CWE-79
+                  owasp_top_10:
+                    - "A05:2025 Injection"
+                platforms:
+                  - browser
+                languages:
+                  - javascript
+                detection:
+                  type: semantic-pattern
+                  methods:
+                    - grep
+                  candidate_tokens:
+                    - innerHTML
+                  query:
+                    grep:
+                      - innerHTML
+                indicators:
+                  - innerHTML
+                tags:
+                  - xss
+                """
+            ).lstrip(),
+            Path("guide.md"),
+        )
+
+        errors = guide_tools.validate_frontmatter(frontmatter, Path("guide.md"))
+
+        self.assertIn("guide.md: unexpected detection keys: query", errors)
 
     def test_rendered_urls_matches_uppercase_schemes_and_ignores_tilde_fences(self) -> None:
         markdown = """

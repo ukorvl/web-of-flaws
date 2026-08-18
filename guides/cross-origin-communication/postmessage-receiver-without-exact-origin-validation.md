@@ -22,6 +22,12 @@ detection:
     - grep
     - ast
     - semantic-review
+  candidate_tokens:
+    - addEventListener("message"
+    - onmessage
+    - event.origin
+    - event.data
+    - postMessage
 indicators:
   - window.addEventListener("message", ...) or window.onmessage = ...
   - handlers that process event.data without checking event.origin

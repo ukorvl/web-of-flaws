@@ -31,6 +31,13 @@
           "grep",
           "ast",
           "semantic-review"
+        ],
+        "candidate_tokens": [
+          "addEventListener(\"message\"",
+          "onmessage",
+          "event.origin",
+          "event.data",
+          "postMessage"
         ]
       },
       "indicators": [
@@ -100,6 +107,16 @@
           "grep",
           "ast",
           "semantic-review"
+        ],
+        "candidate_tokens": [
+          "innerHTML",
+          "outerHTML",
+          "insertAdjacentHTML",
+          "document.write",
+          "dangerouslySetInnerHTML",
+          "v-html",
+          "window.",
+          "document."
         ]
       },
       "indicators": [
@@ -173,6 +190,19 @@
           "ast",
           "taint-analysis",
           "semantic-review"
+        ],
+        "candidate_tokens": [
+          "innerHTML",
+          "outerHTML",
+          "insertAdjacentHTML",
+          "document.write",
+          "dangerouslySetInnerHTML",
+          "v-html",
+          "location.search",
+          "location.hash",
+          "location.href",
+          "URLSearchParams",
+          "document.referrer"
         ]
       },
       "sources": [
@@ -256,6 +286,19 @@
           "ast",
           "taint-analysis",
           "semantic-review"
+        ],
+        "candidate_tokens": [
+          "href",
+          "setAttribute(\"href\"",
+          "formAction",
+          "window.location",
+          "window.open",
+          "javascript:",
+          "location.search",
+          "location.hash",
+          "location.href",
+          "URLSearchParams",
+          "document.referrer"
         ]
       },
       "sources": [
@@ -333,6 +376,18 @@
           "ast",
           "taint-analysis",
           "semantic-review"
+        ],
+        "candidate_tokens": [
+          "fetch(",
+          "XMLHttpRequest",
+          "axios(",
+          "jQuery.ajax",
+          "submit(",
+          "location.search",
+          "location.hash",
+          "MessageEvent.data",
+          "window.name",
+          "document.referrer"
         ]
       },
       "sources": [
@@ -417,6 +472,17 @@
           "entropy-analysis",
           "ast",
           "semantic-review"
+        ],
+        "candidate_tokens": [
+          "SECRET",
+          "TOKEN",
+          "PASSWORD",
+          "API_KEY",
+          "PRIVATE_KEY",
+          "BEGIN PRIVATE KEY",
+          "AKIA",
+          "sk_live_",
+          "JWT_SECRET"
         ]
       },
       "indicators": [

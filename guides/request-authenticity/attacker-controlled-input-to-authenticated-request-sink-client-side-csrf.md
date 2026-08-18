@@ -22,6 +22,17 @@ detection:
     - ast
     - taint-analysis
     - semantic-review
+  candidate_tokens:
+    - fetch(
+    - XMLHttpRequest
+    - axios(
+    - jQuery.ajax
+    - submit(
+    - location.search
+    - location.hash
+    - MessageEvent.data
+    - window.name
+    - document.referrer
 sources:
   - window.location.search
   - window.location.hash

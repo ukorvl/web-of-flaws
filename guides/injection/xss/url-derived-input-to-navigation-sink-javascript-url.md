@@ -22,6 +22,18 @@ detection:
     - ast
     - taint-analysis
     - semantic-review
+  candidate_tokens:
+    - href
+    - setAttribute("href"
+    - formAction
+    - window.location
+    - window.open
+    - "javascript:"
+    - location.search
+    - location.hash
+    - location.href
+    - URLSearchParams
+    - document.referrer
 sources:
   - window.location.search
   - window.location.hash

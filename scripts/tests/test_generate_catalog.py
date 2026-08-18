@@ -30,6 +30,8 @@ class GenerateCatalogTests(TestCase):
             )
             self.assertEqual(len(rules[0]["references"]), 2)
             self.assertEqual(rules[0]["references"][0]["label"], "CWE-79")
+            self.assertEqual(rules[0]["detection"]["candidate_tokens"], ["innerHTML", "URLSearchParams"])
+            self.assertEqual(rules[1]["detection"]["candidate_tokens"], ["SECRET", "BEGIN PRIVATE KEY"])
 
     def test_build_rules_rejects_duplicate_rule_ids(self) -> None:
         with TemporaryDirectory() as tmpdir:

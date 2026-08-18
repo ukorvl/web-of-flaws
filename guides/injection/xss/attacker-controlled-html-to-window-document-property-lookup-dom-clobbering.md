@@ -21,6 +21,15 @@ detection:
     - grep
     - ast
     - semantic-review
+  candidate_tokens:
+    - innerHTML
+    - outerHTML
+    - insertAdjacentHTML
+    - document.write
+    - dangerouslySetInnerHTML
+    - v-html
+    - window.
+    - document.
 indicators:
   - attacker-controlled HTML reaches DOM parsing sinks such as `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, or framework raw-HTML escape hatches
   - code reads `window.NAME`, `document.NAME`, or bare global identifiers as if they were trusted configuration, navigation targets, or script URLs
