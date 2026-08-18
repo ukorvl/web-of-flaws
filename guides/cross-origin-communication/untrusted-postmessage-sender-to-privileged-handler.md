@@ -1,12 +1,11 @@
 ---
 id: WOF-PM-001
-title: "postMessage Receiver Without Exact Origin Validation"
+title: "Untrusted postMessage Sender to Privileged Handler"
 kind: vulnerability
 default_severity: high
 exploitability: medium
 standards:
   cwe:
-    - CWE-346
     - CWE-940
   owasp_top_10:
     - "A07:2025 Authentication Failures"
@@ -29,8 +28,8 @@ detection:
     - event.data
     - postMessage
 indicators:
-  - window.addEventListener("message", ...) or window.onmessage = ...
-  - handlers that process event.data without checking event.origin
+  - message handlers that route event.data into privileged actions or sensitive state transitions
+  - handlers that reach sensitive behavior before validating a trusted sender
   - origin checks using substring, prefix, suffix, regex, or wildcard matching instead of exact allowlisted origins
   - message-driven actions that complete payments, approve wallet flows, link accounts, navigate, or invoke backend mutations
 tags:
@@ -46,17 +45,19 @@ tags:
 ## Rule
 
 Treat `message` events as untrusted cross-origin input.
-Do not process `event.data` unless the receiver first verifies `event.origin` against an exact allowlist of expected origins and, when practical, confirms the expected sender window as well.
+This rule applies when an untrusted sender can drive privileged behavior through a receiver that does not first verify `event.origin` against an exact allowlist of expected origins and, when practical, confirm the expected sender window as well.
 
 ## Mental Model
 
 `postMessage` is a deliberate hole through the same-origin policy.
-The security boundary moves from the browser to your receiver code, so a vague origin check is effectively the same as letting an attacker talk directly to privileged widget logic.
+The listener itself is not the vulnerability.
+The vulnerability appears when the security boundary moves from the browser to your receiver code and an untrusted sender can still reach privileged widget logic.
 
 ## Why This Matters
 
 This flaw is extremely common in iframe, popup, wallet, identity, and payment integrations.
 If the receiver trusts any sender or uses fuzzy matching such as `includes`, `indexOf`, `endsWith`, or a broad regex, an attacker-controlled page can trigger privileged flows, spoof success states, or send crafted data into trusted application logic.
+A listener that only logs or ignores message data is not equivalent to a handler that completes a payment, links an account, or calls a privileged backend action.
 
 ## Vulnerable Pattern
 
@@ -175,7 +176,7 @@ Use an exact allowlist for origins, validate the sender window when possible, an
 Detection type: `semantic-pattern`.
 
 - Candidate collection: search for `window.addEventListener("message", ...)`, `window.onmessage =`, and framework wrappers around `message` events.
-- Confirmation: verify that the handler processes `event.data` or triggers privileged actions before enforcing an exact allowlist of full origin strings.
+- Confirmation: verify that the handler processes `event.data` or reaches a privileged action before enforcing an exact allowlist of full origin strings.
 - Treat `includes`, `indexOf`, `startsWith`, `endsWith`, regex matching, hostname-only comparisons, or checks that ignore scheme or port as suspicious until proven safe.
 - High-confidence findings often complete payments, advance checkout state, approve wallet or identity flows, write tokens to storage, navigate, or call privileged backend endpoints.
 - A scanner should surface message handlers and validation patterns; the agent or reviewer should confirm whether an attacker-controlled origin can reach a sensitive branch with crafted message data.
@@ -184,7 +185,7 @@ Detection type: `semantic-pattern`.
 
 - A receiver that checks `event.origin` against a fixed allowlist of exact origin strings and validates message schema is usually not this issue.
 - Multi-environment integrations can still be safe if they allow only explicit production, staging, or local-development origins, each as a full origin string.
-- Telemetry or debugging listeners may be lower priority if they do not expose data or trigger sensitive behavior, though they still deserve review if message contents flow elsewhere.
+- Telemetry, analytics, or debugging listeners that do not expose data or trigger sensitive behavior are usually not this rule, though they still deserve review if message contents flow elsewhere.
 
 ## Framework Notes
 
@@ -193,7 +194,6 @@ Many widget integrations correctly use a strict sender `targetOrigin` but still 
 
 ## References
 
-- [MITRE CWE-346: Origin Validation Error](https://cwe.mitre.org/data/definitions/346.html)
 - [MITRE CWE-940: Improper Verification of Source of a Communication Channel](https://cwe.mitre.org/data/definitions/940.html)
 - [OWASP Top 10 2025 A07: Authentication Failures](https://owasp.org/Top10/2025/A07_2025-Authentication_Failures/)
 - [OWASP HTML5 Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html)

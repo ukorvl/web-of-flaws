@@ -3,14 +3,13 @@
   "rules": [
     {
       "id": "WOF-PM-001",
-      "path": "guides/cross-origin-communication/postmessage-receiver-without-exact-origin-validation.md",
-      "title": "postMessage Receiver Without Exact Origin Validation",
+      "path": "guides/cross-origin-communication/untrusted-postmessage-sender-to-privileged-handler.md",
+      "title": "Untrusted postMessage Sender to Privileged Handler",
       "kind": "vulnerability",
       "default_severity": "high",
       "exploitability": "medium",
       "standards": {
         "cwe": [
-          "CWE-346",
           "CWE-940"
         ],
         "owasp_top_10": [
@@ -41,8 +40,8 @@
         ]
       },
       "indicators": [
-        "window.addEventListener(\"message\", ...) or window.onmessage = ...",
-        "handlers that process event.data without checking event.origin",
+        "message handlers that route event.data into privileged actions or sensitive state transitions",
+        "handlers that reach sensitive behavior before validating a trusted sender",
         "origin checks using substring, prefix, suffix, regex, or wildcard matching instead of exact allowlisted origins",
         "message-driven actions that complete payments, approve wallet flows, link accounts, navigate, or invoke backend mutations"
       ],
@@ -56,10 +55,6 @@
         "cross-origin"
       ],
       "references": [
-        {
-          "label": "MITRE CWE-346: Origin Validation Error",
-          "url": "https://cwe.mitre.org/data/definitions/346.html"
-        },
         {
           "label": "MITRE CWE-940: Improper Verification of Source of a Communication Channel",
           "url": "https://cwe.mitre.org/data/definitions/940.html"
