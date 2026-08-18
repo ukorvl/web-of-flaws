@@ -246,3 +246,62 @@ class LintRepoTests(TestCase):
             self.assertEqual(code, 1)
             self.assertIn("dataflow guides must declare non-empty sources", stderr)
             self.assertIn("dataflow guides must declare non-empty sinks", stderr)
+
+    def test_missing_nearest_readme_link_fails(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "guides/injection/xss/README.md",
+                """
+                # Cross-site scripting (XSS)
+
+                ## Rules
+                """,
+            )
+
+            code, _stdout, stderr = run_main(lint_repo, root)
+
+            self.assertEqual(code, 1)
+            self.assertIn("nearest index guides/injection/xss/README.md must link to this guide exactly once (found 0)", stderr)
+
+    def test_duplicate_nearest_readme_link_fails(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "guides/injection/xss/README.md",
+                """
+                # Cross-site scripting (XSS)
+
+                ## Rules
+
+                - [Rule A](url-derived-input-to-html-sink-innerhtml.md)
+                - [Rule B](url-derived-input-to-html-sink-innerhtml.md)
+                """,
+            )
+
+            code, _stdout, stderr = run_main(lint_repo, root)
+
+            self.assertEqual(code, 1)
+            self.assertIn("nearest index guides/injection/xss/README.md must link to this guide exactly once (found 2)", stderr)
+
+    def test_broken_index_readme_link_fails(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "guides/injection/README.md",
+                """
+                # Injection
+
+                ## Categories
+
+                - [Cross-site scripting (XSS)](missing/README.md)
+                """,
+            )
+
+            code, _stdout, stderr = run_main(lint_repo, root)
+
+            self.assertEqual(code, 1)
+            self.assertIn("linked markdown target does not exist: missing/README.md", stderr)
