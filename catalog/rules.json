@@ -520,6 +520,78 @@
           "url": "https://getsops.io/docs/"
         }
       ]
+    },
+    {
+      "id": "WOF-SDE-002",
+      "path": "guides/sensitive-data-exposure/sensitive-data-to-postmessage-wildcard-target-origin.md",
+      "title": "Sensitive Data to `postMessage` Wildcard Target Origin",
+      "kind": "vulnerability",
+      "default_severity": "high",
+      "exploitability": "medium",
+      "standards": {
+        "cwe": [
+          "CWE-201"
+        ],
+        "owasp_top_10": [
+          "A01:2025 Broken Access Control"
+        ]
+      },
+      "platforms": [
+        "browser"
+      ],
+      "languages": [
+        "html",
+        "javascript",
+        "typescript"
+      ],
+      "detection": {
+        "type": "semantic-pattern",
+        "methods": [
+          "grep",
+          "ast",
+          "semantic-review"
+        ],
+        "candidate_tokens": [
+          "postMessage(",
+          "targetOrigin",
+          "contentWindow",
+          "window.open(",
+          "accessToken"
+        ]
+      },
+      "indicators": [
+        "calls to `postMessage` that send tokens, session data, personal data, or bootstrap secrets into another window",
+        "wildcard or overly broad `targetOrigin` values such as `*` for data that should only reach one trusted origin",
+        "popup or iframe integrations where the receiving window can be navigated before sensitive data is sent",
+        "cross-origin bootstrap flows that expose reusable credentials instead of a one-time transfer artifact"
+      ],
+      "tags": [
+        "sensitive-data-exposure",
+        "postmessage",
+        "target-origin",
+        "token-leak",
+        "iframe",
+        "popup",
+        "cross-origin"
+      ],
+      "references": [
+        {
+          "label": "MITRE CWE-201: Insertion of Sensitive Information Into Sent Data",
+          "url": "https://cwe.mitre.org/data/definitions/201.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 A01: Broken Access Control",
+          "url": "https://owasp.org/Top10/2025/A01_2025-Broken_Access_Control/"
+        },
+        {
+          "label": "OWASP HTML5 Security Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html"
+        },
+        {
+          "label": "MDN: `Window.postMessage()`",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage"
+        }
+      ]
     }
   ]
 }
