@@ -19,11 +19,12 @@ from guide_tools import (
 
 ROOT = Path(__file__).resolve().parents[1]
 COMMAND = "python3 scripts/lint_repo.py"
-# TODO: Parse or reject reference-style local links; broken README refs can bypass this inline-link regex.
 LOCAL_MARKDOWN_LINK_RE = re.compile(
     r"\[([^\]]+)\]\((?P<target>(?![a-z][a-z0-9+.-]*:|//)[^)\s]+\.md)(?:#[^)]+)?\)",
     re.IGNORECASE,
 )
+REFERENCE_STYLE_LINK_RE = re.compile(r"(?<!\!)\[[^\]]+\]\[[^\]]*\]")
+REFERENCE_DEFINITION_RE = re.compile(r"^\s*\[[^\]]+\]:\s+\S+")
 HTML_COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
 
 
@@ -73,6 +74,15 @@ def local_markdown_links(path: Path) -> list[tuple[str, int]]:
     return links
 
 
+def reference_style_markdown_lines(path: Path) -> list[int]:
+    line_numbers: list[int] = []
+    markdown = strip_html_comments_preserve_lines(path.read_text(encoding="utf-8"))
+    for line_number, _stripped, scrubbed in iter_rendered_lines(markdown):
+        if REFERENCE_STYLE_LINK_RE.search(scrubbed) or REFERENCE_DEFINITION_RE.search(scrubbed):
+            line_numbers.append(line_number)
+    return line_numbers
+
+
 def nearest_readme_for(path: Path, root: Path) -> Path | None:
     guides_root = root / "guides"
     current = path.parent
@@ -91,6 +101,8 @@ def lint_guide_indexes(root: Path) -> list[str]:
     counts: dict[tuple[Path, Path], int] = {}
 
     for readme in iter_guide_readme_paths(root):
+        for line_number in reference_style_markdown_lines(readme):
+            errors.append(f"{readme}:{line_number}: category indexes must use inline Markdown links, not reference-style links")
         for target, line_number in local_markdown_links(readme):
             resolved = (readme.parent / target).resolve()
             if not resolved.exists() or not resolved.is_file():

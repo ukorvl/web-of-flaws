@@ -6,15 +6,19 @@ import re
 import sys
 from urllib.parse import urlparse
 
-from guide_tools import GuideValidationError, iter_guide_rule_paths, load_guide, parse_references, validate_frontmatter
+from guide_tools import (
+    CWE_ID_RE,
+    OWASP_TOP_10_RE,
+    GuideValidationError,
+    iter_guide_rule_paths,
+    load_guide,
+    parse_references,
+    validate_frontmatter,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
 COMMAND = "python3 scripts/generate_catalog.py"
-CWE_ID_RE = re.compile(r"^CWE-(\d+)$")
-OWASP_TOP_10_RE = re.compile(r"^(A\d{2}):(\d{4}) (.+)$")
-
-
 def catalog_path(root: Path) -> Path:
     return root / "catalog" / "rules.json"
 
@@ -28,7 +32,7 @@ def expected_cwe_reference(cwe_id: str) -> str | None:
     match = CWE_ID_RE.fullmatch(cwe_id)
     if not match:
         return None
-    return f"https://cwe.mitre.org/data/definitions/{match.group(1)}.html"
+    return f"https://cwe.mitre.org/data/definitions/{cwe_id.removeprefix('CWE-')}.html"
 
 
 def expected_owasp_top_10_reference(entry: str) -> str | None:

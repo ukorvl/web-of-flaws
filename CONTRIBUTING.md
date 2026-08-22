@@ -9,7 +9,7 @@
   - [Rule Kinds](#rule-kinds)
     - [`vulnerability`](#vulnerability)
     - [`weakness`](#weakness)
-    - [`hardening`](#hardening)
+    - [`hardening-gap`](#hardening-gap)
   - [Default Severity and Exploitability](#default-severity-and-exploitability)
   - [Detection Models](#detection-models)
     - [Dataflow](#dataflow)
@@ -102,7 +102,7 @@ Before creating a new rule:
 
 1. Check that an equivalent rule does not already exist.
 2. Prefer a specific, reusable security pattern over a broad security topic.
-3. Make sure the issue represents a real vulnerability, weakness, or hardening concern supported by reputable references.
+3. Make sure the issue represents a real vulnerability, weakness, or defense-in-depth gap supported by reputable references.
 4. Choose the narrowest existing category that fits the rule.
 5. Add the guide to the nearest category `README.md`.
 
@@ -197,6 +197,7 @@ For example:
 ## Rule Kinds
 
 Use `kind` to distinguish the nature of the finding.
+Valid values are `vulnerability`, `weakness`, and `hardening-gap`.
 
 ### `vulnerability`
 
@@ -211,9 +212,9 @@ Examples:
 
 Use for security-relevant patterns that increase risk but are not necessarily exploitable on their own.
 
-### `hardening`
+### `hardening-gap`
 
-Use for defense-in-depth recommendations where the absence of the control should not automatically be reported as an exploitable vulnerability.
+Use when the finding is a meaningful defense-in-depth gap, but the absence of the control should not automatically be reported as an exploitable vulnerability.
 
 Do not classify every missing security control as a vulnerability.
 
@@ -228,12 +229,14 @@ These are rule-level defaults, not per-finding scanner verdicts.
 ## Detection Models
 
 Rules currently use two main detection models.
+These models are mutually exclusive.
 
 ### Dataflow
 
 Use `dataflow` when security depends on attacker-controlled information reaching a sensitive sink.
 
 Declare explicit `sources` and `sinks`.
+Do not declare `indicators` on `dataflow` rules.
 
 Example:
 
@@ -269,6 +272,7 @@ A human or coding agent should confirm whether the flow is actually exploitable.
 Use `semantic-pattern` when the weakness depends primarily on the presence and surrounding meaning of a code pattern rather than a source-to-sink flow.
 
 Declare `indicators` instead of inventing artificial sources and sinks.
+Do not declare `sources` or `sinks` on `semantic-pattern` rules.
 
 The rule must explain what additional context is necessary to confirm the finding.
 
@@ -466,6 +470,7 @@ When adding a new guide, update the nearest category `README.md`.
 When adding a new category, update the appropriate parent index or the repository `README.md`.
 
 Keep names and descriptions short and consistent with related rules.
+Category indexes must use inline Markdown links such as `[Rule](rule.md)`, not reference-style links such as `[Rule][rule]`.
 
 ## Generated Files
 

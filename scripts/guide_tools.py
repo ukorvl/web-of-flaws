@@ -22,6 +22,7 @@ GUIDE_RULE_KEYS = {
 GUIDE_KINDS = {"vulnerability", "weakness", "hardening-gap"}
 GUIDE_DEFAULT_SEVERITIES = {"low", "medium", "high", "critical"}
 GUIDE_EXPLOITABILITY = {"low", "medium", "high"}
+STANDARDS_KEYS = {"cwe", "owasp_top_10"}
 GUIDE_PLATFORMS = {
     "browser",
     "server",
@@ -49,6 +50,8 @@ GUIDE_LANGUAGES = {
 DETECTION_TYPES = {"dataflow", "semantic-pattern"}
 DETECTION_METHODS = {"grep", "ast", "taint-analysis", "semantic-review", "entropy-analysis"}
 DETECTION_KEYS = {"type", "methods", "candidate_tokens"}
+CWE_ID_RE = re.compile(r"^CWE-\d+$")
+OWASP_TOP_10_RE = re.compile(r"^(A\d{2}):(\d{4}) (.+)$")
 URL_RE = re.compile(r"(?:https?:)?//[^\s)>`]+", re.IGNORECASE)
 MARKDOWN_LINK_RE = re.compile(r"\[([^\]]+)\]\(((?:https?:)?//[^)\s]+)\)", re.IGNORECASE)
 CODE_FENCE_RE = re.compile(r"^([`~]{3,})")
@@ -287,12 +290,16 @@ def validate_frontmatter(frontmatter: dict, path: Path) -> list[str]:
     if not isinstance(standards, dict):
         errors.append(f"{path}: standards must be a mapping")
     else:
+        extra_standards_keys = sorted(set(standards) - STANDARDS_KEYS)
+        if extra_standards_keys:
+            errors.append(f"{path}: unexpected standards keys: {', '.join(extra_standards_keys)}")
+
         cwes = standards.get("cwe")
         if not isinstance(cwes, list) or not cwes:
             errors.append(f"{path}: standards.cwe must be a non-empty list")
         else:
             for cwe in cwes:
-                if not isinstance(cwe, str) or not re.fullmatch(r"CWE-\d+", cwe):
+                if not isinstance(cwe, str) or not CWE_ID_RE.fullmatch(cwe):
                     errors.append(f"{path}: CWE value {cwe!r} must match ^CWE-\\d+$")
 
         owasp = standards.get("owasp_top_10")
@@ -300,8 +307,8 @@ def validate_frontmatter(frontmatter: dict, path: Path) -> list[str]:
             errors.append(f"{path}: standards.owasp_top_10 must be a non-empty list")
         else:
             for entry in owasp:
-                if not isinstance(entry, str) or not entry.strip():
-                    errors.append(f"{path}: standards.owasp_top_10 entries must be non-empty strings")
+                if not isinstance(entry, str) or not OWASP_TOP_10_RE.fullmatch(entry):
+                    errors.append(f"{path}: OWASP Top 10 value {entry!r} must match ^A\\d{{2}}:\\d{{4}} .+$")
 
     detection = frontmatter.get("detection")
     if not isinstance(detection, dict):
@@ -338,6 +345,8 @@ def validate_frontmatter(frontmatter: dict, path: Path) -> list[str]:
     if detection_type == "dataflow":
         errors.extend(validate_non_empty_string_list(frontmatter.get("sources"), path, "sources", "dataflow guides must declare non-empty sources"))
         errors.extend(validate_non_empty_string_list(frontmatter.get("sinks"), path, "sinks", "dataflow guides must declare non-empty sinks"))
+        if "indicators" in frontmatter:
+            errors.append(f"{path}: dataflow guides must not declare indicators")
     elif detection_type == "semantic-pattern":
         errors.extend(
             validate_non_empty_string_list(
@@ -347,6 +356,10 @@ def validate_frontmatter(frontmatter: dict, path: Path) -> list[str]:
                 "semantic-pattern guides must declare non-empty indicators",
             )
         )
+        if "sources" in frontmatter:
+            errors.append(f"{path}: semantic-pattern guides must not declare sources")
+        if "sinks" in frontmatter:
+            errors.append(f"{path}: semantic-pattern guides must not declare sinks")
 
     return errors
 

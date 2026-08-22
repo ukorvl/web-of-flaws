@@ -10,7 +10,7 @@ Web of Flaws is a markdown-first catalog of vulnerable web patterns and safer re
 The repository is designed for both humans and coding agents: each guide shows the risky pattern,
 why it is exploitable, and how to fix it with concrete code.
 
-It can be used as a SAST rule catalog, a model training resource, or a reference for security checks during code review. At the same time the library could be useful for developers and security engineers to learn about common web vulnerabilities and how to mitigate them.
+It can be used as a knowledge base for SAST, model training, and agent-assisted security review. At the same time the library could be useful for developers and security engineers to learn about common web vulnerabilities and how to mitigate them.
 
 ## For Agents
 
