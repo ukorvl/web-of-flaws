@@ -377,3 +377,25 @@ class LintRepoTests(TestCase):
 
             self.assertEqual(code, 1)
             self.assertIn("nearest index guides/injection/xss/README.md must link to this guide exactly once (found 0)", stderr)
+
+    def test_reference_style_index_links_are_rejected(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "guides/injection/xss/README.md",
+                """
+                # Cross-site scripting (XSS)
+
+                ## Rules
+
+                - [Rule][xss-rule]
+
+                [xss-rule]: url-derived-input-to-html-sink-innerhtml.md
+                """,
+            )
+
+            code, _stdout, stderr = run_main(lint_repo, root)
+
+            self.assertEqual(code, 1)
+            self.assertIn("category indexes must use inline Markdown links, not reference-style links", stderr)

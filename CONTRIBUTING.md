@@ -470,6 +470,7 @@ When adding a new guide, update the nearest category `README.md`.
 When adding a new category, update the appropriate parent index or the repository `README.md`.
 
 Keep names and descriptions short and consistent with related rules.
+Category indexes must use inline Markdown links such as `[Rule](rule.md)`, not reference-style links such as `[Rule][rule]`.
 
 ## Generated Files
 
