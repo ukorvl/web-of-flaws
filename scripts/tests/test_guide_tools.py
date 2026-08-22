@@ -154,6 +154,45 @@ class GuideToolsTests(TestCase):
 
         self.assertIn("guide.md: unexpected detection keys: query", errors)
 
+    def test_validate_frontmatter_rejects_invalid_standards_keys_and_values(self) -> None:
+        frontmatter = guide_tools.parse_yaml_mapping(
+            dedent(
+                """
+                id: WOF-XSS-001
+                title: URL-derived Input to HTML Sink
+                kind: vulnerability
+                default_severity: high
+                exploitability: high
+                standards:
+                  cwe:
+                    - banana
+                  owasp_top_10:
+                    - banana
+                  whatever:
+                    - hello
+                platforms:
+                  - browser
+                languages:
+                  - javascript
+                detection:
+                  type: semantic-pattern
+                  methods:
+                    - grep
+                indicators:
+                  - innerHTML
+                tags:
+                  - xss
+                """
+            ).lstrip(),
+            Path("guide.md"),
+        )
+
+        errors = guide_tools.validate_frontmatter(frontmatter, Path("guide.md"))
+
+        self.assertIn("guide.md: unexpected standards keys: whatever", errors)
+        self.assertIn("guide.md: CWE value 'banana' must match ^CWE-\\d+$", errors)
+        self.assertIn("guide.md: OWASP Top 10 value 'banana' must match ^A\\d{2}:\\d{4} .+$", errors)
+
     def test_rendered_urls_matches_uppercase_schemes_and_ignores_tilde_fences(self) -> None:
         markdown = """
         [Reference](HTTPS://docs.example.com/guide)

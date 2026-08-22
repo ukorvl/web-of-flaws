@@ -129,6 +129,55 @@ class GenerateCatalogTests(TestCase):
                 str(error.exception),
             )
 
+    def test_build_rules_rejects_invalid_standards_metadata(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "guides/injection/xss/url-derived-input-to-html-sink-innerhtml.md",
+                """
+                ---
+                id: WOF-XSS-001
+                title: URL-derived Input to HTML Sink (innerHTML)
+                kind: vulnerability
+                default_severity: high
+                exploitability: high
+                standards:
+                  cwe:
+                    - CWE-79
+                  owasp_top_10:
+                    - banana
+                  whatever:
+                    - hello
+                platforms:
+                  - browser
+                languages:
+                  - html
+                detection:
+                  type: dataflow
+                  methods:
+                    - grep
+                sources:
+                  - window.location.search
+                sinks:
+                  - Element.innerHTML
+                tags:
+                  - xss
+                ---
+
+                ## References
+
+                - [CWE-79](https://cwe.mitre.org/data/definitions/79.html)
+                - [OWASP Top 10 2025 A05: Injection](https://owasp.org/Top10/2025/A05_2025-Injection/)
+                """,
+            )
+
+            with self.assertRaises(guide_tools.GuideValidationError) as error:
+                generate_catalog.build_rules(root)
+
+            self.assertIn("unexpected standards keys: whatever", str(error.exception))
+            self.assertIn("OWASP Top 10 value 'banana' must match ^A\\d{2}:\\d{4} .+$", str(error.exception))
+
     def test_main_sync_and_check_modes(self) -> None:
         with TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
