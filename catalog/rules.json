@@ -663,6 +663,22 @@
           "url": "https://docs.npmjs.com/files/package-lock.json/"
         },
         {
+          "label": "pnpm v11/12 Docs: Mitigating supply chain attacks",
+          "url": "https://pnpm.io/supply-chain-security"
+        },
+        {
+          "label": "Yarn 4+ Docs: Settings (.yarnrc.yml)",
+          "url": "https://yarnpkg.com/configuration/yarnrc/"
+        },
+        {
+          "label": "Yarn 4+ Docs: Manifest (package.json)",
+          "url": "https://yarnpkg.com/configuration/manifest/"
+        },
+        {
+          "label": "Bun 1.x Docs: Lifecycle scripts",
+          "url": "https://bun.sh/docs/pm/lifecycle"
+        },
+        {
           "label": "OWASP Cheat Sheet Series: Vulnerable Dependency Management",
           "url": "https://cheatsheetseries.owasp.org/cheatsheets/Vulnerable_Dependency_Management_Cheat_Sheet.html"
         }

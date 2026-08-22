@@ -181,8 +181,13 @@ Detection type: `semantic-pattern`.
 
 ## Framework Notes
 
-This guide focuses on npm, but the same trust boundary exists in adjacent JavaScript package managers when dependency install hooks execute automatically.
-The core question is whether third-party code runs during dependency installation before the project deliberately chooses to trust it.
+This guide focuses on npm semantics, but adjacent JavaScript package managers now expose more explicit controls for the same trust boundary.
+
+- `pnpm` (v11/12) documents supply-chain protections that go beyond plain lockfiles: pnpm v10 disables automatic dependency `postinstall` execution, recommends explicit `allowBuilds` entries instead of `dangerouslyAllowAllBuilds`, and pnpm v11 defaults `minimumReleaseAge` to 1440 minutes, while also supporting `blockExoticSubdeps` and `trustPolicy`.
+- Yarn Berry (Yarn 4) documents a default-off model for third-party install hooks: `enableScripts` defaults to `false`, so third-party `postinstall` scripts do not run during install, and `dependenciesMeta.built` can then deny or allow builds per package.
+- Bun (Bun 1.x) documents a default-secure allowlist model: lifecycle scripts do not run arbitrarily, packages can be explicitly approved through `trustedDependencies`, blocked scripts can be reviewed with `bun pm untrusted`, and `--ignore-scripts` or `install.ignoreScripts = true` can disable all lifecycle scripts.
+
+The core question remains the same across npm-compatible ecosystems: whether third-party code can execute during dependency installation before the project deliberately chooses to trust it.
 
 ## References
 
@@ -190,6 +195,10 @@ The core question is whether third-party code runs during dependency installatio
 - [OWASP Top 10 2025 A03: Software Supply Chain Failures](https://owasp.org/Top10/2025/A03_2025-Software_Supply_Chain_Failures/)
 - [npm Docs: Scripts](https://docs.npmjs.com/cli/using-npm/scripts/)
 - [npm Docs: package-lock.json](https://docs.npmjs.com/files/package-lock.json/)
+- [pnpm v11/12 Docs: Mitigating supply chain attacks](https://pnpm.io/supply-chain-security)
+- [Yarn 4+ Docs: Settings (.yarnrc.yml)](https://yarnpkg.com/configuration/yarnrc/)
+- [Yarn 4+ Docs: Manifest (package.json)](https://yarnpkg.com/configuration/manifest/)
+- [Bun 1.x Docs: Lifecycle scripts](https://bun.sh/docs/pm/lifecycle)
 - [OWASP Cheat Sheet Series: Vulnerable Dependency Management](https://cheatsheetseries.owasp.org/cheatsheets/Vulnerable_Dependency_Management_Cheat_Sheet.html)
 
 ## Quick Checklist

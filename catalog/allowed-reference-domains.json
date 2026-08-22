@@ -68,6 +68,27 @@
       "purpose": "Official npm documentation for lifecycle scripts, lockfiles, and package installation behavior."
     },
     {
+      "domain": "pnpm.io",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official pnpm documentation for supply-chain protections and package installation behavior."
+    },
+    {
+      "domain": "yarnpkg.com",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official Yarn Berry documentation for install-script controls and package-manager settings."
+    },
+    {
+      "domain": "bun.sh",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official Bun documentation for lifecycle-script controls and trusted dependency behavior."
+    },
+    {
       "domain": "example.com",
       "scopes": [
         "example-urls"
