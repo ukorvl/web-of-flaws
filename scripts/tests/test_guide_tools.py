@@ -114,6 +114,85 @@ class GuideToolsTests(TestCase):
         self.assertIn("guide.md: sources entries must be non-empty strings", errors)
         self.assertIn("guide.md: sinks entries must be non-empty strings", errors)
 
+    def test_validate_frontmatter_rejects_dataflow_guides_with_indicators(self) -> None:
+        frontmatter = guide_tools.parse_yaml_mapping(
+            dedent(
+                """
+                id: WOF-XSS-001
+                title: URL-derived Input to HTML Sink
+                kind: vulnerability
+                default_severity: high
+                exploitability: high
+                standards:
+                  cwe:
+                    - CWE-79
+                  owasp_top_10:
+                    - "A05:2025 Injection"
+                platforms:
+                  - browser
+                languages:
+                  - javascript
+                detection:
+                  type: dataflow
+                  methods:
+                    - grep
+                sources:
+                  - window.location.search
+                sinks:
+                  - Element.innerHTML
+                indicators:
+                  - innerHTML
+                tags:
+                  - xss
+                """
+            ).lstrip(),
+            Path("guide.md"),
+        )
+
+        errors = guide_tools.validate_frontmatter(frontmatter, Path("guide.md"))
+
+        self.assertIn("guide.md: dataflow guides must not declare indicators", errors)
+
+    def test_validate_frontmatter_rejects_semantic_pattern_guides_with_sources_and_sinks(self) -> None:
+        frontmatter = guide_tools.parse_yaml_mapping(
+            dedent(
+                """
+                id: WOF-PM-001
+                title: Untrusted postMessage Sender to Privileged Handler
+                kind: vulnerability
+                default_severity: high
+                exploitability: medium
+                standards:
+                  cwe:
+                    - CWE-940
+                  owasp_top_10:
+                    - "A07:2025 Authentication Failures"
+                platforms:
+                  - browser
+                languages:
+                  - javascript
+                detection:
+                  type: semantic-pattern
+                  methods:
+                    - grep
+                indicators:
+                  - addEventListener("message"
+                sources:
+                  - MessageEvent.data
+                sinks:
+                  - fetch()
+                tags:
+                  - postmessage
+                """
+            ).lstrip(),
+            Path("guide.md"),
+        )
+
+        errors = guide_tools.validate_frontmatter(frontmatter, Path("guide.md"))
+
+        self.assertIn("guide.md: semantic-pattern guides must not declare sources", errors)
+        self.assertIn("guide.md: semantic-pattern guides must not declare sinks", errors)
+
     def test_validate_frontmatter_rejects_unexpected_detection_keys(self) -> None:
         frontmatter = guide_tools.parse_yaml_mapping(
             dedent(

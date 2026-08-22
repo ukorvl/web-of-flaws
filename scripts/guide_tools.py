@@ -345,6 +345,8 @@ def validate_frontmatter(frontmatter: dict, path: Path) -> list[str]:
     if detection_type == "dataflow":
         errors.extend(validate_non_empty_string_list(frontmatter.get("sources"), path, "sources", "dataflow guides must declare non-empty sources"))
         errors.extend(validate_non_empty_string_list(frontmatter.get("sinks"), path, "sinks", "dataflow guides must declare non-empty sinks"))
+        if "indicators" in frontmatter:
+            errors.append(f"{path}: dataflow guides must not declare indicators")
     elif detection_type == "semantic-pattern":
         errors.extend(
             validate_non_empty_string_list(
@@ -354,6 +356,10 @@ def validate_frontmatter(frontmatter: dict, path: Path) -> list[str]:
                 "semantic-pattern guides must declare non-empty indicators",
             )
         )
+        if "sources" in frontmatter:
+            errors.append(f"{path}: semantic-pattern guides must not declare sources")
+        if "sinks" in frontmatter:
+            errors.append(f"{path}: semantic-pattern guides must not declare sinks")
 
     return errors
 

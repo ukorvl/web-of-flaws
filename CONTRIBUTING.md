@@ -229,12 +229,14 @@ These are rule-level defaults, not per-finding scanner verdicts.
 ## Detection Models
 
 Rules currently use two main detection models.
+These models are mutually exclusive.
 
 ### Dataflow
 
 Use `dataflow` when security depends on attacker-controlled information reaching a sensitive sink.
 
 Declare explicit `sources` and `sinks`.
+Do not declare `indicators` on `dataflow` rules.
 
 Example:
 
@@ -270,6 +272,7 @@ A human or coding agent should confirm whether the flow is actually exploitable.
 Use `semantic-pattern` when the weakness depends primarily on the presence and surrounding meaning of a code pattern rather than a source-to-sink flow.
 
 Declare `indicators` instead of inventing artificial sources and sinks.
+Do not declare `sources` or `sinks` on `semantic-pattern` rules.
 
 The rule must explain what additional context is necessary to confirm the finding.
 
