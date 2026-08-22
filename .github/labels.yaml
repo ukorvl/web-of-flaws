@@ -18,6 +18,10 @@
   description: "Changes to guides in the Sensitive Data Exposure category"
   color: "046d23"
 
+- name: "software-supply-chain"
+  description: "Changes to guides in the Software Supply Chain category"
+  color: "b95c09"
+
 - name: "xss"
   description: "Changes to Cross-site scripting (XSS) guides"
   color: "8eaee4"

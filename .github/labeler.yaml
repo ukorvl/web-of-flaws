@@ -26,3 +26,8 @@
   - changed-files:
       - any-glob-to-any-file:
           - "guides/sensitive-data-exposure/**"
+
+"software-supply-chain":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "guides/software-supply-chain/**"

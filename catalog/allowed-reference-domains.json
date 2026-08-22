@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "last_verified": "2026-08-13",
+  "last_verified": "2026-08-22",
   "policy": {
     "default_action": "deny",
     "requirements": [
@@ -59,6 +59,13 @@
         "guide-references"
       ],
       "purpose": "Official SOPS documentation for encrypted secret-management workflows."
+    },
+    {
+      "domain": "docs.npmjs.com",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official npm documentation for lifecycle scripts, lockfiles, and package installation behavior."
     },
     {
       "domain": "example.com",
