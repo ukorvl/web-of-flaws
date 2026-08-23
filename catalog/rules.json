@@ -683,6 +683,82 @@
           "url": "https://cheatsheetseries.owasp.org/cheatsheets/Vulnerable_Dependency_Management_Cheat_Sheet.html"
         }
       ]
+    },
+    {
+      "id": "WOF-SUPPLY-002",
+      "path": "guides/software-supply-chain/mutable-third-party-ci-action-executes-trusted-workflow.md",
+      "title": "Mutable Third-Party CI Action Executes Trusted Workflow",
+      "kind": "vulnerability",
+      "default_severity": "high",
+      "exploitability": "medium",
+      "standards": {
+        "cwe": [
+          "CWE-829"
+        ],
+        "owasp_top_10": [
+          "A03:2025 Software Supply Chain Failures"
+        ]
+      },
+      "platforms": [
+        "ci-cd"
+      ],
+      "languages": [
+        "yaml"
+      ],
+      "detection": {
+        "type": "semantic-pattern",
+        "methods": [
+          "grep",
+          "ast",
+          "semantic-review"
+        ],
+        "candidate_tokens": [
+          "uses:",
+          "@main",
+          "@master",
+          "@v",
+          "permissions:"
+        ]
+      },
+      "indicators": [
+        "workflow steps that use third-party actions by branch or mutable tag instead of a full commit SHA",
+        "release, deploy, publish, signing, or artifact jobs that execute mutable external actions with secrets or write permissions",
+        "workflows that rely on broad `GITHUB_TOKEN` or cloud credentials while importing actions from repositories outside the organization",
+        "pull requests that change `uses:` targets, action owners, or action version refs without pinning to an immutable commit"
+      ],
+      "tags": [
+        "supply-chain",
+        "github-actions",
+        "ci-cd",
+        "mutable-ref",
+        "secrets"
+      ],
+      "references": [
+        {
+          "label": "MITRE CWE-829: Inclusion of Functionality from Untrusted Control Sphere",
+          "url": "https://cwe.mitre.org/data/definitions/829.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 A03: Software Supply Chain Failures",
+          "url": "https://owasp.org/Top10/2025/A03_2025-Software_Supply_Chain_Failures/"
+        },
+        {
+          "label": "GitHub Docs: Secure use reference",
+          "url": "https://docs.github.com/en/actions/reference/security/secure-use"
+        },
+        {
+          "label": "GitHub Docs: Managing GitHub Actions settings for a repository",
+          "url": "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository"
+        },
+        {
+          "label": "GitHub Docs: Using immutable releases and tags to manage your action's releases",
+          "url": "https://docs.github.com/en/actions/how-tos/create-and-publish-actions/using-immutable-releases-and-tags-to-manage-your-actions-releases"
+        },
+        {
+          "label": "GitHub Docs: Immutable releases",
+          "url": "https://docs.github.com/en/code-security/concepts/supply-chain-security/immutable-releases"
+        }
+      ]
     }
   ]
 }

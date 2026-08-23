@@ -5,3 +5,4 @@ Software supply chain guides focus on compromised or insufficiently trusted depe
 ## Rules
 
 - [Malicious npm Lifecycle Script](malicious-npm-lifecycle-script.md)
+- [Mutable Third-Party CI Action Executes Trusted Workflow](mutable-third-party-ci-action-executes-trusted-workflow.md)
