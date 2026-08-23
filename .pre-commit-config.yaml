@@ -14,6 +14,13 @@ repos:
       - id: yamllint
         args: [--strict]
 
+  - repo: https://gitlab.com/bmares/check-json5
+    rev: 82381b1133603e4ff6eb3d866ec4501d121b669b # v1.0.1
+    hooks:
+      - id: check-json5
+        types: [file]
+        files: \.(json|jsonc|json5)$
+
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: 91ab4bf57e58b32adf1a122681f6ebe164d081c8 # v4.4.0
     hooks:
