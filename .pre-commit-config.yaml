@@ -18,7 +18,7 @@ repos:
     rev: 82381b1133603e4ff6eb3d866ec4501d121b669b # v1.0.1
     hooks:
       - id: check-json5
-        types: [file]
+        types_or: [file]
         files: \.(json|jsonc|json5)$
 
   - repo: https://github.com/compilerla/conventional-pre-commit
