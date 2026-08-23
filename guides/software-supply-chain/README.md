@@ -4,5 +4,6 @@ Software supply chain guides focus on compromised or insufficiently trusted depe
 
 ## Rules
 
+- [Dynamic Package Installation or Unpinned Dependency Resolution in CI](dynamic-package-installation-or-unpinned-dependency-resolution-in-ci.md)
 - [Malicious npm Lifecycle Script](malicious-npm-lifecycle-script.md)
 - [Mutable Third-Party CI Action Executes Trusted Workflow](mutable-third-party-ci-action-executes-trusted-workflow.md)

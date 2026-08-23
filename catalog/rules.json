@@ -594,6 +594,91 @@
       ]
     },
     {
+      "id": "WOF-SUPPLY-006",
+      "path": "guides/software-supply-chain/dynamic-package-installation-or-unpinned-dependency-resolution-in-ci.md",
+      "title": "Dynamic Package Installation or Unpinned Dependency Resolution in CI",
+      "kind": "vulnerability",
+      "default_severity": "medium",
+      "exploitability": "medium",
+      "standards": {
+        "cwe": [
+          "CWE-829"
+        ],
+        "owasp_top_10": [
+          "A03:2025 Software Supply Chain Failures"
+        ]
+      },
+      "platforms": [
+        "ci-cd"
+      ],
+      "languages": [
+        "json",
+        "shell",
+        "yaml"
+      ],
+      "detection": {
+        "type": "semantic-pattern",
+        "methods": [
+          "grep",
+          "ast",
+          "semantic-review"
+        ],
+        "candidate_tokens": [
+          "npm install",
+          "npm exec",
+          "npx",
+          "@latest",
+          "package-lock.json",
+          "^",
+          "~"
+        ]
+      },
+      "indicators": [
+        "CI steps that run `npm install <pkg>@latest`, `npm i <pkg>@latest`, `npx <pkg>`, or `npm exec` against packages that are not already pinned and locked in the repository",
+        "workflows that regenerate or rewrite `package-lock.json`, or that run `npm install` from dependency ranges such as `^`, `~`, `*`, dist-tags, or mutable git refs",
+        "release, build, signing, publish, or artifact-generation jobs whose outputs depend on live npm registry resolution at workflow runtime",
+        "pull requests that widen dependency specs, remove exact pins, or replace `npm ci` with mutable install flows in trusted automation"
+      ],
+      "tags": [
+        "supply-chain",
+        "npm",
+        "npx",
+        "ci-cd",
+        "dependency-pinning",
+        "mutable-resolution"
+      ],
+      "references": [
+        {
+          "label": "MITRE CWE-829: Inclusion of Functionality from Untrusted Control Sphere",
+          "url": "https://cwe.mitre.org/data/definitions/829.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 A03: Software Supply Chain Failures",
+          "url": "https://owasp.org/Top10/2025/A03_2025-Software_Supply_Chain_Failures/"
+        },
+        {
+          "label": "npm Docs: npm install",
+          "url": "https://docs.npmjs.com/cli/install/"
+        },
+        {
+          "label": "npm Docs: npm exec",
+          "url": "https://docs.npmjs.com/cli/npm-exec/"
+        },
+        {
+          "label": "npm Docs: npm ci",
+          "url": "https://docs.npmjs.com/cli/commands/npm-ci/"
+        },
+        {
+          "label": "npm Docs: package.json",
+          "url": "https://docs.npmjs.com/files/package.json/"
+        },
+        {
+          "label": "npm Docs: package-lock.json",
+          "url": "https://docs.npmjs.com/files/package-lock.json/"
+        }
+      ]
+    },
+    {
       "id": "WOF-SUPPLY-001",
       "path": "guides/software-supply-chain/malicious-npm-lifecycle-script.md",
       "title": "Malicious npm Lifecycle Script",
