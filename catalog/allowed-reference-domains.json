@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "last_verified": "2026-08-22",
+  "last_verified": "2026-08-23",
   "policy": {
     "default_action": "deny",
     "requirements": [
@@ -87,6 +87,13 @@
         "guide-references"
       ],
       "purpose": "Official Bun documentation for lifecycle-script controls and trusted dependency behavior."
+    },
+    {
+      "domain": "docs.github.com",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official GitHub documentation for Actions security, immutable releases, and workflow policy controls."
     },
     {
       "domain": "example.com",
