@@ -131,6 +131,7 @@ The same pattern also applies to login, MFA, password reset, checkout, and admin
 Eliminate third-party scripts from sensitive pages whenever possible.
 If a business function must remain, prefer server-side integrations, narrow event forwarding, or a strongly sandboxed isolated frame instead of same-page script execution.
 For less-sensitive pages where an external script is still justified, self-hosting a reviewed immutable copy, CSP, and SRI can reduce some classes of risk, but they do not make an untrusted third-party script equivalent to first-party code.
+If the page also needs anti-framing protection, deliver that policy as an HTTP response header instead of trying to express it in a `<meta http-equiv="Content-Security-Policy">` element.
 
 ```html
 <!doctype html>
@@ -138,7 +139,7 @@ For less-sensitive pages where an external script is still justified, self-hosti
   <head>
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'"
+      content="default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'"
     >
     <script type="module" src="/assets/send-transaction.js"></script>
   </head>
@@ -149,6 +150,11 @@ For less-sensitive pages where an external script is still justified, self-hosti
     </main>
   </body>
 </html>
+```
+
+```http
+Content-Security-Policy: frame-ancestors 'none'
+X-Frame-Options: DENY
 ```
 
 ```html
@@ -194,6 +200,7 @@ For Web3 applications, the most important question is not whether the third-part
 - [MDN Web Docs: `<script>` HTML element](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script)
 - [MDN Web Docs: HTMLScriptElement.src](https://developer.mozilla.org/en-US/docs/Web/API/HTMLScriptElement/src)
 - [MDN Web Docs: Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Subresource_Integrity)
+- [MDN Web Docs: Content-Security-Policy `frame-ancestors`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/frame-ancestors)
 - [MDN Web Docs: Content-Security-Policy `script-src`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/script-src)
 
 ## Quick Checklist

@@ -924,6 +924,10 @@
           "url": "https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Subresource_Integrity"
         },
         {
+          "label": "MDN Web Docs: Content-Security-Policy `frame-ancestors`",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/frame-ancestors"
+        },
+        {
           "label": "MDN Web Docs: Content-Security-Policy `script-src`",
           "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/script-src"
         }
