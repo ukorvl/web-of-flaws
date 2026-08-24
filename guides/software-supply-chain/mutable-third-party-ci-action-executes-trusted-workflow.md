@@ -24,7 +24,7 @@ detection:
     - "@main"
     - "@master"
     - "@v"
-    - permissions:
+    - "permissions:"
 indicators:
   - workflow steps that use third-party actions by branch or mutable tag instead of a full commit SHA
   - release, deploy, publish, signing, or artifact jobs that execute mutable external actions with secrets or write permissions

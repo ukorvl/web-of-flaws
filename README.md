@@ -12,6 +12,8 @@ why it is exploitable, and how to fix it with concrete code.
 
 It can be used as a knowledge base for SAST, model training, and agent-assisted security review. At the same time the library could be useful for developers and security engineers to learn about common web vulnerabilities and how to mitigate them.
 
+[![prek](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/j178/prek/master/docs/assets/badge-v0.json)](https://github.com/j178/prek)
+
 ## For Agents
 
 The repository is designed to be agent-friendly. Each guide is structured in a consistent way, with clear sections for the risky pattern, safer replacement, and detection metadata.

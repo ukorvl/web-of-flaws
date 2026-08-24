@@ -50,12 +50,16 @@ You should have:
 
 - Python 3;
 - `markdownlint-cli2`;
+- `ruff`;
+- `prek`;
 - Git.
 
 Before submitting changes, run:
 
 ```bash
 markdownlint-cli2 "**/*.md"
+ruff check scripts
+ruff format --check scripts
 python3 scripts/lint_repo.py
 python3 scripts/generate_catalog.py --check
 python3 -m unittest discover -s scripts/tests -v
@@ -67,11 +71,11 @@ If guide categories were added, removed, or renamed, also run:
 python3 scripts/sync_guide_labels.py --check
 ```
 
-Pre-commit hooks are also available for staged-file checks and commit message linting.
+`prek` hooks are also available for staged-file checks and commit message linting.
 Commit messages should follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/), for example `docs: clarify catalog generation`.
 
 ```bash
-pre-commit install
+prek install
 ```
 
 ## Repository Structure
@@ -506,6 +510,8 @@ Before opening a pull request, run:
 
 ```bash
 markdownlint-cli2 "**/*.md"
+ruff check scripts
+ruff format --check scripts
 python3 scripts/lint_repo.py
 python3 scripts/generate_catalog.py --check
 python3 scripts/sync_guide_labels.py --check

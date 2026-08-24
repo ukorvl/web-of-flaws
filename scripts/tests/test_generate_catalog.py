@@ -6,7 +6,6 @@ from unittest import TestCase
 
 from support import build_valid_repo, load_module, run_main, write
 
-
 generate_catalog = load_module("generate_catalog")
 guide_tools = load_module("guide_tools")
 
@@ -121,11 +120,13 @@ class GenerateCatalogTests(TestCase):
                 generate_catalog.build_rules(root)
 
             self.assertIn(
-                "standards.cwe entry 'CWE-79' must have matching reference https://cwe.mitre.org/data/definitions/79.html",
+                "standards.cwe entry 'CWE-79' must have matching reference "
+                "https://cwe.mitre.org/data/definitions/79.html",
                 str(error.exception),
             )
             self.assertIn(
-                "standards.owasp_top_10 entry 'A05:2025 Injection' must have matching reference https://owasp.org/Top10/2025/A05_2025-Injection/",
+                "standards.owasp_top_10 entry 'A05:2025 Injection' must have matching reference "
+                "https://owasp.org/Top10/2025/A05_2025-Injection/",
                 str(error.exception),
             )
 

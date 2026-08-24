@@ -6,7 +6,6 @@ from unittest import TestCase
 
 from support import build_valid_repo, load_module, run_main, write
 
-
 lint_repo = load_module("lint_repo")
 
 
@@ -117,6 +116,158 @@ class LintRepoTests(TestCase):
             self.assertEqual(code, 1)
             self.assertIn("bad.example", stderr)
             self.assertIn("guide-references", stderr)
+
+    def test_invalid_allowed_domains_config_is_reported(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "catalog/allowed-reference-domains.json",
+                """
+                {
+                  "schema_version": 2,
+                  "domains": [
+                    {
+                      "scopes": ["guide-references"],
+                      "purpose": "Missing domain"
+                    },
+                    {
+                      "domain": "Bad.Example",
+                      "scopes": ["guide-references"],
+                      "purpose": ""
+                    }
+                  ]
+                }
+                """,
+            )
+
+            code, _stdout, stderr = run_main(lint_repo, root)
+
+            self.assertEqual(code, 1)
+            self.assertIn("catalog/allowed-reference-domains.json: schema_version must equal 1", stderr)
+            self.assertIn(
+                "catalog/allowed-reference-domains.json: domains[0].domain must be a non-empty string",
+                stderr,
+            )
+            self.assertIn(
+                "catalog/allowed-reference-domains.json: domains[1].domain must be a non-empty lowercase hostname",
+                stderr,
+            )
+            self.assertIn(
+                "catalog/allowed-reference-domains.json: domains[1].purpose must be a non-empty string",
+                stderr,
+            )
+
+    def test_empty_allowed_domains_list_is_reported(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "catalog/allowed-reference-domains.json",
+                """
+                {
+                  "schema_version": 1,
+                  "domains": []
+                }
+                """,
+            )
+
+            code, _stdout, stderr = run_main(lint_repo, root)
+
+            self.assertEqual(code, 1)
+            self.assertIn("catalog/allowed-reference-domains.json: domains must be a non-empty list", stderr)
+
+    def test_non_integer_schema_version_is_reported(self) -> None:
+        for schema_version in ("true", "1.0"):
+            with self.subTest(schema_version=schema_version), TemporaryDirectory() as tmpdir:
+                root = Path(tmpdir)
+                build_valid_repo(root)
+                write(
+                    root / "catalog/allowed-reference-domains.json",
+                    f"""
+                        {{
+                          "schema_version": {schema_version},
+                          "domains": [
+                            {{
+                              "domain": "cwe.mitre.org",
+                              "scopes": ["guide-references"],
+                              "purpose": "CWE references"
+                            }}
+                          ]
+                        }}
+                        """,
+                )
+
+                code, _stdout, stderr = run_main(lint_repo, root)
+
+                self.assertEqual(code, 1)
+                self.assertIn(
+                    "catalog/allowed-reference-domains.json: schema_version must equal 1",
+                    stderr,
+                )
+
+    def test_unknown_allowed_domain_scope_is_reported(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "catalog/allowed-reference-domains.json",
+                """
+                {
+                  "schema_version": 1,
+                  "domains": [
+                    {
+                      "domain": "cwe.mitre.org",
+                      "scopes": ["not-a-scope"],
+                      "purpose": "CWE references"
+                    }
+                  ]
+                }
+                """,
+            )
+
+            code, _stdout, stderr = run_main(lint_repo, root)
+
+            self.assertEqual(code, 1)
+            self.assertIn(
+                "catalog/allowed-reference-domains.json: domains[0].scopes[0] must be one of: "
+                "example-urls, guide-references",
+                stderr,
+            )
+
+    def test_duplicate_allowed_domain_scope_is_reported(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "catalog/allowed-reference-domains.json",
+                """
+                {
+                  "schema_version": 1,
+                  "domains": [
+                    {
+                      "domain": "example.com",
+                      "scopes": ["example-urls"],
+                      "purpose": "Example URLs"
+                    },
+                    {
+                      "domain": "example.com",
+                      "scopes": ["example-urls"],
+                      "purpose": "Duplicate entry"
+                    }
+                  ]
+                }
+                """,
+            )
+
+            code, _stdout, stderr = run_main(lint_repo, root)
+
+            self.assertEqual(code, 1)
+            self.assertIn(
+                "catalog/allowed-reference-domains.json: duplicate domain/scope combination for "
+                "'example.com' and 'example-urls'",
+                stderr,
+            )
 
     def test_uppercase_https_reference_domain_is_checked(self) -> None:
         with TemporaryDirectory() as tmpdir:
@@ -291,11 +442,14 @@ class LintRepoTests(TestCase):
 
             self.assertEqual(code, 1)
             self.assertIn(
-                "standards.cwe entry 'CWE-798' must have matching reference https://cwe.mitre.org/data/definitions/798.html",
+                "standards.cwe entry 'CWE-798' must have matching reference "
+                "https://cwe.mitre.org/data/definitions/798.html",
                 stderr,
             )
             self.assertIn(
-                "standards.owasp_top_10 entry 'A07:2025 Authentication Failures' must have matching reference https://owasp.org/Top10/2025/A07_2025-Authentication_Failures/",
+                "standards.owasp_top_10 entry 'A07:2025 Authentication Failures' must have "
+                "matching reference "
+                "https://owasp.org/Top10/2025/A07_2025-Authentication_Failures/",
                 stderr,
             )
 
@@ -315,7 +469,10 @@ class LintRepoTests(TestCase):
             code, _stdout, stderr = run_main(lint_repo, root)
 
             self.assertEqual(code, 1)
-            self.assertIn("nearest index guides/injection/xss/README.md must link to this guide exactly once (found 0)", stderr)
+            self.assertIn(
+                "nearest index guides/injection/xss/README.md must link to this guide exactly once (found 0)",
+                stderr,
+            )
 
     def test_duplicate_nearest_readme_link_fails(self) -> None:
         with TemporaryDirectory() as tmpdir:
@@ -336,7 +493,10 @@ class LintRepoTests(TestCase):
             code, _stdout, stderr = run_main(lint_repo, root)
 
             self.assertEqual(code, 1)
-            self.assertIn("nearest index guides/injection/xss/README.md must link to this guide exactly once (found 2)", stderr)
+            self.assertIn(
+                "nearest index guides/injection/xss/README.md must link to this guide exactly once (found 2)",
+                stderr,
+            )
 
     def test_broken_index_readme_link_fails(self) -> None:
         with TemporaryDirectory() as tmpdir:
@@ -376,7 +536,10 @@ class LintRepoTests(TestCase):
             code, _stdout, stderr = run_main(lint_repo, root)
 
             self.assertEqual(code, 1)
-            self.assertIn("nearest index guides/injection/xss/README.md must link to this guide exactly once (found 0)", stderr)
+            self.assertIn(
+                "nearest index guides/injection/xss/README.md must link to this guide exactly once (found 0)",
+                stderr,
+            )
 
     def test_reference_style_index_links_are_rejected(self) -> None:
         with TemporaryDirectory() as tmpdir:

@@ -1,24 +1,26 @@
 from __future__ import annotations
 
-from pathlib import Path
-from urllib.parse import urlparse
 import json
 import re
 import sys
+from pathlib import Path
+from urllib.parse import urlparse
 
 from generate_catalog import build_rules
 from guide_tools import (
-    GuideValidationError,
     MARKDOWN_LINK_RE,
     URL_RE,
-    iter_guide_rule_paths,
+    GuideValidationError,
     iter_guide_markdown_paths,
+    iter_guide_rule_paths,
     iter_rendered_lines,
 )
 
-
 ROOT = Path(__file__).resolve().parents[1]
 COMMAND = "python3 scripts/lint_repo.py"
+ALLOWED_REFERENCE_DOMAINS_PATH = Path("catalog/allowed-reference-domains.json")
+ALLOWED_REFERENCE_DOMAIN_SCOPES = {"guide-references", "example-urls"}
+HOSTNAME_RE = re.compile(r"^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$")
 LOCAL_MARKDOWN_LINK_RE = re.compile(
     r"\[([^\]]+)\]\((?P<target>(?![a-z][a-z0-9+.-]*:|//)[^)\s]+\.md)(?:#[^)]+)?\)",
     re.IGNORECASE,
@@ -28,13 +30,78 @@ REFERENCE_DEFINITION_RE = re.compile(r"^\s*\[[^\]]+\]:\s+\S+")
 HTML_COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
 
 
+class AllowedDomainsValidationError(ValueError):
+    pass
+
+
 def load_allowed_domains(root: Path) -> dict[str, set[str]]:
-    raw = json.loads((root / "catalog" / "allowed-reference-domains.json").read_text(encoding="utf-8"))
+    config_path = root / ALLOWED_REFERENCE_DOMAINS_PATH
+    display_path = ALLOWED_REFERENCE_DOMAINS_PATH.as_posix()
+    try:
+        raw = json.loads(config_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        raise AllowedDomainsValidationError(
+            f"{display_path}: invalid JSON near line {error.lineno} column {error.colno}"
+        ) from error
+
+    errors: list[str] = []
     scopes: dict[str, set[str]] = {}
-    for entry in raw.get("domains", []):
-        domain = entry["domain"]
-        for scope in entry.get("scopes", []):
+    seen_pairs: set[tuple[str, str]] = set()
+
+    if not isinstance(raw, dict):
+        raise AllowedDomainsValidationError(f"{display_path}: root must be a JSON object")
+
+    schema_version = raw.get("schema_version")
+    if isinstance(schema_version, bool) or not isinstance(schema_version, int) or schema_version != 1:
+        errors.append(f"{display_path}: schema_version must equal 1")
+
+    domains = raw.get("domains")
+    if not isinstance(domains, list) or not domains:
+        errors.append(f"{display_path}: domains must be a non-empty list")
+        domains = []
+
+    for index, entry in enumerate(domains):
+        prefix = f"{display_path}: domains[{index}]"
+        if not isinstance(entry, dict):
+            errors.append(f"{prefix} must be an object")
+            continue
+
+        domain = entry.get("domain")
+        if not isinstance(domain, str) or not domain.strip():
+            errors.append(f"{prefix}.domain must be a non-empty string")
+            valid_domain = False
+        else:
+            valid_domain = domain == domain.strip() and domain == domain.lower() and bool(HOSTNAME_RE.fullmatch(domain))
+            if not valid_domain:
+                errors.append(f"{prefix}.domain must be a non-empty lowercase hostname")
+
+        scopes_list = entry.get("scopes")
+        if not isinstance(scopes_list, list) or not scopes_list:
+            errors.append(f"{prefix}.scopes must be a non-empty list")
+            scopes_list = []
+
+        purpose = entry.get("purpose")
+        if not isinstance(purpose, str) or not purpose.strip():
+            errors.append(f"{prefix}.purpose must be a non-empty string")
+
+        for scope_index, scope in enumerate(scopes_list):
+            if not isinstance(scope, str) or not scope.strip():
+                errors.append(f"{prefix}.scopes[{scope_index}] must be a non-empty string")
+                continue
+            if scope not in ALLOWED_REFERENCE_DOMAIN_SCOPES:
+                errors.append(f"{prefix}.scopes[{scope_index}] must be one of: example-urls, guide-references")
+                continue
+            if not valid_domain:
+                continue
+            pair = (domain, scope)
+            if pair in seen_pairs:
+                errors.append(f"{display_path}: duplicate domain/scope combination for {domain!r} and {scope!r}")
+                continue
+            seen_pairs.add(pair)
             scopes.setdefault(scope, set()).add(domain)
+
+    if errors:
+        raise AllowedDomainsValidationError("\n".join(errors))
     return scopes
 
 
@@ -102,7 +169,9 @@ def lint_guide_indexes(root: Path) -> list[str]:
 
     for readme in iter_guide_readme_paths(root):
         for line_number in reference_style_markdown_lines(readme):
-            errors.append(f"{readme}:{line_number}: category indexes must use inline Markdown links, not reference-style links")
+            errors.append(
+                f"{readme}:{line_number}: category indexes must use inline Markdown links, not reference-style links"
+            )
         for target, line_number in local_markdown_links(readme):
             resolved = (readme.parent / target).resolve()
             if not resolved.exists() or not resolved.is_file():
@@ -137,18 +206,20 @@ def lint(root: Path) -> list[str]:
 
     errors.extend(lint_guide_indexes(root))
 
-    allowed_domains = load_allowed_domains(root)
-    for path in iter_guide_markdown_paths(root):
-        markdown = path.read_text(encoding="utf-8")
-        for url, line_number, scope in rendered_urls_with_scopes(markdown):
-            hostname = urlparse(url).hostname
-            if not hostname:
-                errors.append(f"{path}:{line_number}: could not determine hostname for {url}")
-                continue
-            if hostname not in allowed_domains.get(scope, set()):
-                errors.append(
-                    f"{path}:{line_number}: hostname {hostname!r} is not allowlisted for scope {scope!r}"
-                )
+    try:
+        allowed_domains = load_allowed_domains(root)
+    except AllowedDomainsValidationError as error:
+        errors.extend(str(error).splitlines())
+    else:
+        for path in iter_guide_markdown_paths(root):
+            markdown = path.read_text(encoding="utf-8")
+            for url, line_number, scope in rendered_urls_with_scopes(markdown):
+                hostname = urlparse(url).hostname
+                if not hostname:
+                    errors.append(f"{path}:{line_number}: could not determine hostname for {url}")
+                    continue
+                if hostname not in allowed_domains.get(scope, set()):
+                    errors.append(f"{path}:{line_number}: hostname {hostname!r} is not allowlisted for scope {scope!r}")
     return sorted(set(errors))
 
 
