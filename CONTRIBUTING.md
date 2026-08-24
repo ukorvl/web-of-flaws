@@ -50,6 +50,7 @@ You should have:
 
 - Python 3;
 - `markdownlint-cli2`;
+- `prek`;
 - Git.
 
 Before submitting changes, run:
@@ -67,11 +68,11 @@ If guide categories were added, removed, or renamed, also run:
 python3 scripts/sync_guide_labels.py --check
 ```
 
-Pre-commit hooks are also available for staged-file checks and commit message linting.
+`prek` hooks are also available for staged-file checks and commit message linting.
 Commit messages should follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/), for example `docs: clarify catalog generation`.
 
 ```bash
-pre-commit install
+prek install
 ```
 
 ## Repository Structure
