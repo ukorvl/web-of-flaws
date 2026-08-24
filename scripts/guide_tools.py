@@ -57,7 +57,7 @@ MARKDOWN_LINK_RE = re.compile(r"\[([^\]]+)\]\(((?:https?:)?//[^)\s]+)\)", re.IGN
 CODE_FENCE_RE = re.compile(r"^([`~]{3,})")
 INLINE_CODE_RE = re.compile(r"(?P<fence>`+).*?(?P=fence)")
 LEADING_YAML_INDICATOR_RE = re.compile(r"^(?:[#&*!@`|>]|%|[{}\[\],]|(?:\?|-)(?=\s))")
-PLAIN_SCALAR_SYNTAX_RE = re.compile(r":(?=\s)|\s#")
+PLAIN_SCALAR_SYNTAX_RE = re.compile(r":(?=\s|$)|\s#")
 
 
 class GuideValidationError(ValueError):

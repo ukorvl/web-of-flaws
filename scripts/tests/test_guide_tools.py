@@ -31,6 +31,12 @@ class GuideToolsTests(TestCase):
 
                 self.assertIn("unsupported plain YAML scalar", str(error.exception))
 
+    def test_parse_yaml_rejects_plain_scalar_ending_in_colon(self) -> None:
+        with self.assertRaises(guide_tools.GuideValidationError) as error:
+            guide_tools.parse_yaml_mapping("title: permissions:", Path("guide.md"))
+
+        self.assertIn("unsupported plain YAML scalar", str(error.exception))
+
     def test_validate_frontmatter_rejects_empty_required_strings_and_entries(self) -> None:
         frontmatter = guide_tools.parse_yaml_mapping(
             dedent(
