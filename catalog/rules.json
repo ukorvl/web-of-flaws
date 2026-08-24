@@ -844,6 +844,94 @@
           "url": "https://docs.github.com/en/code-security/concepts/supply-chain-security/immutable-releases"
         }
       ]
+    },
+    {
+      "id": "WOF-SUPPLY-005",
+      "path": "guides/software-supply-chain/untrusted-third-party-script-on-sensitive-page.md",
+      "title": "Untrusted Third-Party Script on Sensitive Page",
+      "kind": "vulnerability",
+      "default_severity": "high",
+      "exploitability": "medium",
+      "standards": {
+        "cwe": [
+          "CWE-829"
+        ],
+        "owasp_top_10": [
+          "A03:2025 Software Supply Chain Failures"
+        ]
+      },
+      "platforms": [
+        "browser"
+      ],
+      "languages": [
+        "html",
+        "javascript",
+        "typescript"
+      ],
+      "detection": {
+        "type": "semantic-pattern",
+        "methods": [
+          "grep",
+          "ast",
+          "semantic-review"
+        ],
+        "candidate_tokens": [
+          "<script src=",
+          "next/script",
+          "googletagmanager.com",
+          "gtag(",
+          "eth_sendTransaction",
+          "signTypedData"
+        ]
+      },
+      "indicators": [
+        "external or third-party script loads on pages that handle passwords, MFA, checkout, account recovery, admin actions, wallet connection, transaction review, or signing flows",
+        "analytics, chat, support, tag-manager, A/B testing, or session-recording SDKs that execute in the same page context as sensitive UI or secrets",
+        "framework code that injects remote scripts dynamically through helpers such as `next/script`, DOM script creation, or tag-manager bootstrap snippets",
+        "third-party scripts that can read DOM state, hook form submission, intercept fetch/XHR, or patch wallet and auth APIs before privileged actions execute"
+      ],
+      "tags": [
+        "supply-chain",
+        "frontend",
+        "web3",
+        "third-party-script",
+        "analytics",
+        "tag-manager"
+      ],
+      "references": [
+        {
+          "label": "MITRE CWE-829: Inclusion of Functionality from Untrusted Control Sphere",
+          "url": "https://cwe.mitre.org/data/definitions/829.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 A03: Software Supply Chain Failures",
+          "url": "https://owasp.org/Top10/2025/A03_2025-Software_Supply_Chain_Failures/"
+        },
+        {
+          "label": "OWASP Cheat Sheet Series: Third Party JavaScript Management",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Third_Party_Javascript_Management_Cheat_Sheet.html"
+        },
+        {
+          "label": "MDN Web Docs: `<script>` HTML element",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script"
+        },
+        {
+          "label": "MDN Web Docs: HTMLScriptElement.src",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/HTMLScriptElement/src"
+        },
+        {
+          "label": "MDN Web Docs: Subresource Integrity",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Subresource_Integrity"
+        },
+        {
+          "label": "MDN Web Docs: Content-Security-Policy `frame-ancestors`",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/frame-ancestors"
+        },
+        {
+          "label": "MDN Web Docs: Content-Security-Policy `script-src`",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/script-src"
+        }
+      ]
     }
   ]
 }
