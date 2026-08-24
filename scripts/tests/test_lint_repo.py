@@ -118,6 +118,124 @@ class LintRepoTests(TestCase):
             self.assertIn("bad.example", stderr)
             self.assertIn("guide-references", stderr)
 
+    def test_invalid_allowed_domains_config_is_reported(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "catalog/allowed-reference-domains.json",
+                """
+                {
+                  "schema_version": 2,
+                  "domains": [
+                    {
+                      "scopes": ["guide-references"],
+                      "purpose": "Missing domain"
+                    },
+                    {
+                      "domain": "Bad.Example",
+                      "scopes": ["guide-references"],
+                      "purpose": ""
+                    }
+                  ]
+                }
+                """,
+            )
+
+            code, _stdout, stderr = run_main(lint_repo, root)
+
+            self.assertEqual(code, 1)
+            self.assertIn("catalog/allowed-reference-domains.json: schema_version must equal 1", stderr)
+            self.assertIn("catalog/allowed-reference-domains.json: domains[0].domain must be a non-empty string", stderr)
+            self.assertIn(
+                "catalog/allowed-reference-domains.json: domains[1].domain must be a non-empty lowercase hostname",
+                stderr,
+            )
+            self.assertIn(
+                "catalog/allowed-reference-domains.json: domains[1].purpose must be a non-empty string",
+                stderr,
+            )
+
+    def test_empty_allowed_domains_list_is_reported(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "catalog/allowed-reference-domains.json",
+                """
+                {
+                  "schema_version": 1,
+                  "domains": []
+                }
+                """,
+            )
+
+            code, _stdout, stderr = run_main(lint_repo, root)
+
+            self.assertEqual(code, 1)
+            self.assertIn("catalog/allowed-reference-domains.json: domains must be a non-empty list", stderr)
+
+    def test_unknown_allowed_domain_scope_is_reported(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "catalog/allowed-reference-domains.json",
+                """
+                {
+                  "schema_version": 1,
+                  "domains": [
+                    {
+                      "domain": "cwe.mitre.org",
+                      "scopes": ["not-a-scope"],
+                      "purpose": "CWE references"
+                    }
+                  ]
+                }
+                """,
+            )
+
+            code, _stdout, stderr = run_main(lint_repo, root)
+
+            self.assertEqual(code, 1)
+            self.assertIn(
+                "catalog/allowed-reference-domains.json: domains[0].scopes[0] must be one of: example-urls, guide-references",
+                stderr,
+            )
+
+    def test_duplicate_allowed_domain_scope_is_reported(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "catalog/allowed-reference-domains.json",
+                """
+                {
+                  "schema_version": 1,
+                  "domains": [
+                    {
+                      "domain": "example.com",
+                      "scopes": ["example-urls"],
+                      "purpose": "Example URLs"
+                    },
+                    {
+                      "domain": "example.com",
+                      "scopes": ["example-urls"],
+                      "purpose": "Duplicate entry"
+                    }
+                  ]
+                }
+                """,
+            )
+
+            code, _stdout, stderr = run_main(lint_repo, root)
+
+            self.assertEqual(code, 1)
+            self.assertIn(
+                "catalog/allowed-reference-domains.json: duplicate domain/scope combination for 'example.com' and 'example-urls'",
+                stderr,
+            )
+
     def test_uppercase_https_reference_domain_is_checked(self) -> None:
         with TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
