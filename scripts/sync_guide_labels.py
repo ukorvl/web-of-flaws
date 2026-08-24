@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import sys
 from hashlib import sha1
 from pathlib import Path
-import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 GUIDES = ROOT / "guides"
@@ -26,10 +26,7 @@ def display_name(rel: Path) -> str:
         for line in readme.read_text().splitlines():
             if line.startswith("# "):
                 return line[2:].strip()
-    return " ".join(
-        part.upper() if part in UPPERCASE_PARTS else part.capitalize()
-        for part in rel.name.split("-")
-    )
+    return " ".join(part.upper() if part in UPPERCASE_PARTS else part.capitalize() for part in rel.name.split("-"))
 
 
 def guide_labels() -> list[tuple[str, str, str]]:

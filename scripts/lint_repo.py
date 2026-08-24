@@ -1,29 +1,26 @@
 from __future__ import annotations
 
-from pathlib import Path
-from urllib.parse import urlparse
 import json
 import re
 import sys
+from pathlib import Path
+from urllib.parse import urlparse
 
 from generate_catalog import build_rules
 from guide_tools import (
-    GuideValidationError,
     MARKDOWN_LINK_RE,
     URL_RE,
-    iter_guide_rule_paths,
+    GuideValidationError,
     iter_guide_markdown_paths,
+    iter_guide_rule_paths,
     iter_rendered_lines,
 )
-
 
 ROOT = Path(__file__).resolve().parents[1]
 COMMAND = "python3 scripts/lint_repo.py"
 ALLOWED_REFERENCE_DOMAINS_PATH = Path("catalog/allowed-reference-domains.json")
 ALLOWED_REFERENCE_DOMAIN_SCOPES = {"guide-references", "example-urls"}
-HOSTNAME_RE = re.compile(
-    r"^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$"
-)
+HOSTNAME_RE = re.compile(r"^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$")
 LOCAL_MARKDOWN_LINK_RE = re.compile(
     r"\[([^\]]+)\]\((?P<target>(?![a-z][a-z0-9+.-]*:|//)[^)\s]+\.md)(?:#[^)]+)?\)",
     re.IGNORECASE,
@@ -91,17 +88,13 @@ def load_allowed_domains(root: Path) -> dict[str, set[str]]:
                 errors.append(f"{prefix}.scopes[{scope_index}] must be a non-empty string")
                 continue
             if scope not in ALLOWED_REFERENCE_DOMAIN_SCOPES:
-                errors.append(
-                    f"{prefix}.scopes[{scope_index}] must be one of: example-urls, guide-references"
-                )
+                errors.append(f"{prefix}.scopes[{scope_index}] must be one of: example-urls, guide-references")
                 continue
             if not valid_domain:
                 continue
             pair = (domain, scope)
             if pair in seen_pairs:
-                errors.append(
-                    f"{display_path}: duplicate domain/scope combination for {domain!r} and {scope!r}"
-                )
+                errors.append(f"{display_path}: duplicate domain/scope combination for {domain!r} and {scope!r}")
                 continue
             seen_pairs.add(pair)
             scopes.setdefault(scope, set()).add(domain)
@@ -175,7 +168,9 @@ def lint_guide_indexes(root: Path) -> list[str]:
 
     for readme in iter_guide_readme_paths(root):
         for line_number in reference_style_markdown_lines(readme):
-            errors.append(f"{readme}:{line_number}: category indexes must use inline Markdown links, not reference-style links")
+            errors.append(
+                f"{readme}:{line_number}: category indexes must use inline Markdown links, not reference-style links"
+            )
         for target, line_number in local_markdown_links(readme):
             resolved = (readme.parent / target).resolve()
             if not resolved.exists() or not resolved.is_file():
@@ -223,9 +218,7 @@ def lint(root: Path) -> list[str]:
                     errors.append(f"{path}:{line_number}: could not determine hostname for {url}")
                     continue
                 if hostname not in allowed_domains.get(scope, set()):
-                    errors.append(
-                        f"{path}:{line_number}: hostname {hostname!r} is not allowlisted for scope {scope!r}"
-                    )
+                    errors.append(f"{path}:{line_number}: hostname {hostname!r} is not allowlisted for scope {scope!r}")
     return sorted(set(errors))
 
 

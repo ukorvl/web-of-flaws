@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from pathlib import Path
 import re
-
+from pathlib import Path
 
 GUIDE_RULE_KEYS = {
     "id",
@@ -32,7 +31,7 @@ GUIDE_PLATFORMS = {
     "infrastructure",
     "cloud",
     "container",
-  }
+}
 GUIDE_LANGUAGES = {
     "html",
     "javascript",
@@ -65,11 +64,7 @@ class GuideValidationError(ValueError):
 
 
 def iter_guide_rule_paths(root: Path) -> list[Path]:
-    return sorted(
-        path
-        for path in (root / "guides").rglob("*.md")
-        if path.name != "README.md"
-    )
+    return sorted(path for path in (root / "guides").rglob("*.md") if path.name != "README.md")
 
 
 def iter_guide_markdown_paths(root: Path) -> list[Path]:
@@ -107,9 +102,7 @@ def parse_yaml_mapping(text: str, path: Path) -> dict:
         value = value.strip()
         if value[:1] in {'"', "'"}:
             if value[-1:] != value[:1]:
-                raise GuideValidationError(
-                    f"{path}: unsupported quoted YAML scalar near line {line_number}"
-                )
+                raise GuideValidationError(f"{path}: unsupported quoted YAML scalar near line {line_number}")
             return value[1:-1]
         if LEADING_YAML_INDICATOR_RE.search(value) or PLAIN_SCALAR_SYNTAX_RE.search(value):
             raise GuideValidationError(
@@ -157,11 +150,7 @@ def parse_yaml_mapping(text: str, path: Path) -> dict:
             if key in result:
                 raise GuideValidationError(f"{path}: duplicate YAML key {key!r}")
             index += 1
-            result[key] = (
-                parse_scalar(remainder, index)
-                if remainder.strip()
-                else parse_node(indent + 2)
-            )
+            result[key] = parse_scalar(remainder, index) if remainder.strip() else parse_node(indent + 2)
         return result
 
     def parse_node(indent: int):
@@ -246,7 +235,18 @@ def validate_frontmatter(frontmatter: dict, path: Path) -> list[str]:
     if extra_keys:
         errors.append(f"{path}: unexpected frontmatter keys: {', '.join(extra_keys)}")
 
-    for key in ("id", "title", "kind", "default_severity", "exploitability", "standards", "platforms", "languages", "detection", "tags"):
+    for key in (
+        "id",
+        "title",
+        "kind",
+        "default_severity",
+        "exploitability",
+        "standards",
+        "platforms",
+        "languages",
+        "detection",
+        "tags",
+    ):
         if key not in frontmatter:
             errors.append(f"{path}: missing frontmatter key {key}")
 
@@ -267,11 +267,14 @@ def validate_frontmatter(frontmatter: dict, path: Path) -> list[str]:
         errors,
     )
     if default_severity is not None and default_severity not in GUIDE_DEFAULT_SEVERITIES:
-        errors.append(
-            f"{path}: default_severity must be one of {sorted(GUIDE_DEFAULT_SEVERITIES)}"
-        )
+        errors.append(f"{path}: default_severity must be one of {sorted(GUIDE_DEFAULT_SEVERITIES)}")
 
-    exploitability = validate_required_string(frontmatter.get("exploitability"), path, "exploitability", errors)
+    exploitability = validate_required_string(
+        frontmatter.get("exploitability"),
+        path,
+        "exploitability",
+        errors,
+    )
     if exploitability is not None and exploitability not in GUIDE_EXPLOITABILITY:
         errors.append(f"{path}: exploitability must be one of {sorted(GUIDE_EXPLOITABILITY)}")
 
@@ -343,8 +346,22 @@ def validate_frontmatter(frontmatter: dict, path: Path) -> list[str]:
                     errors.append(f"{path}: detection.candidate_tokens entries must be non-empty strings")
 
     if detection_type == "dataflow":
-        errors.extend(validate_non_empty_string_list(frontmatter.get("sources"), path, "sources", "dataflow guides must declare non-empty sources"))
-        errors.extend(validate_non_empty_string_list(frontmatter.get("sinks"), path, "sinks", "dataflow guides must declare non-empty sinks"))
+        errors.extend(
+            validate_non_empty_string_list(
+                frontmatter.get("sources"),
+                path,
+                "sources",
+                "dataflow guides must declare non-empty sources",
+            )
+        )
+        errors.extend(
+            validate_non_empty_string_list(
+                frontmatter.get("sinks"),
+                path,
+                "sinks",
+                "dataflow guides must declare non-empty sinks",
+            )
+        )
         if "indicators" in frontmatter:
             errors.append(f"{path}: dataflow guides must not declare indicators")
     elif detection_type == "semantic-pattern":

@@ -6,7 +6,6 @@ from unittest import TestCase
 
 from support import load_module
 
-
 guide_tools = load_module("guide_tools")
 
 

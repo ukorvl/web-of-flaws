@@ -1,14 +1,12 @@
 from __future__ import annotations
 
+import sys
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from importlib import import_module
 from io import StringIO
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from textwrap import dedent
 from unittest import mock
-import sys
-
 
 SCRIPTS_DIR = Path(__file__).resolve().parents[1]
 if str(SCRIPTS_DIR) not in sys.path:

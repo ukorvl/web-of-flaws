@@ -8,7 +8,6 @@ from tempfile import TemporaryDirectory
 from textwrap import dedent
 from unittest import TestCase, mock
 
-
 SCRIPT_PATH = Path(__file__).resolve().parents[1] / "sync_guide_labels.py"
 SPEC = spec_from_file_location("sync_guide_labels", SCRIPT_PATH)
 MODULE = module_from_spec(SPEC)
@@ -107,7 +106,11 @@ class SyncGuideLabelsTests(TestCase):
 
     def test_render_is_deterministic_and_includes_expected_headers(self) -> None:
         labels = [
-            ("request-authenticity", "Changes to guides in the Request Authenticity category", "guides/request-authenticity/**"),
+            (
+                "request-authenticity",
+                "Changes to guides in the Request Authenticity category",
+                "guides/request-authenticity/**",
+            ),
             ("xss", "Changes to Cross-site scripting (XSS) guides", "guides/injection/xss/**"),
         ]
 

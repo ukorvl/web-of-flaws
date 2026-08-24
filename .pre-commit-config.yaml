@@ -27,6 +27,14 @@ repos:
         types_or: [file]
         files: \.(json|jsonc|json5)$
 
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: cb8c523fd4835aba42af70f4cad5568db4df0b6c # v0.16.0
+    hooks:
+      - id: ruff-check
+        files: ^scripts/.*\.py$
+      - id: ruff-format
+        files: ^scripts/.*\.py$
+
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: 91ab4bf57e58b32adf1a122681f6ebe164d081c8 # v4.4.0
     hooks:

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from pathlib import Path
 import json
 import re
 import sys
+from pathlib import Path
 from urllib.parse import urlparse
 
 from guide_tools import (
@@ -16,9 +16,10 @@ from guide_tools import (
     validate_frontmatter,
 )
 
-
 ROOT = Path(__file__).resolve().parents[1]
 COMMAND = "python3 scripts/generate_catalog.py"
+
+
 def catalog_path(root: Path) -> Path:
     return root / "catalog" / "rules.json"
 
@@ -65,18 +66,14 @@ def validate_standard_references(
             continue
         expected = expected_cwe_reference(cwe_id)
         if expected and expected not in reference_urls:
-            errors.append(
-                f"{path}: standards.cwe entry {cwe_id!r} must have matching reference {expected}"
-            )
+            errors.append(f"{path}: standards.cwe entry {cwe_id!r} must have matching reference {expected}")
 
     for entry in standards.get("owasp_top_10", []):
         if not isinstance(entry, str):
             continue
         expected = expected_owasp_top_10_reference(entry)
         if expected and expected not in reference_urls:
-            errors.append(
-                f"{path}: standards.owasp_top_10 entry {entry!r} must have matching reference {expected}"
-            )
+            errors.append(f"{path}: standards.owasp_top_10 entry {entry!r} must have matching reference {expected}")
 
     return errors
 

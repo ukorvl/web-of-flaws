@@ -50,6 +50,7 @@ You should have:
 
 - Python 3;
 - `markdownlint-cli2`;
+- `ruff`;
 - `prek`;
 - Git.
 
@@ -57,6 +58,8 @@ Before submitting changes, run:
 
 ```bash
 markdownlint-cli2 "**/*.md"
+ruff check scripts
+ruff format --check scripts
 python3 scripts/lint_repo.py
 python3 scripts/generate_catalog.py --check
 python3 -m unittest discover -s scripts/tests -v
@@ -507,6 +510,8 @@ Before opening a pull request, run:
 
 ```bash
 markdownlint-cli2 "**/*.md"
+ruff check scripts
+ruff format --check scripts
 python3 scripts/lint_repo.py
 python3 scripts/generate_catalog.py --check
 python3 scripts/sync_guide_labels.py --check

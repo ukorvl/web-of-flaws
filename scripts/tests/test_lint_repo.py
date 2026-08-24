@@ -6,7 +6,6 @@ from unittest import TestCase
 
 from support import build_valid_repo, load_module, run_main, write
 
-
 lint_repo = load_module("lint_repo")
 
 
@@ -146,7 +145,10 @@ class LintRepoTests(TestCase):
 
             self.assertEqual(code, 1)
             self.assertIn("catalog/allowed-reference-domains.json: schema_version must equal 1", stderr)
-            self.assertIn("catalog/allowed-reference-domains.json: domains[0].domain must be a non-empty string", stderr)
+            self.assertIn(
+                "catalog/allowed-reference-domains.json: domains[0].domain must be a non-empty string",
+                stderr,
+            )
             self.assertIn(
                 "catalog/allowed-reference-domains.json: domains[1].domain must be a non-empty lowercase hostname",
                 stderr,
@@ -199,7 +201,8 @@ class LintRepoTests(TestCase):
 
             self.assertEqual(code, 1)
             self.assertIn(
-                "catalog/allowed-reference-domains.json: domains[0].scopes[0] must be one of: example-urls, guide-references",
+                "catalog/allowed-reference-domains.json: domains[0].scopes[0] must be one of: "
+                "example-urls, guide-references",
                 stderr,
             )
 
@@ -232,7 +235,8 @@ class LintRepoTests(TestCase):
 
             self.assertEqual(code, 1)
             self.assertIn(
-                "catalog/allowed-reference-domains.json: duplicate domain/scope combination for 'example.com' and 'example-urls'",
+                "catalog/allowed-reference-domains.json: duplicate domain/scope combination for "
+                "'example.com' and 'example-urls'",
                 stderr,
             )
 
@@ -409,11 +413,14 @@ class LintRepoTests(TestCase):
 
             self.assertEqual(code, 1)
             self.assertIn(
-                "standards.cwe entry 'CWE-798' must have matching reference https://cwe.mitre.org/data/definitions/798.html",
+                "standards.cwe entry 'CWE-798' must have matching reference "
+                "https://cwe.mitre.org/data/definitions/798.html",
                 stderr,
             )
             self.assertIn(
-                "standards.owasp_top_10 entry 'A07:2025 Authentication Failures' must have matching reference https://owasp.org/Top10/2025/A07_2025-Authentication_Failures/",
+                "standards.owasp_top_10 entry 'A07:2025 Authentication Failures' must have "
+                "matching reference "
+                "https://owasp.org/Top10/2025/A07_2025-Authentication_Failures/",
                 stderr,
             )
 
@@ -433,7 +440,10 @@ class LintRepoTests(TestCase):
             code, _stdout, stderr = run_main(lint_repo, root)
 
             self.assertEqual(code, 1)
-            self.assertIn("nearest index guides/injection/xss/README.md must link to this guide exactly once (found 0)", stderr)
+            self.assertIn(
+                "nearest index guides/injection/xss/README.md must link to this guide exactly once (found 0)",
+                stderr,
+            )
 
     def test_duplicate_nearest_readme_link_fails(self) -> None:
         with TemporaryDirectory() as tmpdir:
@@ -454,7 +464,10 @@ class LintRepoTests(TestCase):
             code, _stdout, stderr = run_main(lint_repo, root)
 
             self.assertEqual(code, 1)
-            self.assertIn("nearest index guides/injection/xss/README.md must link to this guide exactly once (found 2)", stderr)
+            self.assertIn(
+                "nearest index guides/injection/xss/README.md must link to this guide exactly once (found 2)",
+                stderr,
+            )
 
     def test_broken_index_readme_link_fails(self) -> None:
         with TemporaryDirectory() as tmpdir:
@@ -494,7 +507,10 @@ class LintRepoTests(TestCase):
             code, _stdout, stderr = run_main(lint_repo, root)
 
             self.assertEqual(code, 1)
-            self.assertIn("nearest index guides/injection/xss/README.md must link to this guide exactly once (found 0)", stderr)
+            self.assertIn(
+                "nearest index guides/injection/xss/README.md must link to this guide exactly once (found 0)",
+                stderr,
+            )
 
     def test_reference_style_index_links_are_rejected(self) -> None:
         with TemporaryDirectory() as tmpdir:
