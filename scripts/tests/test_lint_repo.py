@@ -177,6 +177,35 @@ class LintRepoTests(TestCase):
             self.assertEqual(code, 1)
             self.assertIn("catalog/allowed-reference-domains.json: domains must be a non-empty list", stderr)
 
+    def test_non_integer_schema_version_is_reported(self) -> None:
+        for schema_version in ("true", "1.0"):
+            with self.subTest(schema_version=schema_version), TemporaryDirectory() as tmpdir:
+                root = Path(tmpdir)
+                build_valid_repo(root)
+                write(
+                    root / "catalog/allowed-reference-domains.json",
+                    f"""
+                        {{
+                          "schema_version": {schema_version},
+                          "domains": [
+                            {{
+                              "domain": "cwe.mitre.org",
+                              "scopes": ["guide-references"],
+                              "purpose": "CWE references"
+                            }}
+                          ]
+                        }}
+                        """,
+                )
+
+                code, _stdout, stderr = run_main(lint_repo, root)
+
+                self.assertEqual(code, 1)
+                self.assertIn(
+                    "catalog/allowed-reference-domains.json: schema_version must equal 1",
+                    stderr,
+                )
+
     def test_unknown_allowed_domain_scope_is_reported(self) -> None:
         with TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

@@ -51,7 +51,8 @@ def load_allowed_domains(root: Path) -> dict[str, set[str]]:
     if not isinstance(raw, dict):
         raise AllowedDomainsValidationError(f"{display_path}: root must be a JSON object")
 
-    if raw.get("schema_version") != 1:
+    schema_version = raw.get("schema_version")
+    if type(schema_version) is not int or schema_version != 1:
         errors.append(f"{display_path}: schema_version must equal 1")
 
     domains = raw.get("domains")
