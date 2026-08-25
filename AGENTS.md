@@ -12,7 +12,7 @@ Each rule guide is exactly one Markdown file. Guide markdown files should start 
 
 ## Environment
 
-This is a docs-first repository with no app runtime or build step. `python3` and `markdownlint-cli2` should be present in the environment. If either command is missing, report that directly instead of silently falling back to another toolchain. The main local Markdown tool is `markdownlint-cli2`; run `markdownlint-cli2 "**/*.md"` and use `--fix` when appropriate. Follow `.editorconfig` for whitespace and indentation, and keep in mind that CI checks Markdown style, links, and GitHub Actions security.
+This is a docs-first repository with no app runtime or build step. Run all validation commands defined in `CONTRIBUTING.md`. If a required tool is unavailable, report which check could not be executed rather than silently substituting another toolchain. Follow `.editorconfig` for whitespace and indentation, and keep in mind that CI checks Markdown style, links, and GitHub Actions security.
 
 ## Workspace structure
 
