@@ -10,6 +10,10 @@
   description: "Changes to guides in the Injection category"
   color: "3cc6cc"
 
+- name: "object-integrity"
+  description: "Changes to guides in the Object Integrity category"
+  color: "ab9cc9"
+
 - name: "request-authenticity"
   description: "Changes to guides in the Request Authenticity category"
   color: "d2efaa"
