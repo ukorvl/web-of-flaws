@@ -342,6 +342,93 @@
       ]
     },
     {
+      "id": "WOF-PP-001",
+      "path": "guides/object-integrity/attacker-controlled-property-path-to-object-prototype.md",
+      "title": "Attacker-controlled Property Path to Object Prototype",
+      "kind": "vulnerability",
+      "default_severity": "high",
+      "exploitability": "medium",
+      "standards": {
+        "cwe": [
+          "CWE-1321"
+        ],
+        "owasp_top_10": [
+          "A08:2025 Software or Data Integrity Failures"
+        ]
+      },
+      "platforms": [
+        "browser",
+        "server"
+      ],
+      "languages": [
+        "javascript",
+        "typescript",
+        "json"
+      ],
+      "detection": {
+        "type": "dataflow",
+        "methods": [
+          "grep",
+          "ast",
+          "taint-analysis",
+          "semantic-review"
+        ],
+        "candidate_tokens": [
+          "__proto__",
+          "constructor.prototype",
+          "Object.assign(",
+          "deepMerge(",
+          "merge(",
+          "set(",
+          "path.split(\".\")",
+          "req.body",
+          "req.query"
+        ]
+      },
+      "sources": [
+        "window.location.search",
+        "window.location.hash",
+        "URLSearchParams",
+        "req.query",
+        "req.body",
+        "JSON request body",
+        "form data",
+        "cookies"
+      ],
+      "sinks": [
+        "target[key] = value",
+        "Object.assign(target, source)",
+        "deepMerge(target, source)",
+        "set(target, path, value)",
+        "object[path[i]][path[i + 1]] = value"
+      ],
+      "tags": [
+        "prototype-pollution",
+        "object-integrity",
+        "property-path",
+        "deep-merge",
+        "dynamic-assignment"
+      ],
+      "references": [
+        {
+          "label": "MITRE CWE-1321: Improperly Controlled Modification of Object Prototype Attributes ('Prototype Pollution')",
+          "url": "https://cwe.mitre.org/data/definitions/1321.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 A08: Software or Data Integrity Failures",
+          "url": "https://owasp.org/Top10/2025/A08_2025-Software_or_Data_Integrity_Failures/"
+        },
+        {
+          "label": "OWASP Prototype Pollution Prevention Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Prototype_Pollution_Prevention_Cheat_Sheet.html"
+        },
+        {
+          "label": "MDN: JavaScript prototype pollution",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/Prototype_pollution"
+        }
+      ]
+    },
+    {
       "id": "WOF-CSRF-001",
       "path": "guides/request-authenticity/attacker-controlled-input-to-authenticated-request-sink-client-side-csrf.md",
       "title": "Attacker-controlled Input to Authenticated Request Sink (Client-side CSRF)",

@@ -22,6 +22,7 @@ Categories are grouped by security topic and vulnerability family.
 
 - [Cross-origin Communication](guides/cross-origin-communication/README.md)
 - [Injection](guides/injection/README.md)
+- [Object Integrity](guides/object-integrity/README.md)
 - [Request Authenticity](guides/request-authenticity/README.md)
 - [Software Supply Chain](guides/software-supply-chain/README.md)
 - [Sensitive Data Exposure](guides/sensitive-data-exposure/README.md)

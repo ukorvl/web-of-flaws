@@ -17,6 +17,11 @@
       - any-glob-to-any-file:
           - "guides/injection/xss/**"
 
+"object-integrity":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "guides/object-integrity/**"
+
 "request-authenticity":
   - changed-files:
       - any-glob-to-any-file:
