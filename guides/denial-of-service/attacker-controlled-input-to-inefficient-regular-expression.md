@@ -25,6 +25,10 @@ detection:
     - semantic-review
   candidate_tokens:
     - new RegExp(
+    - re.compile(
+    - re.match(
+    - re.search(
+    - re.fullmatch(
     - .test(
     - .exec(
     - .match(
@@ -46,6 +50,12 @@ sinks:
   - String.prototype.replace()
   - String.prototype.search()
   - String.prototype.split()
+  - re.match()
+  - re.search()
+  - re.fullmatch()
+  - Pattern.match()
+  - Pattern.search()
+  - Pattern.fullmatch()
 tags:
   - denial-of-service
   - redos
@@ -161,7 +171,7 @@ Where the runtime supports it, additional regex timeouts or backtracking limits 
 Detection type: `dataflow`.
 
 - Candidate sources: request bodies, query parameters, path parameters, form fields, headers, message payloads, and other attacker-controlled strings.
-- Candidate sinks: regex evaluation APIs such as `.test()`, `.exec()`, `.match()`, `.replace()`, `.search()`, `.split()`, framework validators, route matchers, and parser helpers that rely on backtracking regex engines.
+- Candidate sinks: regex evaluation APIs such as `.test()`, `.exec()`, `.match()`, `.replace()`, `.search()`, `.split()`, Python `re.match()` or `re.search()` calls, compiled-pattern methods, framework validators, route matchers, and parser helpers that rely on backtracking regex engines.
 - Confirmation: verify that attacker-controlled input can reach the regex and that the pattern has a catastrophic-backtracking shape such as nested quantifiers or overlapping alternatives inside repetition.
 - Confirmation: verify that the input can be long enough and that the match can fail late enough to trigger worst-case behavior.
 - High-confidence signals include public request paths, synchronous validation on the request thread, repeated-group patterns like `(...+)*`, and missing size limits before the match.

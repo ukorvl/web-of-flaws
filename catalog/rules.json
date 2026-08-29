@@ -107,6 +107,10 @@
         ],
         "candidate_tokens": [
           "new RegExp(",
+          "re.compile(",
+          "re.match(",
+          "re.search(",
+          "re.fullmatch(",
           ".test(",
           ".exec(",
           ".match(",
@@ -130,7 +134,13 @@
         "String.prototype.match()",
         "String.prototype.replace()",
         "String.prototype.search()",
-        "String.prototype.split()"
+        "String.prototype.split()",
+        "re.match()",
+        "re.search()",
+        "re.fullmatch()",
+        "Pattern.match()",
+        "Pattern.search()",
+        "Pattern.fullmatch()"
       ],
       "tags": [
         "denial-of-service",
