@@ -170,9 +170,7 @@ const allowedOrigins = new Set([
 app.use("/api", (req, res, next) => {
   const origin = req.headers.origin;
 
-  if (origin) {
-    res.append("Vary", "Origin");
-  }
+  res.append("Vary", "Origin");
 
   if (origin && allowedOrigins.has(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
