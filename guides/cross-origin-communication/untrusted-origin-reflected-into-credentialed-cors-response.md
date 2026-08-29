@@ -85,11 +85,14 @@ The impact is often private profile data, account state, tokens, billing informa
 
 ```js
 app.use((req, res, next) => {
-  // Problem: untrusted request origin is reflected into ACAO.
-  res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
+  if (req.headers.origin) {
+    // Problem: every supplied origin is reflected into ACAO.
+    res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
 
-  // Problem: credentialed responses are now readable by that origin.
-  res.setHeader("Access-Control-Allow-Credentials", "true");
+    // Problem: credentialed responses are now readable by that origin.
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+  }
+
   next();
 });
 
