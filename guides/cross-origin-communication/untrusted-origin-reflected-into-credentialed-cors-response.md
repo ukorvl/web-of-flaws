@@ -162,6 +162,17 @@ If a resource is public, use `Access-Control-Allow-Origin: *` without credential
 If a resource is not meant to be read cross-origin, omit CORS response headers entirely.
 
 ```js
+const sessions = new Map([
+  [
+    "victim-session-id",
+    {
+      email: "victim@example.com",
+      plan: "enterprise",
+      mfaEnabled: true,
+    },
+  ],
+]);
+
 const allowedOrigins = new Set([
   "https://app.example.com",
   "https://admin.example.com",
@@ -181,15 +192,19 @@ app.use("/api", (req, res, next) => {
 });
 
 app.get("/api/me", (req, res) => {
-  res.json({
-    email: "victim@example.com",
-    plan: "enterprise",
-    mfaEnabled: true,
-  });
+  const sessionId = req.cookies?.session;
+  const account = sessionId ? sessions.get(sessionId) : null;
+
+  if (!account) {
+    return res.status(401).json({ error: "Authentication required" });
+  }
+
+  res.json(account);
 });
 ```
 
 The key control is the allowlist lookup.
+The safer variant keeps the same session-backed authenticated endpoint behavior and changes only which origins may read the response.
 Dynamic origin reflection is only safe when it is constrained to a fixed trusted set before the header is emitted.
 
 ## Detection
