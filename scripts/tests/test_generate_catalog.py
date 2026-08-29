@@ -177,7 +177,13 @@ class GenerateCatalogTests(TestCase):
                 generate_catalog.build_rules(root)
 
             self.assertIn("unexpected standards keys: whatever", str(error.exception))
-            self.assertIn("OWASP Top 10 value 'banana' must match ^A\\d{2}:\\d{4} .+$", str(error.exception))
+            self.assertIn("OWASP Top 10 value 'banana' must match ^[AX]\\d{2}:\\d{4} .+$", str(error.exception))
+
+    def test_expected_owasp_top_10_reference_supports_x_series_next_steps(self) -> None:
+        self.assertEqual(
+            generate_catalog.expected_owasp_top_10_reference("X01:2025 Lack of Application Resilience"),
+            "https://owasp.org/Top10/2025/X01_2025-Next_Steps/",
+        )
 
     def test_main_sync_and_check_modes(self) -> None:
         with TemporaryDirectory() as tmpdir:

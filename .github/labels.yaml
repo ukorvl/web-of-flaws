@@ -6,6 +6,10 @@
   description: "Changes to guides in the Cross-origin Communication category"
   color: "91d046"
 
+- name: "denial-of-service"
+  description: "Changes to guides in the Denial of Service category"
+  color: "767b88"
+
 - name: "injection"
   description: "Changes to guides in the Injection category"
   color: "3cc6cc"

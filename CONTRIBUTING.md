@@ -198,6 +198,10 @@ For example:
 - "javascript:"
 ```
 
+For `standards.owasp_top_10`, use canonical category names such as `A05:2025 Injection`.
+OWASP 2025 "Next Steps" categories are also allowed, for example `X01:2025 Lack of Application Resilience`.
+Those `X##` entries currently use the shared canonical `Next Steps` page URL under `## References`.
+
 ## Rule Kinds
 
 Use `kind` to distinguish the nature of the finding.

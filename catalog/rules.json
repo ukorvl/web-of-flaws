@@ -74,6 +74,87 @@
       ]
     },
     {
+      "id": "WOF-REDOS-001",
+      "path": "guides/denial-of-service/attacker-controlled-input-to-inefficient-regular-expression.md",
+      "title": "Attacker-controlled Input to Inefficient Regular Expression",
+      "kind": "vulnerability",
+      "default_severity": "medium",
+      "exploitability": "high",
+      "standards": {
+        "cwe": [
+          "CWE-1333"
+        ],
+        "owasp_top_10": [
+          "X01:2025 Lack of Application Resilience"
+        ]
+      },
+      "platforms": [
+        "browser",
+        "server"
+      ],
+      "languages": [
+        "javascript",
+        "typescript",
+        "python"
+      ],
+      "detection": {
+        "type": "dataflow",
+        "methods": [
+          "grep",
+          "ast",
+          "taint-analysis",
+          "semantic-review"
+        ],
+        "candidate_tokens": [
+          "new RegExp(",
+          ".test(",
+          ".exec(",
+          ".match(",
+          ".replace(",
+          "req.body",
+          "req.query"
+        ]
+      },
+      "sources": [
+        "req.body",
+        "req.query",
+        "req.params",
+        "HTTP headers",
+        "form data",
+        "window.location.search",
+        "MessageEvent.data"
+      ],
+      "sinks": [
+        "RegExp.prototype.test()",
+        "RegExp.prototype.exec()",
+        "String.prototype.match()",
+        "String.prototype.replace()",
+        "String.prototype.search()",
+        "String.prototype.split()"
+      ],
+      "tags": [
+        "denial-of-service",
+        "redos",
+        "regex",
+        "catastrophic-backtracking",
+        "availability"
+      ],
+      "references": [
+        {
+          "label": "MITRE CWE-1333: Inefficient Regular Expression Complexity",
+          "url": "https://cwe.mitre.org/data/definitions/1333.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 X01: Lack of Application Resilience",
+          "url": "https://owasp.org/Top10/2025/X01_2025-Next_Steps/"
+        },
+        {
+          "label": "OWASP Regular expression Denial of Service - ReDoS",
+          "url": "https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS"
+        }
+      ]
+    },
+    {
       "id": "WOF-XSS-003",
       "path": "guides/injection/xss/attacker-controlled-html-to-window-document-property-lookup-dom-clobbering.md",
       "title": "Attacker-controlled HTML to `window`/`document` Property Lookup (DOM Clobbering)",

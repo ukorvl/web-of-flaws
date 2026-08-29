@@ -7,6 +7,11 @@
       - any-glob-to-any-file:
           - "guides/cross-origin-communication/**"
 
+"denial-of-service":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "guides/denial-of-service/**"
+
 "injection":
   - changed-files:
       - any-glob-to-any-file:

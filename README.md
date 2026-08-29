@@ -21,6 +21,7 @@ It can be used as a knowledge base for SAST, model training, and agent-assisted 
 Categories are grouped by security topic and vulnerability family.
 
 - [Cross-origin Communication](guides/cross-origin-communication/README.md)
+- [Denial of Service](guides/denial-of-service/README.md)
 - [Injection](guides/injection/README.md)
 - [Object Integrity](guides/object-integrity/README.md)
 - [Request Authenticity](guides/request-authenticity/README.md)
