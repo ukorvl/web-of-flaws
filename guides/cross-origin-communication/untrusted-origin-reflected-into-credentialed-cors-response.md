@@ -84,6 +84,17 @@ The impact is often private profile data, account state, tokens, billing informa
 ## Vulnerable Pattern
 
 ```js
+const sessions = new Map([
+  [
+    "victim-session-id",
+    {
+      email: "victim@example.com",
+      plan: "enterprise",
+      mfaEnabled: true,
+    },
+  ],
+]);
+
 app.use((req, res, next) => {
   if (req.headers.origin) {
     // Problem: every supplied origin is reflected into ACAO.
@@ -97,11 +108,14 @@ app.use((req, res, next) => {
 });
 
 app.get("/api/me", (req, res) => {
-  res.json({
-    email: "victim@example.com",
-    plan: "enterprise",
-    mfaEnabled: true,
-  });
+  const sessionId = req.cookies?.session;
+  const account = sessionId ? sessions.get(sessionId) : null;
+
+  if (!account) {
+    return res.status(401).json({ error: "Authentication required" });
+  }
+
+  res.json(account);
 });
 ```
 
