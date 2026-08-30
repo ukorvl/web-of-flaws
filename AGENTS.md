@@ -10,7 +10,7 @@ A purpose of this repository is to enable coding agents to learn from the guides
 
 Each rule guide is exactly one Markdown file. Guide markdown files should start with YAML frontmatter that includes standard properties of each guide, followed by the standard heading structure. Dataflow rules should declare explicit `sources` and `sinks`; pattern rules should declare `indicators`. Look at `.markdownlint-cli2.jsonc`, `CONTRIBUTING.md`, `catalog/rules.json`, and `catalog/allowed-reference-domains.json` for the expected guide structure.
 
-All guides are divided into two main categories - rules and notes. Notes are for general information, best practices, or other relevant content that does not fit into the rules category and can not be used to identify a vulnerability. Rules are for specific patterns that can be used to identify vulnerabilities in web applications.
+All guides are divided into two main categories - rules and notes. Notes are for general information, best practices, or other relevant content that does not fit into the rules category and cannot be used to identify a vulnerability. Rules are for specific patterns that can be used to identify vulnerabilities in web applications.
 
 ## Environment
 
