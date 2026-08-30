@@ -18,6 +18,7 @@ node_modules/
 # Python caches
 __pycache__/
 *.py[cod]
+.ruff_cache/
 
 # Logs
 npm-debug.log*

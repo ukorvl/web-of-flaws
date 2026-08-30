@@ -43,7 +43,8 @@
       "combine": "merge",
       "filter": [
         "guides/**/*.md",
-        "!guides/**/README.md"
+        "!guides/**/README.md",
+        "!guides/**/notes/**/*.md"
       ],
       "config": {
         // Asserts stable heading structure for guides which is important to keep the doc machine and human readable.
@@ -60,6 +61,30 @@
             "## False Positives",
             // Place any optional notes here, such as framework or scope notes.
             "*",
+            "## References",
+            "## Quick Checklist"
+          ],
+          "match_case": true
+        }
+      }
+    },
+    {
+      "combine": "merge",
+      "filter": ["guides/**/notes/**/*.md"],
+      "config": {
+        // Notes are not catalog rules, but they should look and read as close to real guides as possible.
+        "required-headings": {
+          "headings": [
+            "*",
+            "## Summary",
+            "## Mental Model",
+            "## Why This Matters",
+            "## Vulnerable Pattern",
+            "## Example Attack",
+            "## Why The Attack Works",
+            "## Safer Pattern",
+            "## Detection",
+            "## False Positives",
             "## References",
             "## Quick Checklist"
           ],

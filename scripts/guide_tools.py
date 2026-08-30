@@ -57,14 +57,25 @@ CODE_FENCE_RE = re.compile(r"^([`~]{3,})")
 INLINE_CODE_RE = re.compile(r"(?P<fence>`+).*?(?P=fence)")
 LEADING_YAML_INDICATOR_RE = re.compile(r"^(?:[#&*!@`|>]|%|[{}\[\],]|(?:\?|-)(?=\s))")
 PLAIN_SCALAR_SYNTAX_RE = re.compile(r":(?=\s|$)|\s#")
+NOTES_DIRECTORY_NAME = "notes"
 
 
 class GuideValidationError(ValueError):
     pass
 
 
+def is_guide_note_path(path: Path, guides_root: Path | None = None) -> bool:
+    relative = path.relative_to(guides_root) if guides_root is not None else path
+    return NOTES_DIRECTORY_NAME in relative.parts
+
+
 def iter_guide_rule_paths(root: Path) -> list[Path]:
-    return sorted(path for path in (root / "guides").rglob("*.md") if path.name != "README.md")
+    guides_root = root / "guides"
+    return sorted(
+        path
+        for path in guides_root.rglob("*.md")
+        if path.name != "README.md" and not is_guide_note_path(path, guides_root)
+    )
 
 
 def iter_guide_markdown_paths(root: Path) -> list[Path]:
