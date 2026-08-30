@@ -4,7 +4,7 @@
   - [Getting Started](#getting-started)
   - [Repository Structure](#repository-structure)
   - [Adding a New Guide](#adding-a-new-guide)
-  - [Notes Versus Guides](#notes-versus-guides)
+  - [Notes Versus Rules](#notes-versus-rules)
   - [Rule IDs](#rule-ids)
   - [Frontmatter](#frontmatter)
   - [Rule Kinds](#rule-kinds)
@@ -113,23 +113,23 @@ Before creating a new rule:
 
 Use exactly one Markdown file per rule.
 
-## Notes Versus Guides
+## Notes Versus Rules
 
 Some security topics are real and worth documenting, but still make poor catalog rules.
 Common examples include social-engineering-driven attacks, analyst context, and educational edge cases that do not map cleanly to a concrete application pattern a scanner or coding agent can confirm.
 
 When that happens:
 
-1. Keep the catalog schema strict for actual guides.
+1. Keep the catalog schema strict for actual rules.
 2. Add a separate Markdown note under the nearest category's `notes/` directory and link it from the parent category `README.md`.
-3. Do not assign notes a `WOF-*` ID or require guide frontmatter, standards, default severity, exploitability, or detection metadata.
+3. Do not assign notes a `WOF-*` ID or require rule frontmatter, standards, default severity, exploitability, or detection metadata.
 4. Keep notes out of `catalog/rules.json`; they are for context, education, and reviewer guidance rather than scanner-facing rule selection.
-5. Promote the topic to a full guide only when you can phrase a real application-side `vulnerability`, `weakness`, or `hardening-gap` with confirmable detection logic.
+5. Promote the topic to a full rule only when you can phrase a real application-side `vulnerability`, `weakness`, or `hardening-gap` with confirmable detection logic.
 
 Notes should still be maintained as first-class documentation.
 Use a separate file so related topics can scale cleanly as the repository grows, but do not loosen the structured rule schema to make informational content fit the catalog.
 
-Notes should mirror normal guide structure as closely as possible even though they are not rule files.
+Notes should mirror normal rule structure as closely as possible even though they are not rule files.
 The main differences are:
 
 - no YAML frontmatter;
@@ -145,7 +145,7 @@ Every note should follow this exact outline:
 
 ## Mental Model
 
-## Why It Matters
+## Why This Matters
 
 ## Vulnerable Pattern
 
