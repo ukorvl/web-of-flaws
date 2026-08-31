@@ -1,15 +1,33 @@
 from __future__ import annotations
 
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from textwrap import dedent
 from unittest import TestCase
 
-from support import load_module
+from support import load_module, write
 
 guide_tools = load_module("guide_tools")
 
 
 class GuideToolsTests(TestCase):
+    def test_iter_guide_rule_paths_excludes_note_files(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            write(root / "guides/injection/xss/README.md", "# XSS\n")
+            write(
+                root / "guides/injection/xss/url-derived-input-to-html-sink-innerhtml.md",
+                "# Real guide\n",
+            )
+            write(root / "guides/injection/xss/notes/self-xss.md", "# Note\n")
+
+            paths = guide_tools.iter_guide_rule_paths(root)
+
+            self.assertEqual(
+                paths,
+                [root / "guides/injection/xss/url-derived-input-to-html-sink-innerhtml.md"],
+            )
+
     def test_parse_yaml_rejects_unquoted_parser_sensitive_scalars(self) -> None:
         with self.assertRaises(guide_tools.GuideValidationError) as error:
             guide_tools.parse_yaml_mapping("title: Foo: Bar", Path("guide.md"))
@@ -304,4 +322,20 @@ class GuideToolsTests(TestCase):
         self.assertEqual(
             guide_tools.rendered_urls(markdown),
             [("https://docs.example.com/guide", 3)],
+        )
+
+    def test_is_guide_note_path_detects_notes_directory(self) -> None:
+        guides_root = Path("/repo/guides")
+
+        self.assertTrue(
+            guide_tools.is_guide_note_path(
+                guides_root / "injection" / "xss" / "notes" / "self-xss.md",
+                guides_root,
+            )
+        )
+        self.assertFalse(
+            guide_tools.is_guide_note_path(
+                guides_root / "injection" / "xss" / "url-derived-input-to-html-sink-innerhtml.md",
+                guides_root,
+            )
         )

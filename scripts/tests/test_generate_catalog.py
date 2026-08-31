@@ -75,6 +75,30 @@ class GenerateCatalogTests(TestCase):
 
             self.assertIn("duplicate rule id 'WOF-XSS-001'", str(error.exception))
 
+    def test_build_rules_ignores_note_files(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "guides/injection/xss/notes/self-xss.md",
+                """
+                # Self-XSS
+
+                Informational note without guide frontmatter.
+                """,
+            )
+
+            rules = generate_catalog.build_rules(root)
+
+            self.assertEqual(len(rules), 2)
+            self.assertEqual(
+                [rule["path"] for rule in rules],
+                [
+                    "guides/injection/xss/url-derived-input-to-html-sink-innerhtml.md",
+                    "guides/sensitive-data-exposure/hard-coded-secrets.md",
+                ],
+            )
+
     def test_build_rules_requires_matching_standard_references(self) -> None:
         with TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

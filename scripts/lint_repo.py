@@ -11,8 +11,8 @@ from guide_tools import (
     MARKDOWN_LINK_RE,
     URL_RE,
     GuideValidationError,
+    is_guide_note_path,
     iter_guide_markdown_paths,
-    iter_guide_rule_paths,
     iter_rendered_lines,
 )
 
@@ -166,6 +166,7 @@ def nearest_readme_for(path: Path, root: Path) -> Path | None:
 def lint_guide_indexes(root: Path) -> list[str]:
     errors: list[str] = []
     counts: dict[tuple[Path, Path], int] = {}
+    guides_root = root / "guides"
 
     for readme in iter_guide_readme_paths(root):
         for line_number in reference_style_markdown_lines(readme):
@@ -180,17 +181,21 @@ def lint_guide_indexes(root: Path) -> list[str]:
             counts[(readme.resolve(), resolved)] = counts.get((readme.resolve(), resolved), 0) + 1
 
     # TODO: Lint category README.md entries too; parent indexes can currently omit nested categories silently.
-    for rule_path in iter_guide_rule_paths(root):
-        nearest_readme = nearest_readme_for(rule_path, root)
-        if nearest_readme is None:
-            errors.append(f"{rule_path}: could not find nearest README.md index")
+    for guide_path in iter_guide_markdown_paths(root):
+        if guide_path.name == "README.md":
             continue
 
-        count = counts.get((nearest_readme.resolve(), rule_path.resolve()), 0)
+        nearest_readme = nearest_readme_for(guide_path, root)
+        if nearest_readme is None:
+            errors.append(f"{guide_path}: could not find nearest README.md index")
+            continue
+
+        count = counts.get((nearest_readme.resolve(), guide_path.resolve()), 0)
         if count != 1:
             relative_readme = nearest_readme.relative_to(root).as_posix()
+            kind = "note" if is_guide_note_path(guide_path, guides_root) else "guide"
             errors.append(
-                f"{rule_path}: nearest index {relative_readme} must link to this guide exactly once (found {count})"
+                f"{guide_path}: nearest index {relative_readme} must link to this {kind} exactly once (found {count})"
             )
 
     return errors

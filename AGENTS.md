@@ -10,6 +10,8 @@ A purpose of this repository is to enable coding agents to learn from the guides
 
 Each rule guide is exactly one Markdown file. Guide markdown files should start with YAML frontmatter that includes standard properties of each guide, followed by the standard heading structure. Dataflow rules should declare explicit `sources` and `sinks`; pattern rules should declare `indicators`. Look at `.markdownlint-cli2.jsonc`, `CONTRIBUTING.md`, `catalog/rules.json`, and `catalog/allowed-reference-domains.json` for the expected guide structure.
 
+All guides are divided into two main categories - rules and notes. Notes are for general information, best practices, or other relevant content that does not fit into the rules category and cannot be used to identify a vulnerability. Rules are for specific patterns that can be used to identify vulnerabilities in web applications.
+
 ## Environment
 
 This is a docs-first repository with no app runtime or build step. Run all validation commands defined in `CONTRIBUTING.md`. If a required tool is unavailable, report which check could not be executed rather than silently substituting another toolchain. Follow `.editorconfig` for whitespace and indentation, and keep in mind that CI checks Markdown style, links, and GitHub Actions security.
@@ -17,6 +19,8 @@ This is a docs-first repository with no app runtime or build step. Run all valid
 ## Workspace structure
 
 All guides are located in the `guides` directory. Each category has its own subdirectory, and each rule guide is a single Markdown file. Category directories and nested category directories may contain `README.md` index files, but rules themselves are not split across multiple files.
+
+Repository supports nested agent docs structure. If you encounter nested `AGENTS.md` always give preference to the closest `AGENTS.md` in the directory tree. If a category has no `AGENTS.md`, use the parent category's `AGENTS.md` instead.
 
 ## Before marking things as done
 

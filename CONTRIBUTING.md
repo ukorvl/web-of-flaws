@@ -4,6 +4,7 @@
   - [Getting Started](#getting-started)
   - [Repository Structure](#repository-structure)
   - [Adding a New Guide](#adding-a-new-guide)
+  - [Notes Versus Rules](#notes-versus-rules)
   - [Rule IDs](#rule-ids)
   - [Frontmatter](#frontmatter)
   - [Rule Kinds](#rule-kinds)
@@ -111,6 +112,59 @@ Before creating a new rule:
 5. Add the guide to the nearest category `README.md`.
 
 Use exactly one Markdown file per rule.
+
+## Notes Versus Rules
+
+Some security topics are real and worth documenting, but still make poor catalog rules.
+Common examples include social-engineering-driven attacks, analyst context, and educational edge cases that do not map cleanly to a concrete application pattern a scanner or coding agent can confirm.
+
+When that happens:
+
+1. Keep the catalog schema strict for actual rules.
+2. Add a separate Markdown note under the nearest category's `notes/` directory and link it from the parent category `README.md`.
+3. Do not assign notes a `WOF-*` ID or require rule frontmatter, standards, default severity, exploitability, or detection metadata.
+4. Keep notes out of `catalog/rules.json`; they are for context, education, and reviewer guidance rather than scanner-facing rule selection.
+5. Promote the topic to a full rule only when you can phrase a real application-side `vulnerability`, `weakness`, or `hardening-gap` with confirmable detection logic.
+
+Notes should still be maintained as first-class documentation.
+Use a separate file so related topics can scale cleanly as the repository grows, but do not loosen the structured rule schema to make informational content fit the catalog.
+
+Notes should mirror normal rule structure as closely as possible even though they are not rule files.
+The main differences are:
+
+- no YAML frontmatter;
+- no `WOF-*` identifier;
+- `## Summary` replaces `## Rule`.
+
+Every note should follow this exact outline:
+
+```md
+# Note Title
+
+## Summary
+
+## Mental Model
+
+## Why This Matters
+
+## Vulnerable Pattern
+
+## Example Attack
+
+## Why The Attack Works
+
+## Safer Pattern
+
+## Detection
+
+## False Positives
+
+## References
+
+## Quick Checklist
+```
+
+The goal is to keep notes explicit, comparable, and easy for both humans and agents to scan, while still keeping them outside the machine-readable rule catalog.
 
 ## Rule IDs
 

@@ -474,6 +474,29 @@ class LintRepoTests(TestCase):
                 stderr,
             )
 
+    def test_missing_note_link_fails(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            build_valid_repo(root)
+            write(
+                root / "guides/injection/xss/notes/self-xss.md",
+                """
+                # Self-XSS
+
+                ## Summary
+
+                Informational note.
+                """,
+            )
+
+            code, _stdout, stderr = run_main(lint_repo, root)
+
+            self.assertEqual(code, 1)
+            self.assertIn(
+                "nearest index guides/injection/xss/README.md must link to this note exactly once (found 0)",
+                stderr,
+            )
+
     def test_duplicate_nearest_readme_link_fails(self) -> None:
         with TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
