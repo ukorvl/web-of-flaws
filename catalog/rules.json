@@ -156,6 +156,105 @@
       ]
     },
     {
+      "id": "WOF-XSS-004",
+      "path": "guides/injection/xss/attacker-controlled-request-input-to-html-response-reflected-xss.md",
+      "title": "Attacker-controlled Request Input to HTML Response (Reflected XSS)",
+      "kind": "vulnerability",
+      "default_severity": "high",
+      "exploitability": "high",
+      "standards": {
+        "cwe": [
+          "CWE-79"
+        ],
+        "owasp_top_10": [
+          "A05:2025 Injection"
+        ]
+      },
+      "platforms": [
+        "server",
+        "browser"
+      ],
+      "languages": [
+        "html",
+        "javascript",
+        "typescript",
+        "python"
+      ],
+      "detection": {
+        "type": "dataflow",
+        "methods": [
+          "grep",
+          "ast",
+          "taint-analysis",
+          "semantic-review"
+        ],
+        "candidate_tokens": [
+          "req.query",
+          "req.params",
+          "req.body",
+          "req.headers",
+          "req.cookies",
+          "request.args",
+          "request.form",
+          "request.GET",
+          "request.POST",
+          "request.headers",
+          "res.send(",
+          "res.write(",
+          "res.end(",
+          "res.render(",
+          "render_template(",
+          "<%-",
+          "{{{",
+          "|safe"
+        ]
+      },
+      "sources": [
+        "Express `req.query`",
+        "Express `req.params`",
+        "Express `req.body`",
+        "Express `req.headers`",
+        "Express `req.cookies`",
+        "Flask `request.args`",
+        "Flask `request.form`",
+        "Django `request.GET`",
+        "Django `request.POST`",
+        "request headers and cookies reflected into HTML responses"
+      ],
+      "sinks": [
+        "`res.send()` with attacker-controlled HTML content",
+        "`res.write()` with attacker-controlled HTML content",
+        "`res.end()` with attacker-controlled HTML content",
+        "server-side template output in an HTML response",
+        "unescaped template output such as `{{{ ... }}}`, `<%- ... %>`, or `|safe`"
+      ],
+      "tags": [
+        "xss",
+        "reflected-xss",
+        "server-side",
+        "request-input",
+        "html-response"
+      ],
+      "references": [
+        {
+          "label": "MITRE CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+          "url": "https://cwe.mitre.org/data/definitions/79.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 A05: Injection",
+          "url": "https://owasp.org/Top10/2025/A05_2025-Injection/"
+        },
+        {
+          "label": "OWASP Cross Site Scripting Prevention Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"
+        },
+        {
+          "label": "MDN: Cross-site scripting (XSS)",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS"
+        }
+      ]
+    },
+    {
       "id": "WOF-XSS-001",
       "path": "guides/injection/xss/url-derived-input-to-html-sink-innerhtml.md",
       "title": "URL-derived Input to HTML Sink (innerHTML)",
