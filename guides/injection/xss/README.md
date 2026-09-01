@@ -1,7 +1,6 @@
 # Cross-site scripting (XSS)
 
 XSS guides focus on cases where attacker-controlled input reaches browser execution or HTML parsing sinks.
-DOM XSS occurs when attacker-controlled browser data reaches an HTML parsing or executable URL sink; the separate rules below preserve the distinct protections those boundaries require.
 
 ## Rules
 
