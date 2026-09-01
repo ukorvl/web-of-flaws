@@ -140,7 +140,7 @@ Detection type: `dataflow`.
 - Writing a constant template string such as `element.innerHTML = "<b>Welcome</b>"` is not the same issue because no attacker-controlled input crosses the sink.
 - A sink that only accepts `TrustedHTML` or the output of a vetted sanitizer under an enforced Trusted Types policy may be acceptable, though the policy and sanitization still need review.
 - Server-generated HTML fragments can still be dangerous, but they are not this client-side DOM XSS rule unless attacker-controlled browser data can influence the fragment.
-- A message handler that validates an exact trusted origin and expected sender window before reading `event.data` is not this issue unless the allowed sender can independently forward attacker-controlled content.
+- A message handler that validates an exact trusted origin and expected sender window before using `event.data` at the sink is not this issue unless the allowed sender can independently forward attacker-controlled content.
 
 ## Framework Notes
 

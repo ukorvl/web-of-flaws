@@ -162,7 +162,7 @@ Detection type: `dataflow`.
 - Assigning a constant route such as `link.href = "/account"` is not this issue.
 - Selecting from a fixed allowlist of known route IDs and then mapping those IDs to hard-coded paths is usually acceptable.
 - A dynamic destination may still be safe if the code parses it as a URL, restricts it to `http:` or `https:`, and constrains it to trusted origins or relative routes.
-- A message handler that validates an exact trusted origin and expected sender window before reading `event.data` is not this issue unless the allowed sender can independently forward attacker-controlled content.
+- A message handler that validates an exact trusted origin and expected sender window before using `event.data` at the sink is not this issue unless the allowed sender can independently forward attacker-controlled content.
 
 ## Framework Notes
 
