@@ -71,6 +71,28 @@
               }
             ]
           }
+        },
+        "mappings": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["cwe", "owasp_top_10", "relationship"],
+            "properties": {
+              "cwe": {
+                "type": "string",
+                "pattern": "^CWE-[0-9]+$"
+              },
+              "owasp_top_10": {
+                "type": "string",
+                "pattern": "^A[0-9]{2}:[0-9]{4} .+$"
+              },
+              "relationship": {
+                "enum": ["direct", "related"]
+              }
+            }
+          }
         }
       }
     },

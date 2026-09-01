@@ -158,4 +158,31 @@ def validate_frontmatter(frontmatter: dict, path: Path) -> list[str]:
         location = ".".join(str(part) for part in error.absolute_path)
         suffix = f" at {location}" if location else ""
         errors.append(f"{path}: invalid frontmatter{suffix}: {error.message}")
+    errors.extend(validate_standard_mappings(frontmatter, path))
+    return errors
+
+
+def validate_standard_mappings(frontmatter: dict, path: Path) -> list[str]:
+    standards = frontmatter.get("standards")
+    if not isinstance(standards, dict):
+        return []
+
+    cwe_ids = {entry for entry in standards.get("cwe", []) if isinstance(entry, str)}
+    owasp_ids = {
+        entry["id"]
+        for entry in standards.get("owasp_top_10", [])
+        if isinstance(entry, dict) and isinstance(entry.get("id"), str)
+    }
+    errors = []
+    for index, mapping in enumerate(standards.get("mappings", [])):
+        if not isinstance(mapping, dict):
+            continue
+        cwe_id = mapping.get("cwe")
+        if isinstance(cwe_id, str) and cwe_id not in cwe_ids:
+            errors.append(f"{path}: standards.mappings[{index}].cwe must be declared in standards.cwe")
+        owasp_id = mapping.get("owasp_top_10")
+        if isinstance(owasp_id, str) and owasp_id not in owasp_ids:
+            errors.append(
+                f"{path}: standards.mappings[{index}].owasp_top_10 must be declared in standards.owasp_top_10"
+            )
     return errors

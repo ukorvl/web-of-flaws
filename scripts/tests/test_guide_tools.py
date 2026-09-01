@@ -75,6 +75,10 @@ class GuideToolsTests(TestCase):
                   owasp_top_10:
                     - id: "A05:2025 Injection"
                       relationship: direct
+                  mappings:
+                    - cwe: CWE-79
+                      owasp_top_10: "A05:2025 Injection"
+                      relationship: direct
                 platforms:
                   - browser
                 languages:
@@ -93,6 +97,49 @@ class GuideToolsTests(TestCase):
         )
 
         self.assertEqual(guide_tools.validate_frontmatter(frontmatter, Path("guide.md")), [])
+
+    def test_validate_frontmatter_rejects_undeclared_standard_mapping(self) -> None:
+        frontmatter = guide_tools.parse_yaml_mapping(
+            dedent(
+                """
+                id: WOF-XSS-001
+                title: DOM XSS
+                kind: vulnerability
+                default_severity: high
+                exploitability: high
+                standards:
+                  cwe:
+                    - CWE-79
+                  owasp_top_10:
+                    - id: "A05:2025 Injection"
+                      relationship: direct
+                  mappings:
+                    - cwe: CWE-89
+                      owasp_top_10: "A05:2025 Injection"
+                      relationship: direct
+                platforms:
+                  - browser
+                languages:
+                  - javascript
+                detection:
+                  type: semantic-pattern
+                  methods:
+                    - grep
+                indicators:
+                  - innerHTML
+                tags:
+                  - xss
+                """
+            ).lstrip(),
+            Path("guide.md"),
+        )
+
+        errors = guide_tools.validate_frontmatter(frontmatter, Path("guide.md"))
+
+        self.assertIn(
+            "guide.md: standards.mappings[0].cwe must be declared in standards.cwe",
+            errors,
+        )
 
     def test_validate_frontmatter_rejects_empty_required_strings_and_entries(self) -> None:
         frontmatter = guide_tools.parse_yaml_mapping(

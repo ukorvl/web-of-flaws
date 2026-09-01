@@ -245,6 +245,7 @@ Keep metadata concise and machine-readable.
 
 Use a structured OWASP entry with `relationship: direct` only when the listed CWE has an authoritative direct mapping to that OWASP category. Use `relationship: related` when the category is conceptually relevant but does not formally map the listed CWE.
 Legacy string OWASP entries remain accepted for compatibility, but new and updated guides should use the structured form.
+When a rule includes multiple CWEs and OWASP categories, use `standards.mappings` to record each specific correspondence.
 
 Do not introduce new frontmatter fields without discussing whether they belong in the common rule schema.
 
