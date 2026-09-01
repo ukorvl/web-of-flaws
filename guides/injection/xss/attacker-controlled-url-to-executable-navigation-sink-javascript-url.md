@@ -25,6 +25,7 @@ detection:
   candidate_tokens:
     - href
     - src
+    - sandbox
     - setAttribute("href"
     - formAction
     - window.location
@@ -154,6 +155,7 @@ Detection type: `dataflow`.
 - Candidate collection: find API response reads such as `fetch(...)`, `response.json()`, and `response.text()` when the response can contain attacker-controlled values.
 - Confirmation: verify that attacker-controlled input can reach the sink and that the code does not strictly constrain protocol, destination, or route identity.
 - Confirmation: for message event payloads, first check whether the handler rejects all but exact allowlisted `event.origin` values and, where applicable, the expected `event.source`. Missing or ineffective validation makes `event.data` attacker-controlled; if validation works, determine whether an allowed sender can independently forward attacker-controlled data.
+- Confirmation: for `HTMLIFrameElement.src`, check the effective `sandbox` configuration. A sandbox without `allow-scripts` blocks script execution; when scripts are allowed, a missing `allow-same-origin` still prevents same-origin access to the parent.
 - Give extra attention to code that copies a string directly into `href` or calls `setAttribute("href", value)` without URL parsing and allowlisting.
 - A scanner should surface candidate navigation sinks; the agent or reviewer should confirm whether a dangerous protocol or untrusted destination can actually survive validation.
 
@@ -164,6 +166,7 @@ Detection type: `dataflow`.
 - A dynamic destination may still be safe if the code parses it as a URL, restricts it to `http:` or `https:`, and constrains it to trusted origins or relative routes.
 - A message handler that validates an exact trusted origin and expected sender window before using `event.data` at the sink is not this issue unless the allowed sender can independently forward attacker-controlled content.
 - Client-side storage that contains only internally generated preferences or route identifiers is not attacker-controlled input.
+- An iframe with an effective sandbox that lacks `allow-scripts` cannot execute a `javascript:` URL, though later code can change the sandbox configuration.
 
 ## Framework Notes
 
@@ -175,6 +178,7 @@ Bindings such as `<a href={next}>` in React or `<a :href="next">` in Vue can sti
 - [MITRE CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')](https://cwe.mitre.org/data/definitions/79.html)
 - [OWASP Top 10 2025 A05: Injection](https://owasp.org/Top10/2025/A05_2025-Injection/)
 - [OWASP DOM based XSS Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html)
+- [MDN: `<iframe>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe)
 - [MDN: `javascript:` URLs](https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Schemes/javascript)
 - [Vue Security Guide](https://vuejs.org/guide/best-practices/security.html)
 

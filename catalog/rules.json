@@ -488,6 +488,7 @@
         "candidate_tokens": [
           "href",
           "src",
+          "sandbox",
           "setAttribute(\"href\"",
           "formAction",
           "window.location",
@@ -550,6 +551,10 @@
         {
           "label": "OWASP DOM based XSS Prevention Cheat Sheet",
           "url": "https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html"
+        },
+        {
+          "label": "MDN: `<iframe>`",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe"
         },
         {
           "label": "MDN: `javascript:` URLs",
