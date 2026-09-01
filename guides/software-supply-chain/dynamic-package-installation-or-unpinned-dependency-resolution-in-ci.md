@@ -8,7 +8,8 @@ standards:
   cwe:
     - CWE-829
   owasp_top_10:
-    - "A03:2025 Software Supply Chain Failures"
+    - id: "A03:2025 Software Supply Chain Failures"
+      relationship: related
 platforms:
   - ci-cd
 languages:
