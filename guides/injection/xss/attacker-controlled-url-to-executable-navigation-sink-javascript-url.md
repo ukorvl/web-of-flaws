@@ -24,6 +24,7 @@ detection:
     - semantic-review
   candidate_tokens:
     - href
+    - src
     - setAttribute("href"
     - formAction
     - window.location
@@ -50,6 +51,7 @@ sources:
   - sessionStorage.getItem()
 sinks:
   - HTMLAnchorElement.href
+  - HTMLIFrameElement.src
   - Element.setAttribute("href", ...)
   - HTMLFormElement.action
   - HTMLButtonElement.formAction
@@ -67,7 +69,7 @@ tags:
 ## Rule
 
 Treat attacker-controlled URLs as dangerous input.
-Do not pass browser input, form values, API data, or other attacker-controlled values into `href`, `formaction`, `action`, `window.location`, or similar navigation sinks without strict validation of the allowed protocol and destination.
+Do not pass browser input, form values, API data, or other attacker-controlled values into `href`, `src`, `formaction`, `action`, `window.location`, or similar navigation sinks without strict validation of the allowed protocol and destination.
 
 ## Mental Model
 
@@ -141,7 +143,7 @@ If the destination is user-controlled, validate the protocol and constrain navig
 
 Detection type: `dataflow`.
 
-- Candidate collection: search for assignments to `href`, `action`, `formAction`, `window.location`, and `window.open(...)`.
+- Candidate collection: search for assignments to `href`, `src`, `action`, `formAction`, `window.location`, and `window.open(...)`.
 - Candidate collection: find browser input sources such as URL values, `MessageEvent.data`, `window.name`, and attacker-influenced storage.
 - Confirmation: verify that attacker-controlled input can reach the sink and that the code does not strictly constrain protocol, destination, or route identity.
 - Give extra attention to code that copies a string directly into `href` or calls `setAttribute("href", value)` without URL parsing and allowlisting.

@@ -481,6 +481,7 @@
         ],
         "candidate_tokens": [
           "href",
+          "src",
           "setAttribute(\"href\"",
           "formAction",
           "window.location",
@@ -510,6 +511,7 @@
       ],
       "sinks": [
         "HTMLAnchorElement.href",
+        "HTMLIFrameElement.src",
         "Element.setAttribute(\"href\", ...)",
         "HTMLFormElement.action",
         "HTMLButtonElement.formAction",
