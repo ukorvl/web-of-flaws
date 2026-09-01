@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "last_verified": "2026-08-23",
+  "last_verified": "2026-09-02",
   "policy": {
     "default_action": "deny",
     "requirements": [
@@ -94,6 +94,13 @@
         "guide-references"
       ],
       "purpose": "Official GitHub documentation for Actions security, immutable releases, and workflow policy controls."
+    },
+    {
+      "domain": "git-scm.com",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official Git documentation for hooks, repository initialization, and configuration behavior."
     },
     {
       "domain": "example.com",

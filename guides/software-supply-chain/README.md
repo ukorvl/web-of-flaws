@@ -8,3 +8,7 @@ Software supply chain guides focus on compromised or insufficiently trusted depe
 - [Malicious npm Lifecycle Script](malicious-npm-lifecycle-script.md)
 - [Mutable Third-Party CI Action Executes Trusted Workflow](mutable-third-party-ci-action-executes-trusted-workflow.md)
 - [Untrusted Third-Party Script on Sensitive Page](untrusted-third-party-script-on-sensitive-page.md)
+
+## Notes
+
+- [Malicious Git Hooks](notes/malicious-git-hooks.md)
