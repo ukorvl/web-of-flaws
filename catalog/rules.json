@@ -74,6 +74,110 @@
       ]
     },
     {
+      "id": "WOF-XSS-001",
+      "path": "guides/injection/xss/attacker-controlled-browser-input-to-html-parsing-sink-dom-xss.md",
+      "title": "Attacker-controlled Browser Input to HTML Parsing Sink (DOM XSS)",
+      "kind": "vulnerability",
+      "default_severity": "high",
+      "exploitability": "high",
+      "standards": {
+        "cwe": [
+          "CWE-79"
+        ],
+        "owasp_top_10": [
+          "A05:2025 Injection"
+        ]
+      },
+      "platforms": [
+        "browser"
+      ],
+      "languages": [
+        "html",
+        "javascript",
+        "typescript"
+      ],
+      "detection": {
+        "type": "dataflow",
+        "methods": [
+          "grep",
+          "ast",
+          "taint-analysis",
+          "semantic-review"
+        ],
+        "candidate_tokens": [
+          "innerHTML",
+          "outerHTML",
+          "insertAdjacentHTML",
+          "document.write",
+          "dangerouslySetInnerHTML",
+          "v-html",
+          "location.search",
+          "location.hash",
+          "location.href",
+          "URLSearchParams",
+          "document.referrer",
+          "window.name",
+          "MessageEvent.data",
+          "localStorage.getItem(",
+          "sessionStorage.getItem("
+        ]
+      },
+      "sources": [
+        "window.location.search",
+        "window.location.hash",
+        "window.location.href",
+        "URLSearchParams",
+        "document.referrer",
+        "window.name",
+        "MessageEvent.data",
+        "localStorage.getItem()",
+        "sessionStorage.getItem()"
+      ],
+      "sinks": [
+        "Element.innerHTML",
+        "Element.outerHTML",
+        "Element.insertAdjacentHTML()",
+        "Document.write()"
+      ],
+      "tags": [
+        "xss",
+        "dom-xss",
+        "browser-input",
+        "html-parsing",
+        "raw-html"
+      ],
+      "references": [
+        {
+          "label": "MITRE CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+          "url": "https://cwe.mitre.org/data/definitions/79.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 A05: Injection",
+          "url": "https://owasp.org/Top10/2025/A05_2025-Injection/"
+        },
+        {
+          "label": "OWASP DOM based XSS Prevention Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html"
+        },
+        {
+          "label": "MDN: `Element.innerHTML`",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML"
+        },
+        {
+          "label": "MDN: `Node.textContent`",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent"
+        },
+        {
+          "label": "React docs: `dangerouslySetInnerHTML`",
+          "url": "https://react.dev/reference/react-dom/components/common#dangerously-setting-the-inner-html"
+        },
+        {
+          "label": "Vue Security Guide",
+          "url": "https://vuejs.org/guide/best-practices/security.html"
+        }
+      ]
+    },
+    {
       "id": "WOF-XSS-003",
       "path": "guides/injection/xss/attacker-controlled-html-to-window-document-property-lookup-dom-clobbering.md",
       "title": "Attacker-controlled HTML to `window`/`document` Property Lookup (DOM Clobbering)",
@@ -345,105 +449,9 @@
       ]
     },
     {
-      "id": "WOF-XSS-001",
-      "path": "guides/injection/xss/url-derived-input-to-html-sink-innerhtml.md",
-      "title": "URL-derived Input to HTML Sink (innerHTML)",
-      "kind": "vulnerability",
-      "default_severity": "high",
-      "exploitability": "high",
-      "standards": {
-        "cwe": [
-          "CWE-79"
-        ],
-        "owasp_top_10": [
-          "A05:2025 Injection"
-        ]
-      },
-      "platforms": [
-        "browser"
-      ],
-      "languages": [
-        "html",
-        "javascript",
-        "typescript"
-      ],
-      "detection": {
-        "type": "dataflow",
-        "methods": [
-          "grep",
-          "ast",
-          "taint-analysis",
-          "semantic-review"
-        ],
-        "candidate_tokens": [
-          "innerHTML",
-          "outerHTML",
-          "insertAdjacentHTML",
-          "document.write",
-          "dangerouslySetInnerHTML",
-          "v-html",
-          "location.search",
-          "location.hash",
-          "location.href",
-          "URLSearchParams",
-          "document.referrer"
-        ]
-      },
-      "sources": [
-        "window.location.search",
-        "window.location.hash",
-        "window.location.href",
-        "URLSearchParams",
-        "document.referrer"
-      ],
-      "sinks": [
-        "Element.innerHTML",
-        "Element.outerHTML",
-        "Element.insertAdjacentHTML()",
-        "Document.write()"
-      ],
-      "tags": [
-        "xss",
-        "dom-xss",
-        "url-input",
-        "query-params",
-        "innerhtml"
-      ],
-      "references": [
-        {
-          "label": "MITRE CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
-          "url": "https://cwe.mitre.org/data/definitions/79.html"
-        },
-        {
-          "label": "OWASP Top 10 2025 A05: Injection",
-          "url": "https://owasp.org/Top10/2025/A05_2025-Injection/"
-        },
-        {
-          "label": "OWASP DOM based XSS Prevention Cheat Sheet",
-          "url": "https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html"
-        },
-        {
-          "label": "MDN: `Element.innerHTML`",
-          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML"
-        },
-        {
-          "label": "MDN: `Node.textContent`",
-          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent"
-        },
-        {
-          "label": "React docs: `dangerouslySetInnerHTML`",
-          "url": "https://react.dev/reference/react-dom/components/common#dangerously-setting-the-inner-html"
-        },
-        {
-          "label": "Vue Security Guide",
-          "url": "https://vuejs.org/guide/best-practices/security.html"
-        }
-      ]
-    },
-    {
       "id": "WOF-XSS-002",
-      "path": "guides/injection/xss/url-derived-input-to-navigation-sink-javascript-url.md",
-      "title": "URL-derived Input to Navigation Sink (javascript: URL)",
+      "path": "guides/injection/xss/attacker-controlled-url-to-executable-navigation-sink-javascript-url.md",
+      "title": "Attacker-controlled URL to Executable Navigation Sink (javascript: URL)",
       "kind": "vulnerability",
       "default_severity": "medium",
       "exploitability": "medium",
@@ -482,7 +490,11 @@
           "location.hash",
           "location.href",
           "URLSearchParams",
-          "document.referrer"
+          "document.referrer",
+          "window.name",
+          "MessageEvent.data",
+          "localStorage.getItem(",
+          "sessionStorage.getItem("
         ]
       },
       "sources": [
@@ -490,7 +502,11 @@
         "window.location.hash",
         "window.location.href",
         "URLSearchParams",
-        "document.referrer"
+        "document.referrer",
+        "window.name",
+        "MessageEvent.data",
+        "localStorage.getItem()",
+        "sessionStorage.getItem()"
       ],
       "sinks": [
         "HTMLAnchorElement.href",
@@ -502,8 +518,9 @@
       ],
       "tags": [
         "xss",
+        "dom-xss",
         "javascript-protocol",
-        "url-input",
+        "browser-input",
         "navigation-sink",
         "href"
       ],

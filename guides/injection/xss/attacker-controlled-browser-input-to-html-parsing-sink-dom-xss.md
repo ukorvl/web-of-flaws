@@ -1,6 +1,6 @@
 ---
 id: WOF-XSS-001
-title: URL-derived Input to HTML Sink (innerHTML)
+title: Attacker-controlled Browser Input to HTML Parsing Sink (DOM XSS)
 kind: vulnerability
 default_severity: high
 exploitability: high
@@ -34,12 +34,20 @@ detection:
     - location.href
     - URLSearchParams
     - document.referrer
+    - window.name
+    - MessageEvent.data
+    - localStorage.getItem(
+    - sessionStorage.getItem(
 sources:
   - window.location.search
   - window.location.hash
   - window.location.href
   - URLSearchParams
   - document.referrer
+  - window.name
+  - MessageEvent.data
+  - localStorage.getItem()
+  - sessionStorage.getItem()
 sinks:
   - Element.innerHTML
   - Element.outerHTML
@@ -48,25 +56,25 @@ sinks:
 tags:
   - xss
   - dom-xss
-  - url-input
-  - query-params
-  - innerhtml
+  - browser-input
+  - html-parsing
+  - raw-html
 ---
 
 ## Rule
 
-Treat browser URL data as untrusted input.
-Do not pass data from `window.location.search`, `window.location.hash`, `URLSearchParams`, or equivalent URL APIs into HTML parsing sinks such as `innerHTML`, `outerHTML`, `insertAdjacentHTML`, or `document.write`.
+Treat attacker-controlled browser data as untrusted input.
+Do not pass URL values, cross-window messages, attacker-influenced client-side state, or equivalent browser input into HTML parsing sinks such as `innerHTML`, `outerHTML`, `insertAdjacentHTML`, or `document.write`.
 
 ## Mental Model
 
 This is a client-side dataflow rule.
-The browser URL is attacker-controlled, and HTML parsing sinks are execution boundaries: once untrusted data crosses that boundary as HTML instead of text, the browser may create executable DOM.
+An attacker controls browser-provided data, and HTML parsing sinks are execution boundaries: once untrusted data crosses that boundary as HTML instead of text, the browser may create executable DOM.
 
 ## Why This Matters
 
-Query strings, fragments, and related URL values are easy for an attacker to control and share with victims.
-If an application inserts those values into the DOM as HTML, the browser may parse attacker markup and execute JavaScript in the victim's session.
+Query strings, fragments, cross-window messages, and attacker-influenced client-side state can all carry attacker-controlled data.
+If an application inserts that data into the DOM as HTML, the browser may parse attacker markup and execute JavaScript in the victim's session.
 
 ## Vulnerable Pattern
 
@@ -92,7 +100,7 @@ https://example.com/welcome?name=%3Cimg%20src%3Dx%20onerror%3Dalert(document.dom
 ## Why The Attack Works
 
 1. The attacker controls the `name` query parameter.
-2. The page reads that value directly from the browser URL.
+2. The page reads that attacker-controlled value from browser input.
 3. The value is written into an HTML parsing sink.
 4. The browser interprets the attacker-controlled string as markup, not as inert text.
 5. The injected event handler executes JavaScript in the page context.
@@ -120,7 +128,8 @@ If HTML is truly required, sanitize it with a well-reviewed library and enforce 
 Detection type: `dataflow`.
 
 - Candidate collection: use grep or AST queries to find `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, and framework escape hatches such as `dangerouslySetInnerHTML` or `v-html`.
-- Confirmation: trace whether the sink can receive attacker-controlled URL data such as query parameters, fragments, `location.href`, or `document.referrer`.
+- Candidate collection: find browser input sources such as URL values, `MessageEvent.data`, `window.name`, and attacker-influenced storage.
+- Confirmation: trace whether attacker-controlled browser data can reach the sink without being converted to safe text or sanitized under a trusted policy.
 - Higher-confidence findings usually show the source and sink in the same function, component, or render path.
 - A scanner should find candidates; the agent or reviewer should confirm that untrusted data can actually reach the sink without being converted to safe text or sanitized under a trusted policy.
 
@@ -128,12 +137,12 @@ Detection type: `dataflow`.
 
 - Writing a constant template string such as `element.innerHTML = "<b>Welcome</b>"` is not the same issue because no attacker-controlled input crosses the sink.
 - A sink that only accepts `TrustedHTML` or the output of a vetted sanitizer under an enforced Trusted Types policy may be acceptable, though the policy and sanitization still need review.
-- Server-generated HTML fragments can still be dangerous, but they are not URL-derived DOM XSS unless attacker-controlled URL data can influence the fragment.
+- Server-generated HTML fragments can still be dangerous, but they are not this client-side DOM XSS rule unless attacker-controlled browser data can influence the fragment.
 
 ## Framework Notes
 
 React and Vue reduce this risk for normal text interpolation because they escape content by default.
-The risk returns when developers bypass those defaults with APIs such as React's `dangerouslySetInnerHTML` or Vue's `v-html`, especially if the value ultimately comes from URL-derived input.
+The risk returns when developers bypass those defaults with APIs such as React's `dangerouslySetInnerHTML` or Vue's `v-html`, especially if the value ultimately comes from attacker-controlled browser input.
 
 ## References
 
@@ -147,7 +156,7 @@ The risk returns when developers bypass those defaults with APIs such as React's
 
 ## Quick Checklist
 
-- URL-derived data never flows into HTML parsing sinks as a raw string.
+- Attacker-controlled browser data never flows into HTML parsing sinks as a raw string.
 - Plain text output uses `textContent`, text nodes, or an equivalent safe API.
 - Required HTML rendering uses sanitization and a narrowly scoped trust policy.
 - Findings are confirmed by actual source-to-sink flow, not by sink name alone.

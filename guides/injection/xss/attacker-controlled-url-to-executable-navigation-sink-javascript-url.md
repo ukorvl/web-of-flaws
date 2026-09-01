@@ -1,6 +1,6 @@
 ---
 id: WOF-XSS-002
-title: "URL-derived Input to Navigation Sink (javascript: URL)"
+title: "Attacker-controlled URL to Executable Navigation Sink (javascript: URL)"
 kind: vulnerability
 default_severity: medium
 exploitability: medium
@@ -34,12 +34,20 @@ detection:
     - location.href
     - URLSearchParams
     - document.referrer
+    - window.name
+    - MessageEvent.data
+    - localStorage.getItem(
+    - sessionStorage.getItem(
 sources:
   - window.location.search
   - window.location.hash
   - window.location.href
   - URLSearchParams
   - document.referrer
+  - window.name
+  - MessageEvent.data
+  - localStorage.getItem()
+  - sessionStorage.getItem()
 sinks:
   - HTMLAnchorElement.href
   - Element.setAttribute("href", ...)
@@ -49,21 +57,22 @@ sinks:
   - window.open()
 tags:
   - xss
+  - dom-xss
   - javascript-protocol
-  - url-input
+  - browser-input
   - navigation-sink
   - href
 ---
 
 ## Rule
 
-Treat untrusted data in URL-valued attributes as dangerous input.
-Do not reflect query parameters, form values, or other attacker-controlled data into `href`, `formaction`, `action`, `window.location`, or similar navigation sinks without strict validation of the allowed protocol and destination.
+Treat attacker-controlled URLs as dangerous input.
+Do not pass browser input, form values, API data, or other attacker-controlled values into `href`, `formaction`, `action`, `window.location`, or similar navigation sinks without strict validation of the allowed protocol and destination.
 
 ## Mental Model
 
-This is also a client-side dataflow rule, but the dangerous boundary is navigation rather than HTML parsing.
-If untrusted input reaches a navigation sink, the browser may interpret `javascript:` as executable code instead of as a normal destination.
+This is a client-side dataflow rule, but the dangerous boundary is executable URL navigation rather than HTML parsing.
+If an attacker-controlled URL reaches a navigation sink, the browser may interpret `javascript:` as executable code instead of as a normal destination.
 
 ## Why This Matters
 
@@ -132,7 +141,8 @@ If the destination is user-controlled, validate the protocol and constrain navig
 
 Detection type: `dataflow`.
 
-- Candidate collection: search for assignments to `href`, `src`, `action`, `formAction`, `window.location`, and `window.open(...)`.
+- Candidate collection: search for assignments to `href`, `action`, `formAction`, `window.location`, and `window.open(...)`.
+- Candidate collection: find browser input sources such as URL values, `MessageEvent.data`, `window.name`, and attacker-influenced storage.
 - Confirmation: verify that attacker-controlled input can reach the sink and that the code does not strictly constrain protocol, destination, or route identity.
 - Give extra attention to code that copies a string directly into `href` or calls `setAttribute("href", value)` without URL parsing and allowlisting.
 - A scanner should surface candidate navigation sinks; the agent or reviewer should confirm whether a dangerous protocol or untrusted destination can actually survive validation.
@@ -158,7 +168,7 @@ Bindings such as `<a href={next}>` in React or `<a :href="next">` in Vue can sti
 
 ## Quick Checklist
 
-- Untrusted input is not written directly into navigation sinks.
+- Attacker-controlled input is not written directly into navigation sinks.
 - Allowed destinations are constrained by protocol and, when appropriate, by origin or route allowlist.
 - `javascript:` and other unsafe schemes are rejected before navigation occurs.
 - Findings are confirmed by actual source-to-sink flow, not by the presence of `href` alone.
