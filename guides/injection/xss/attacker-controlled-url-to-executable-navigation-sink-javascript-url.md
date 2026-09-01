@@ -1,6 +1,6 @@
 ---
 id: WOF-XSS-002
-title: "Attacker-controlled URL to Executable Navigation Sink (javascript: URL)"
+title: "Attacker-controlled URL to Executable URL Sink (javascript: URL)"
 kind: vulnerability
 default_severity: medium
 exploitability: medium
@@ -69,14 +69,14 @@ tags:
   - dom-xss
   - javascript-protocol
   - browser-input
-  - navigation-sink
+  - executable-url-sink
   - href
 ---
 
 ## Rule
 
 Treat attacker-controlled URLs as dangerous input.
-Do not pass browser input, form values, API response fields that can contain attacker-controlled data, or other attacker-controlled values into `href`, `src`, `formaction`, `action`, `window.location`, or similar navigation sinks without strict validation of the allowed protocol and destination.
+Do not pass browser input, form values, API response fields that can contain attacker-controlled data, or other attacker-controlled values into executable URL sinks unless strict validation rejects executable URL schemes such as `javascript:`.
 
 ## Mental Model
 
@@ -118,7 +118,7 @@ https://example.com/complete-profile?next=javascript:alert(document.domain)
 
 ## Safer Pattern
 
-If the destination is user-controlled, validate the protocol and constrain navigation to trusted locations.
+If the destination is user-controlled, validate the allowed protocol before assigning it to an executable URL sink.
 
 ```html
 <a id="continue-link" href="/account">Continue</a>
@@ -133,11 +133,10 @@ If the destination is user-controlled, validate the protocol and constrain navig
       const candidate = new URL(next, window.location.origin);
       const isSafeProtocol =
         candidate.protocol === "http:" || candidate.protocol === "https:";
-      const isSameOrigin = candidate.origin === window.location.origin;
 
-      if (isSafeProtocol && isSameOrigin) {
-        // Safe: reduce the final value to a same-origin path.
-        link.href = candidate.pathname + candidate.search + candidate.hash;
+      if (isSafeProtocol) {
+        // Safe for this rule: executable schemes such as javascript: are rejected.
+        link.href = candidate.href;
       }
     } catch {
       // Ignore invalid URLs and keep the default safe destination.
@@ -153,17 +152,17 @@ Detection type: `dataflow`.
 - Candidate collection: search for assignments to `href`, `src`, `action`, `formAction`, `window.location`, and `window.open(...)`.
 - Candidate collection: find browser input sources such as URL values, message event payloads, `window.name`, and client-side storage whose values can be traced to attacker-controlled writes.
 - Candidate collection: find API response reads such as `fetch(...)`, `response.json()`, and `response.text()` when the response can contain attacker-controlled values.
-- Confirmation: verify that attacker-controlled input can reach the sink and that the code does not strictly constrain protocol, destination, or route identity.
+- Confirmation: verify that attacker-controlled input can reach the sink and that an executable scheme such as `javascript:` can survive validation.
 - Confirmation: for message event payloads, first check whether the handler rejects all but exact allowlisted `event.origin` values and, where applicable, the expected `event.source`. Missing or ineffective validation makes `event.data` attacker-controlled; if validation works, determine whether an allowed sender can independently forward attacker-controlled data.
 - Confirmation: for `HTMLIFrameElement.src`, check the effective `sandbox` configuration. A sandbox without `allow-scripts` blocks script execution; when scripts are allowed, a missing `allow-same-origin` still prevents same-origin access to the parent.
 - Give extra attention to code that copies a string directly into `href` or calls `setAttribute("href", value)` without URL parsing and allowlisting.
-- A scanner should surface candidate navigation sinks; the agent or reviewer should confirm whether a dangerous protocol or untrusted destination can actually survive validation.
+- A scanner should surface candidate executable URL sinks; the agent or reviewer should confirm whether a dangerous protocol can actually survive validation.
 
 ## False Positives
 
 - Assigning a constant route such as `link.href = "/account"` is not this issue.
 - Selecting from a fixed allowlist of known route IDs and then mapping those IDs to hard-coded paths is usually acceptable.
-- A dynamic destination may still be safe if the code parses it as a URL, restricts it to `http:` or `https:`, and constrains it to trusted origins or relative routes.
+- A dynamic destination is not `javascript:` XSS if the code parses it as a URL and restricts it to non-executable protocols such as `http:` or `https:`. Whether an external destination is acceptable is a separate navigation or open-redirect policy decision.
 - A message handler that validates an exact trusted origin and expected sender window before using `event.data` at the sink is not this issue unless the allowed sender can independently forward attacker-controlled content.
 - Client-side storage that contains only internally generated preferences or route identifiers is not attacker-controlled input.
 - An iframe with an effective sandbox that lacks `allow-scripts` cannot execute a `javascript:` URL, though later code can change the sandbox configuration.
@@ -185,6 +184,6 @@ Bindings such as `<a href={next}>` in React or `<a :href="next">` in Vue can sti
 ## Quick Checklist
 
 - Attacker-controlled input is not written directly into navigation sinks.
-- Allowed destinations are constrained by protocol and, when appropriate, by origin or route allowlist.
+- Allowed protocols exclude `javascript:` and other executable schemes.
 - `javascript:` and other unsafe schemes are rejected before navigation occurs.
 - Findings are confirmed by actual source-to-sink flow, not by the presence of `href` alone.

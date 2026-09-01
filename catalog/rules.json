@@ -459,7 +459,7 @@
     {
       "id": "WOF-XSS-002",
       "path": "guides/injection/xss/attacker-controlled-url-to-executable-navigation-sink-javascript-url.md",
-      "title": "Attacker-controlled URL to Executable Navigation Sink (javascript: URL)",
+      "title": "Attacker-controlled URL to Executable URL Sink (javascript: URL)",
       "kind": "vulnerability",
       "default_severity": "medium",
       "exploitability": "medium",
@@ -538,7 +538,7 @@
         "dom-xss",
         "javascript-protocol",
         "browser-input",
-        "navigation-sink",
+        "executable-url-sink",
         "href"
       ],
       "references": [
