@@ -51,8 +51,8 @@ sources:
   - document.referrer
   - window.name
   - MessageEvent.data
-  - localStorage.getItem()
-  - sessionStorage.getItem()
+  - "`localStorage.getItem()` values previously written from attacker-controlled input"
+  - "`sessionStorage.getItem()` values previously written from attacker-controlled input"
   - "`Response.json()` values from APIs that can return attacker-controlled data"
   - "`Response.text()` values from APIs that can return attacker-controlled data"
 sinks:
@@ -150,7 +150,7 @@ If the destination is user-controlled, validate the protocol and constrain navig
 Detection type: `dataflow`.
 
 - Candidate collection: search for assignments to `href`, `src`, `action`, `formAction`, `window.location`, and `window.open(...)`.
-- Candidate collection: find browser input sources such as URL values, message event payloads, `window.name`, and attacker-influenced storage.
+- Candidate collection: find browser input sources such as URL values, message event payloads, `window.name`, and client-side storage whose values can be traced to attacker-controlled writes.
 - Candidate collection: find API response reads such as `fetch(...)`, `response.json()`, and `response.text()` when the response can contain attacker-controlled values.
 - Confirmation: verify that attacker-controlled input can reach the sink and that the code does not strictly constrain protocol, destination, or route identity.
 - Confirmation: for message event payloads, first check whether the handler rejects all but exact allowlisted `event.origin` values and, where applicable, the expected `event.source`. Missing or ineffective validation makes `event.data` attacker-controlled; if validation works, determine whether an allowed sender can independently forward attacker-controlled data.
@@ -163,6 +163,7 @@ Detection type: `dataflow`.
 - Selecting from a fixed allowlist of known route IDs and then mapping those IDs to hard-coded paths is usually acceptable.
 - A dynamic destination may still be safe if the code parses it as a URL, restricts it to `http:` or `https:`, and constrains it to trusted origins or relative routes.
 - A message handler that validates an exact trusted origin and expected sender window before using `event.data` at the sink is not this issue unless the allowed sender can independently forward attacker-controlled content.
+- Client-side storage that contains only internally generated preferences or route identifiers is not attacker-controlled input.
 
 ## Framework Notes
 

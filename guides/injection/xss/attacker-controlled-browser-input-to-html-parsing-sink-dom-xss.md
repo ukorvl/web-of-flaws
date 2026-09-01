@@ -47,8 +47,8 @@ sources:
   - document.referrer
   - window.name
   - MessageEvent.data
-  - localStorage.getItem()
-  - sessionStorage.getItem()
+  - "`localStorage.getItem()` values previously written from attacker-controlled input"
+  - "`sessionStorage.getItem()` values previously written from attacker-controlled input"
 sinks:
   - Element.innerHTML
   - Element.outerHTML
@@ -129,7 +129,7 @@ If HTML is truly required, sanitize it with a well-reviewed library and enforce 
 Detection type: `dataflow`.
 
 - Candidate collection: use grep or AST queries to find `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, and framework escape hatches such as `dangerouslySetInnerHTML` or `v-html`.
-- Candidate collection: find browser input sources such as URL values, message event payloads, `window.name`, and attacker-influenced storage.
+- Candidate collection: find browser input sources such as URL values, message event payloads, `window.name`, and client-side storage whose values can be traced to attacker-controlled writes.
 - Confirmation: trace whether attacker-controlled browser data can reach the sink without being converted to safe text or sanitized under a trusted policy.
 - Confirmation: for message event payloads, first check whether the handler rejects all but exact allowlisted `event.origin` values and, where applicable, the expected `event.source`. Missing or ineffective validation makes `event.data` attacker-controlled; if validation works, determine whether an allowed sender can independently forward attacker-controlled data.
 - Higher-confidence findings usually show the source and sink in the same function, component, or render path.
@@ -141,6 +141,7 @@ Detection type: `dataflow`.
 - A sink that only accepts `TrustedHTML` or the output of a vetted sanitizer under an enforced Trusted Types policy may be acceptable, though the policy and sanitization still need review.
 - Server-generated HTML fragments can still be dangerous, but they are not this client-side DOM XSS rule unless attacker-controlled browser data can influence the fragment.
 - A message handler that validates an exact trusted origin and expected sender window before using `event.data` at the sink is not this issue unless the allowed sender can independently forward attacker-controlled content.
+- Client-side storage that contains only internally generated preferences or route identifiers is not attacker-controlled input.
 
 ## Framework Notes
 

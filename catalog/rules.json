@@ -131,8 +131,8 @@
         "document.referrer",
         "window.name",
         "MessageEvent.data",
-        "localStorage.getItem()",
-        "sessionStorage.getItem()"
+        "`localStorage.getItem()` values previously written from attacker-controlled input",
+        "`sessionStorage.getItem()` values previously written from attacker-controlled input"
       ],
       "sinks": [
         "Element.innerHTML",
@@ -511,8 +511,8 @@
         "document.referrer",
         "window.name",
         "MessageEvent.data",
-        "localStorage.getItem()",
-        "sessionStorage.getItem()",
+        "`localStorage.getItem()` values previously written from attacker-controlled input",
+        "`sessionStorage.getItem()` values previously written from attacker-controlled input",
         "`Response.json()` values from APIs that can return attacker-controlled data",
         "`Response.text()` values from APIs that can return attacker-controlled data"
       ],
