@@ -117,7 +117,8 @@
           "URLSearchParams",
           "document.referrer",
           "window.name",
-          "MessageEvent.data",
+          "addEventListener(\"message\"",
+          "event.data",
           "localStorage.getItem(",
           "sessionStorage.getItem("
         ]
@@ -493,7 +494,8 @@
           "URLSearchParams",
           "document.referrer",
           "window.name",
-          "MessageEvent.data",
+          "addEventListener(\"message\"",
+          "event.data",
           "localStorage.getItem(",
           "sessionStorage.getItem("
         ]

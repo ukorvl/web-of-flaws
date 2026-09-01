@@ -36,7 +36,8 @@ detection:
     - URLSearchParams
     - document.referrer
     - window.name
-    - MessageEvent.data
+    - addEventListener("message"
+    - event.data
     - localStorage.getItem(
     - sessionStorage.getItem(
 sources:
@@ -144,7 +145,7 @@ If the destination is user-controlled, validate the protocol and constrain navig
 Detection type: `dataflow`.
 
 - Candidate collection: search for assignments to `href`, `src`, `action`, `formAction`, `window.location`, and `window.open(...)`.
-- Candidate collection: find browser input sources such as URL values, `MessageEvent.data`, `window.name`, and attacker-influenced storage.
+- Candidate collection: find browser input sources such as URL values, message event payloads, `window.name`, and attacker-influenced storage.
 - Confirmation: verify that attacker-controlled input can reach the sink and that the code does not strictly constrain protocol, destination, or route identity.
 - Give extra attention to code that copies a string directly into `href` or calls `setAttribute("href", value)` without URL parsing and allowlisting.
 - A scanner should surface candidate navigation sinks; the agent or reviewer should confirm whether a dangerous protocol or untrusted destination can actually survive validation.

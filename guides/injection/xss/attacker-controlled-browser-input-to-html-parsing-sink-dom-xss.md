@@ -35,7 +35,8 @@ detection:
     - URLSearchParams
     - document.referrer
     - window.name
-    - MessageEvent.data
+    - addEventListener("message"
+    - event.data
     - localStorage.getItem(
     - sessionStorage.getItem(
 sources:
@@ -128,7 +129,7 @@ If HTML is truly required, sanitize it with a well-reviewed library and enforce 
 Detection type: `dataflow`.
 
 - Candidate collection: use grep or AST queries to find `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, and framework escape hatches such as `dangerouslySetInnerHTML` or `v-html`.
-- Candidate collection: find browser input sources such as URL values, `MessageEvent.data`, `window.name`, and attacker-influenced storage.
+- Candidate collection: find browser input sources such as URL values, message event payloads, `window.name`, and attacker-influenced storage.
 - Confirmation: trace whether attacker-controlled browser data can reach the sink without being converted to safe text or sanitized under a trusted policy.
 - Higher-confidence findings usually show the source and sink in the same function, component, or render path.
 - A scanner should find candidates; the agent or reviewer should confirm that untrusted data can actually reach the sink without being converted to safe text or sanitized under a trusted policy.
