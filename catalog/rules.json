@@ -156,6 +156,96 @@
       ]
     },
     {
+      "id": "WOF-XSS-005",
+      "path": "guides/injection/xss/attacker-controlled-persisted-content-to-html-response-stored-xss.md",
+      "title": "Attacker-controlled Persisted Content to HTML Response (Stored XSS)",
+      "kind": "vulnerability",
+      "default_severity": "high",
+      "exploitability": "high",
+      "standards": {
+        "cwe": [
+          "CWE-79"
+        ],
+        "owasp_top_10": [
+          "A05:2025 Injection"
+        ]
+      },
+      "platforms": [
+        "server",
+        "browser"
+      ],
+      "languages": [
+        "html",
+        "javascript",
+        "typescript",
+        "python"
+      ],
+      "detection": {
+        "type": "dataflow",
+        "methods": [
+          "grep",
+          "ast",
+          "taint-analysis",
+          "semantic-review"
+        ],
+        "candidate_tokens": [
+          "req.body",
+          "request.form",
+          "request.POST",
+          ".create(",
+          ".save(",
+          ".insert(",
+          ".update(",
+          ".upsert(",
+          "res.send(",
+          "res.write(",
+          "res.end(",
+          "res.render(",
+          "render_template(",
+          "<%-",
+          "{{{",
+          "|safe"
+        ]
+      },
+      "sources": [
+        "user-created comments, reviews, profile fields, posts, and messages",
+        "attacker-controlled request bodies and form fields",
+        "imported content from attacker-controlled files or integrations",
+        "application logs or audit records that contain attacker-controlled values"
+      ],
+      "sinks": [
+        "HTML responses that render persisted attacker-controlled content",
+        "unescaped template output such as `{{{ ... }}}`, `<%- ... %>`, or `|safe`",
+        "raw HTML rendering helpers fed by stored values"
+      ],
+      "tags": [
+        "xss",
+        "stored-xss",
+        "persistent-xss",
+        "server-side",
+        "persisted-content",
+        "html-response"
+      ],
+      "references": [
+        {
+          "label": "MITRE CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+          "url": "https://cwe.mitre.org/data/definitions/79.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 A05: Injection",
+          "url": "https://owasp.org/Top10/2025/A05_2025-Injection/"
+        },
+        {
+          "label": "OWASP Cross Site Scripting Prevention Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"
+        },
+        {
+          "label": "OWASP: Testing for Stored Cross Site Scripting",
+          "url": "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/02-Testing_for_Stored_Cross_Site_Scripting"
+        }
+      ]
+    },
+    {
       "id": "WOF-XSS-004",
       "path": "guides/injection/xss/attacker-controlled-request-input-to-html-response-reflected-xss.md",
       "title": "Attacker-controlled Request Input to HTML Response (Reflected XSS)",
