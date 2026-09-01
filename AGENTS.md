@@ -26,6 +26,7 @@ Repository supports nested agent docs structure. If you encounter nested `AGENTS
 
 - Follow [CONTRIBUTING.md](CONTRIBUTING.md) for the canonical repository rules on guide structure, validation commands, generated files, labels, and contributor workflow.
 - If you change guides, generated files, or link allowlists, run the checks required by `CONTRIBUTING.md` before marking the task done and report anything you could not verify.
+- The generate code should be clean and human-readable with no unnecessary whitespace or formatting issues. Code should be structured in a way that is easy to understand and follow.
 
 ### Other resources
 
