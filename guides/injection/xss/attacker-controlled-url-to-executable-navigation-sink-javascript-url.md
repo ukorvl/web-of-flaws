@@ -40,6 +40,9 @@ detection:
     - event.data
     - localStorage.getItem(
     - sessionStorage.getItem(
+    - fetch(
+    - response.json()
+    - response.text()
 sources:
   - window.location.search
   - window.location.hash
@@ -50,6 +53,8 @@ sources:
   - MessageEvent.data
   - localStorage.getItem()
   - sessionStorage.getItem()
+  - "`Response.json()` values from APIs that can return attacker-controlled data"
+  - "`Response.text()` values from APIs that can return attacker-controlled data"
 sinks:
   - HTMLAnchorElement.href
   - HTMLIFrameElement.src
@@ -70,7 +75,7 @@ tags:
 ## Rule
 
 Treat attacker-controlled URLs as dangerous input.
-Do not pass browser input, form values, API data, or other attacker-controlled values into `href`, `src`, `formaction`, `action`, `window.location`, or similar navigation sinks without strict validation of the allowed protocol and destination.
+Do not pass browser input, form values, API response fields that can contain attacker-controlled data, or other attacker-controlled values into `href`, `src`, `formaction`, `action`, `window.location`, or similar navigation sinks without strict validation of the allowed protocol and destination.
 
 ## Mental Model
 
@@ -146,6 +151,7 @@ Detection type: `dataflow`.
 
 - Candidate collection: search for assignments to `href`, `src`, `action`, `formAction`, `window.location`, and `window.open(...)`.
 - Candidate collection: find browser input sources such as URL values, message event payloads, `window.name`, and attacker-influenced storage.
+- Candidate collection: find API response reads such as `fetch(...)`, `response.json()`, and `response.text()` when the response can contain attacker-controlled values.
 - Confirmation: verify that attacker-controlled input can reach the sink and that the code does not strictly constrain protocol, destination, or route identity.
 - Confirmation: for message event payloads, first check whether the handler rejects all but exact allowlisted `event.origin` values and, where applicable, the expected `event.source`. Missing or ineffective validation makes `event.data` attacker-controlled; if validation works, determine whether an allowed sender can independently forward attacker-controlled data.
 - Give extra attention to code that copies a string directly into `href` or calls `setAttribute("href", value)` without URL parsing and allowlisting.
