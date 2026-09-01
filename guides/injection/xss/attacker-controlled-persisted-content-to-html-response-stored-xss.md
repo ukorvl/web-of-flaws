@@ -87,7 +87,7 @@ An attacker may target a page likely to be visited by a privileged user, then us
 app.post("/comments", async (req, res) => {
   const body = typeof req.body.body === "string" ? req.body.body : "";
 
-  // Problem: untrusted content is persisted unchanged.
+  // Storage preserves the untrusted value; it does not establish trust.
   await db.comments.create({ body });
   res.redirect("/comments");
 });
@@ -113,7 +113,7 @@ When another user later visits the comments page, the server inserts the saved v
 ## Why The Attack Works
 
 1. The attacker controls a value accepted by the application.
-2. The application stores that value without preserving it as inert text or applying a trusted rich-text policy.
+2. The value crosses a persistence boundary, which does not make it trusted.
 3. A later request retrieves the saved value.
 4. The application places it into an executable browser parsing context.
 5. Every viewer of the affected page can execute the attacker's code in their own session.
