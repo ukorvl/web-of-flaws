@@ -143,7 +143,9 @@
         "Element.innerHTML",
         "Element.outerHTML",
         "Element.insertAdjacentHTML()",
-        "Document.write()"
+        "Document.write()",
+        "React.dangerouslySetInnerHTML",
+        "Vue.v-html"
       ],
       "tags": [
         "xss",

@@ -59,6 +59,8 @@ sinks:
   - Element.outerHTML
   - Element.insertAdjacentHTML()
   - Document.write()
+  - React.dangerouslySetInnerHTML
+  - Vue.v-html
 tags:
   - xss
   - dom-xss
