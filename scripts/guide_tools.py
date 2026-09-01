@@ -50,7 +50,7 @@ DETECTION_TYPES = {"dataflow", "semantic-pattern"}
 DETECTION_METHODS = {"grep", "ast", "taint-analysis", "semantic-review", "entropy-analysis"}
 DETECTION_KEYS = {"type", "methods", "candidate_tokens"}
 CWE_ID_RE = re.compile(r"^CWE-\d+$")
-OWASP_TOP_10_RE = re.compile(r"^(A\d{2}):(\d{4}) (.+)$")
+OWASP_TOP_10_RE = re.compile(r"^([AX]\d{2}):(\d{4}) (.+)$")
 URL_RE = re.compile(r"(?:https?:)?//[^\s)>`]+", re.IGNORECASE)
 MARKDOWN_LINK_RE = re.compile(r"\[([^\]]+)\]\(((?:https?:)?//[^)\s]+)\)", re.IGNORECASE)
 CODE_FENCE_RE = re.compile(r"^([`~]{3,})")
@@ -322,7 +322,7 @@ def validate_frontmatter(frontmatter: dict, path: Path) -> list[str]:
         else:
             for entry in owasp:
                 if not isinstance(entry, str) or not OWASP_TOP_10_RE.fullmatch(entry):
-                    errors.append(f"{path}: OWASP Top 10 value {entry!r} must match ^A\\d{{2}}:\\d{{4}} .+$")
+                    errors.append(f"{path}: OWASP Top 10 value {entry!r} must match ^[AX]\\d{{2}}:\\d{{4}} .+$")
 
     detection = frontmatter.get("detection")
     if not isinstance(detection, dict):

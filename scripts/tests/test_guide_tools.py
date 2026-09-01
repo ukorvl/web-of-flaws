@@ -293,7 +293,44 @@ class GuideToolsTests(TestCase):
 
         self.assertIn("guide.md: unexpected standards keys: whatever", errors)
         self.assertIn("guide.md: CWE value 'banana' must match ^CWE-\\d+$", errors)
-        self.assertIn("guide.md: OWASP Top 10 value 'banana' must match ^A\\d{2}:\\d{4} .+$", errors)
+        self.assertIn("guide.md: OWASP Top 10 value 'banana' must match ^[AX]\\d{2}:\\d{4} .+$", errors)
+
+    def test_validate_frontmatter_accepts_x_series_owasp_category(self) -> None:
+        frontmatter = guide_tools.parse_yaml_mapping(
+            dedent(
+                """
+                id: WOF-REDOS-001
+                title: Attacker-controlled Input to Inefficient Regular Expression
+                kind: vulnerability
+                default_severity: medium
+                exploitability: high
+                standards:
+                  cwe:
+                    - CWE-1333
+                  owasp_top_10:
+                    - "X01:2025 Lack of Application Resilience"
+                platforms:
+                  - server
+                languages:
+                  - javascript
+                detection:
+                  type: dataflow
+                  methods:
+                    - grep
+                sources:
+                  - req.body
+                sinks:
+                  - RegExp.prototype.test()
+                tags:
+                  - redos
+                """
+            ).lstrip(),
+            Path("guide.md"),
+        )
+
+        errors = guide_tools.validate_frontmatter(frontmatter, Path("guide.md"))
+
+        self.assertNotIn("OWASP Top 10 value", "\n".join(errors))
 
     def test_rendered_urls_matches_uppercase_schemes_and_ignores_tilde_fences(self) -> None:
         markdown = """

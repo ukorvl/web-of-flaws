@@ -41,6 +41,9 @@ def expected_owasp_top_10_reference(entry: str) -> str | None:
     if not match:
         return None
     category, year, title = match.groups()
+    if category.startswith("X"):
+        # OWASP 2025 "Next Steps" entries currently share one canonical page.
+        return f"https://owasp.org/Top10/{year}/X01_{year}-Next_Steps/"
     title_slug = re.sub(r"\s+", "_", title.strip())
     return f"https://owasp.org/Top10/{year}/{category}_{year}-{title_slug}/"
 
