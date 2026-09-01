@@ -913,8 +913,8 @@
     {
       "id": "WOF-SUPPLY-006",
       "path": "guides/software-supply-chain/dynamic-package-installation-or-unpinned-dependency-resolution-in-ci.md",
-      "title": "Dynamic Package Installation or Unpinned Dependency Resolution in CI",
-      "kind": "vulnerability",
+      "title": "Mutable Dependency Resolution in Trusted CI",
+      "kind": "hardening-gap",
       "default_severity": "medium",
       "exploitability": "medium",
       "standards": {
@@ -948,16 +948,14 @@
           "npm exec",
           "npx",
           "@latest",
-          "package-lock.json",
-          "^",
-          "~"
+          "package-lock.json"
         ]
       },
       "indicators": [
-        "CI steps that run `npm install <pkg>@latest`, `npm i <pkg>@latest`, `npx <pkg>`, or `npm exec` against packages that are not already pinned and locked in the repository",
-        "workflows that regenerate or rewrite `package-lock.json`, or that run `npm install` from dependency ranges such as `^`, `~`, `*`, dist-tags, or mutable git refs",
+        "CI steps that run `npm install <pkg>@latest`, `npm i <pkg>@latest`, `npx <pkg>`, or `npm exec` against packages that are not available in the repository's reviewed lockfile",
+        "workflows that remove, regenerate, or rewrite `package-lock.json`, or that use `npm install` without consuming a reviewed in-sync lockfile",
         "release, build, signing, publish, or artifact-generation jobs whose outputs depend on live npm registry resolution at workflow runtime",
-        "pull requests that widen dependency specs, remove exact pins, or replace `npm ci` with mutable install flows in trusted automation"
+        "pull requests that remove lockfile enforcement or replace `npm ci` with mutable install flows in trusted automation"
       ],
       "tags": [
         "supply-chain",
