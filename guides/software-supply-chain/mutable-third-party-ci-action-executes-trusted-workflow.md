@@ -1,6 +1,6 @@
 ---
 id: WOF-SUPPLY-002
-title: "Mutable Third-Party CI Action Executes Trusted Workflow"
+title: "Unverified Third-Party CI Action Executes Trusted Workflow"
 kind: vulnerability
 default_severity: high
 exploitability: medium
@@ -24,10 +24,11 @@ detection:
     - "uses:"
     - "@main"
     - "@master"
-    - "@v"
+    - "@v1"
+    - "@v1."
     - "permissions:"
 indicators:
-  - workflow steps that use third-party actions by branch or mutable tag instead of a full commit SHA
+  - workflow steps that use third-party actions by branch, rolling tag, or an unverified version tag instead of a full commit SHA or a verified immutable release tag
   - release, deploy, publish, signing, or artifact jobs that execute mutable external actions with secrets or write permissions
   - workflows that rely on broad `GITHUB_TOKEN` or cloud credentials while importing actions from repositories outside the organization
   - pull requests that change `uses:` targets, action owners, or action version refs without pinning to an immutable commit
@@ -41,15 +42,16 @@ tags:
 
 ## Rule
 
-Treat third-party GitHub Actions as untrusted code until pinned to an immutable revision.
-Do not run third-party actions from mutable refs such as branches or movable tags in trusted workflows; pin them to a full commit SHA before they can access secrets, write tokens, releases, or deployment paths.
+Treat third-party GitHub Actions as untrusted code until their revision is verified as immutable.
+Do not run third-party actions from branches, rolling tags, or unverified version tags in trusted workflows; pin them to a full commit SHA before they can access secrets, write tokens, releases, or deployment paths.
+An action's release-specific tag can be an alternative only when the action repository uses GitHub immutable releases and that release is verified.
 
 ## Mental Model
 
 ```text
 third-party action ref
       ↓
-branch or movable tag changes
+branch, rolling tag, or unverified release tag changes
       ↓
 trusted CI workflow execution
       ↓
@@ -64,8 +66,9 @@ When a job executes an external action, it is importing and running third-party 
 ## Why This Matters
 
 Trusted CI jobs often hold deployment credentials, package publishing tokens, signing keys, artifact upload rights, or repository write access.
-If a workflow references `some-org/action@main` or a mutable tag such as `@v1`, the action code can change after review without the workflow file changing again.
-That turns action compromise, tag retargeting, or maintainer account takeover into immediate workflow code execution.
+If a workflow references `some-org/action@main` or a rolling tag such as `@v1`, the action code can change after review without the workflow file changing again.
+Version-specific tags such as `@v1.2.3` require verification: they are immutable only when tied to a GitHub immutable release.
+Without that verification, tag retargeting or maintainer account takeover can turn into immediate workflow code execution.
 
 ## Vulnerable Pattern
 
@@ -115,6 +118,7 @@ jobs:
 ## Safer Pattern
 
 Pin third-party actions to a full commit SHA, reduce workflow permissions, and review ref changes as code execution changes.
+If using a release-specific tag instead, verify that it belongs to a GitHub immutable release before treating it as immutable.
 
 ```yaml
 name: release
@@ -148,9 +152,10 @@ If a team intentionally keeps a GitHub-authored action such as `actions/checkout
 
 Detection type: `semantic-pattern`.
 
-- Candidate collection: inspect workflow YAML for `uses:` steps that reference external actions by branch names such as `main` or `master`, or by tags such as `v1`, `v2`, or `latest`, instead of a full commit SHA.
+- Candidate collection: inspect workflow YAML for `uses:` steps that reference external actions by branch names such as `main` or `master`, rolling tags such as `v1`, `v2`, or `latest`, or version-specific tags that have not been verified as immutable releases.
 - Candidate collection: diff `.github/workflows/*.yml` changes for action owner changes, repo changes, or ref changes, especially in release, deploy, publish, signing, or artifact workflows.
-- Confirmation: verify that the referenced action is third-party or otherwise mutable and that the workflow gives that action step a privileged effect such as explicit secret access, write-scoped `GITHUB_TOKEN`, cloud credentials, artifact publishing, deployment execution, or release modification.
+- Confirmation: verify that the referenced action is third-party or otherwise mutable or unverified and that the workflow gives that action step a privileged effect such as explicit secret access, write-scoped `GITHUB_TOKEN`, cloud credentials, artifact publishing, deployment execution, or release modification.
+- Confirmation: resolve the ref type. A full commit SHA is immutable; branch refs and rolling tags are mutable. A version-specific tag is acceptable only when it is tied to a verified immutable GitHub release.
 - High-confidence signals include mutable third-party actions in jobs with `contents: write`, `packages: write`, OIDC cloud login, signing steps, production deploys, or publish credentials.
 - GitHub-authored actions such as `actions/*` or `github/*` may be treated by some teams as lower-risk warnings when pinned only to major tags, but GitHub still documents full-length commit SHA pinning as the immutable option and repository or organization policy can require SHAs even for GitHub-authored actions.
 - A scanner should surface mutable action refs and privileged workflow contexts; the agent or reviewer should confirm whether the ref is third-party, whether the workflow is trusted, and whether policy or risk acceptance allows a non-SHA exception.
@@ -158,6 +163,7 @@ Detection type: `semantic-pattern`.
 ## False Positives
 
 - A third-party action pinned to a full commit SHA is usually not this rule, even if the repository also publishes mutable tags.
+- A version-specific tag tied to a verified GitHub immutable release is not this rule, though a full commit SHA remains the simplest way to verify the exact code revision.
 - Local actions such as `uses: ./.github/actions/build` are not third-party imports, though they still deserve ordinary code review.
 - A mutable ref in a low-privilege, secret-free workflow may be lower priority, but it is still a trust-boundary warning if the action comes from outside the repository.
 - Some organizations intentionally allow GitHub-authored actions by tag under a documented exception policy; treat that as a warning or policy exception rather than an automatically safe pattern.
@@ -178,7 +184,7 @@ The same trust boundary appears in other CI systems whenever a pipeline imports 
 
 ## Quick Checklist
 
-- Third-party GitHub Actions are pinned to full commit SHAs in trusted workflows.
+- Third-party GitHub Actions are pinned to full commit SHAs, or use verified immutable release tags, in trusted workflows.
 - Action ref changes are reviewed with the same care as code execution changes.
 - Release, deploy, signing, and publish jobs minimize `GITHUB_TOKEN` permissions and secret exposure.
 - Mutable refs in GitHub-authored actions are documented as explicit warnings or policy exceptions, not silently assumed safe.

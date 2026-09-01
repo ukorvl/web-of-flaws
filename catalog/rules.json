@@ -1093,7 +1093,7 @@
     {
       "id": "WOF-SUPPLY-002",
       "path": "guides/software-supply-chain/mutable-third-party-ci-action-executes-trusted-workflow.md",
-      "title": "Mutable Third-Party CI Action Executes Trusted Workflow",
+      "title": "Unverified Third-Party CI Action Executes Trusted Workflow",
       "kind": "vulnerability",
       "default_severity": "high",
       "exploitability": "medium",
@@ -1125,12 +1125,13 @@
           "uses:",
           "@main",
           "@master",
-          "@v",
+          "@v1",
+          "@v1.",
           "permissions:"
         ]
       },
       "indicators": [
-        "workflow steps that use third-party actions by branch or mutable tag instead of a full commit SHA",
+        "workflow steps that use third-party actions by branch, rolling tag, or an unverified version tag instead of a full commit SHA or a verified immutable release tag",
         "release, deploy, publish, signing, or artifact jobs that execute mutable external actions with secrets or write permissions",
         "workflows that rely on broad `GITHUB_TOKEN` or cloud credentials while importing actions from repositories outside the organization",
         "pull requests that change `uses:` targets, action owners, or action version refs without pinning to an immutable commit"
