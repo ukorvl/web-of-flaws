@@ -131,7 +131,7 @@ Detection type: `dataflow`.
 - Candidate collection: use grep or AST queries to find `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, and framework escape hatches such as `dangerouslySetInnerHTML` or `v-html`.
 - Candidate collection: find browser input sources such as URL values, message event payloads, `window.name`, and attacker-influenced storage.
 - Confirmation: trace whether attacker-controlled browser data can reach the sink without being converted to safe text or sanitized under a trusted policy.
-- Confirmation: for message event payloads, verify that the handler enforces an exact allowlist of expected `event.origin` values and, where applicable, the expected `event.source`; then determine whether an allowed sender can itself forward attacker-controlled data.
+- Confirmation: for message event payloads, first check whether the handler rejects all but exact allowlisted `event.origin` values and, where applicable, the expected `event.source`. Missing or ineffective validation makes `event.data` attacker-controlled; if validation works, determine whether an allowed sender can independently forward attacker-controlled data.
 - Higher-confidence findings usually show the source and sink in the same function, component, or render path.
 - A scanner should find candidates; the agent or reviewer should confirm that untrusted data can actually reach the sink without being converted to safe text or sanitized under a trusted policy.
 

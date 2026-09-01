@@ -147,7 +147,7 @@ Detection type: `dataflow`.
 - Candidate collection: search for assignments to `href`, `src`, `action`, `formAction`, `window.location`, and `window.open(...)`.
 - Candidate collection: find browser input sources such as URL values, message event payloads, `window.name`, and attacker-influenced storage.
 - Confirmation: verify that attacker-controlled input can reach the sink and that the code does not strictly constrain protocol, destination, or route identity.
-- Confirmation: for message event payloads, verify that the handler enforces an exact allowlist of expected `event.origin` values and, where applicable, the expected `event.source`; then determine whether an allowed sender can itself forward attacker-controlled data.
+- Confirmation: for message event payloads, first check whether the handler rejects all but exact allowlisted `event.origin` values and, where applicable, the expected `event.source`. Missing or ineffective validation makes `event.data` attacker-controlled; if validation works, determine whether an allowed sender can independently forward attacker-controlled data.
 - Give extra attention to code that copies a string directly into `href` or calls `setAttribute("href", value)` without URL parsing and allowlisting.
 - A scanner should surface candidate navigation sinks; the agent or reviewer should confirm whether a dangerous protocol or untrusted destination can actually survive validation.
 
