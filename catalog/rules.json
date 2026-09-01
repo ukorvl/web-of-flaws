@@ -1173,7 +1173,7 @@
       "id": "WOF-SUPPLY-005",
       "path": "guides/software-supply-chain/untrusted-third-party-script-on-sensitive-page.md",
       "title": "Untrusted Third-Party Script on Sensitive Page",
-      "kind": "vulnerability",
+      "kind": "weakness",
       "default_severity": "high",
       "exploitability": "medium",
       "standards": {

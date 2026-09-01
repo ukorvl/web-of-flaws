@@ -1,7 +1,7 @@
 ---
 id: WOF-SUPPLY-005
 title: "Untrusted Third-Party Script on Sensitive Page"
-kind: vulnerability
+kind: weakness
 default_severity: high
 exploitability: medium
 standards:
