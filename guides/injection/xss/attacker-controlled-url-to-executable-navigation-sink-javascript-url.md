@@ -1,6 +1,6 @@
 ---
 id: WOF-XSS-002
-title: "URL-derived Input to Navigation Sink (javascript: URL)"
+title: "Attacker-controlled URL to Executable Navigation Sink (javascript: URL)"
 kind: vulnerability
 default_severity: medium
 exploitability: medium
@@ -24,6 +24,8 @@ detection:
     - semantic-review
   candidate_tokens:
     - href
+    - src
+    - sandbox
     - setAttribute("href"
     - formAction
     - window.location
@@ -34,14 +36,29 @@ detection:
     - location.href
     - URLSearchParams
     - document.referrer
+    - window.name
+    - addEventListener("message"
+    - event.data
+    - localStorage.getItem(
+    - sessionStorage.getItem(
+    - fetch(
+    - response.json()
+    - response.text()
 sources:
   - window.location.search
   - window.location.hash
   - window.location.href
   - URLSearchParams
   - document.referrer
+  - window.name
+  - MessageEvent.data
+  - "`localStorage.getItem()` values previously written from attacker-controlled input"
+  - "`sessionStorage.getItem()` values previously written from attacker-controlled input"
+  - "`Response.json()` values from APIs that can return attacker-controlled data"
+  - "`Response.text()` values from APIs that can return attacker-controlled data"
 sinks:
   - HTMLAnchorElement.href
+  - HTMLIFrameElement.src
   - Element.setAttribute("href", ...)
   - HTMLFormElement.action
   - HTMLButtonElement.formAction
@@ -49,21 +66,22 @@ sinks:
   - window.open()
 tags:
   - xss
+  - dom-xss
   - javascript-protocol
-  - url-input
+  - browser-input
   - navigation-sink
   - href
 ---
 
 ## Rule
 
-Treat untrusted data in URL-valued attributes as dangerous input.
-Do not reflect query parameters, form values, or other attacker-controlled data into `href`, `formaction`, `action`, `window.location`, or similar navigation sinks without strict validation of the allowed protocol and destination.
+Treat attacker-controlled URLs as dangerous input.
+Do not pass browser input, form values, API response fields that can contain attacker-controlled data, or other attacker-controlled values into `href`, `src`, `formaction`, `action`, `window.location`, or similar navigation sinks without strict validation of the allowed protocol and destination.
 
 ## Mental Model
 
-This is also a client-side dataflow rule, but the dangerous boundary is navigation rather than HTML parsing.
-If untrusted input reaches a navigation sink, the browser may interpret `javascript:` as executable code instead of as a normal destination.
+This is a client-side dataflow rule, but the dangerous boundary is executable URL navigation rather than HTML parsing.
+If an attacker-controlled URL reaches a navigation sink, the browser may interpret `javascript:` as executable code instead of as a normal destination.
 
 ## Why This Matters
 
@@ -133,7 +151,11 @@ If the destination is user-controlled, validate the protocol and constrain navig
 Detection type: `dataflow`.
 
 - Candidate collection: search for assignments to `href`, `src`, `action`, `formAction`, `window.location`, and `window.open(...)`.
+- Candidate collection: find browser input sources such as URL values, message event payloads, `window.name`, and client-side storage whose values can be traced to attacker-controlled writes.
+- Candidate collection: find API response reads such as `fetch(...)`, `response.json()`, and `response.text()` when the response can contain attacker-controlled values.
 - Confirmation: verify that attacker-controlled input can reach the sink and that the code does not strictly constrain protocol, destination, or route identity.
+- Confirmation: for message event payloads, first check whether the handler rejects all but exact allowlisted `event.origin` values and, where applicable, the expected `event.source`. Missing or ineffective validation makes `event.data` attacker-controlled; if validation works, determine whether an allowed sender can independently forward attacker-controlled data.
+- Confirmation: for `HTMLIFrameElement.src`, check the effective `sandbox` configuration. A sandbox without `allow-scripts` blocks script execution; when scripts are allowed, a missing `allow-same-origin` still prevents same-origin access to the parent.
 - Give extra attention to code that copies a string directly into `href` or calls `setAttribute("href", value)` without URL parsing and allowlisting.
 - A scanner should surface candidate navigation sinks; the agent or reviewer should confirm whether a dangerous protocol or untrusted destination can actually survive validation.
 
@@ -142,6 +164,9 @@ Detection type: `dataflow`.
 - Assigning a constant route such as `link.href = "/account"` is not this issue.
 - Selecting from a fixed allowlist of known route IDs and then mapping those IDs to hard-coded paths is usually acceptable.
 - A dynamic destination may still be safe if the code parses it as a URL, restricts it to `http:` or `https:`, and constrains it to trusted origins or relative routes.
+- A message handler that validates an exact trusted origin and expected sender window before using `event.data` at the sink is not this issue unless the allowed sender can independently forward attacker-controlled content.
+- Client-side storage that contains only internally generated preferences or route identifiers is not attacker-controlled input.
+- An iframe with an effective sandbox that lacks `allow-scripts` cannot execute a `javascript:` URL, though later code can change the sandbox configuration.
 
 ## Framework Notes
 
@@ -153,12 +178,13 @@ Bindings such as `<a href={next}>` in React or `<a :href="next">` in Vue can sti
 - [MITRE CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')](https://cwe.mitre.org/data/definitions/79.html)
 - [OWASP Top 10 2025 A05: Injection](https://owasp.org/Top10/2025/A05_2025-Injection/)
 - [OWASP DOM based XSS Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html)
+- [MDN: `<iframe>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe)
 - [MDN: `javascript:` URLs](https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Schemes/javascript)
 - [Vue Security Guide](https://vuejs.org/guide/best-practices/security.html)
 
 ## Quick Checklist
 
-- Untrusted input is not written directly into navigation sinks.
+- Attacker-controlled input is not written directly into navigation sinks.
 - Allowed destinations are constrained by protocol and, when appropriate, by origin or route allowlist.
 - `javascript:` and other unsafe schemes are rejected before navigation occurs.
 - Findings are confirmed by actual source-to-sink flow, not by the presence of `href` alone.
