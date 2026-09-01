@@ -1,2 +1,13 @@
 [tool.ruff]
 line-length = 120
+
+[tool.coverage.run]
+branch = true
+source = ["scripts"]
+omit = ["scripts/tests/*"]
+
+[tool.coverage.report]
+omit = ["scripts/tests/*"]
+
+[tool.coverage.xml]
+output = "coverage.xml"

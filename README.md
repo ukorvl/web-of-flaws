@@ -6,7 +6,7 @@
   - [Contributing](#contributing)
   - [License](#license)
 
-[![Lint](https://github.com/ukorvl/web-of-flaws/actions/workflows/lint.yml/badge.svg)](https://github.com/ukorvl/web-of-flaws/actions/workflows/lint.yml?query=branch%3Amain) [![Markdown style: markdownlint-cli2](https://img.shields.io/badge/Markdown%20style-markdownlint--cli2-000000)](https://github.com/DavidAnson/markdownlint-cli2) [![Python style: Ruff](https://img.shields.io/badge/Python%20style-Ruff-D7FF64)](https://github.com/astral-sh/ruff) [![prek](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/j178/prek/master/docs/assets/badge-v0.json)](https://github.com/j178/prek) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Lint](https://github.com/ukorvl/web-of-flaws/actions/workflows/lint.yml/badge.svg)](https://github.com/ukorvl/web-of-flaws/actions/workflows/lint.yml?query=branch%3Amain) [![Coverage Status](https://coveralls.io/repos/github/ukorvl/web-of-flaws/badge.svg?branch=main)](https://coveralls.io/github/ukorvl/web-of-flaws?branch=main) [![Markdown style: markdownlint-cli2](https://img.shields.io/badge/Markdown%20style-markdownlint--cli2-000000)](https://github.com/DavidAnson/markdownlint-cli2) [![Python style: Ruff](https://img.shields.io/badge/Python%20style-Ruff-D7FF64)](https://github.com/astral-sh/ruff) [![prek](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/j178/prek/v0.4.13/docs/assets/badge-v0.json)](https://github.com/j178/prek) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Overview
 
