@@ -396,8 +396,8 @@ class LintRepoTests(TestCase):
             code, _stdout, stderr = run_main(lint_repo, root)
 
             self.assertEqual(code, 1)
-            self.assertIn("dataflow guides must declare non-empty sources", stderr)
-            self.assertIn("dataflow guides must declare non-empty sinks", stderr)
+            self.assertIn("'sources' is a required property", stderr)
+            self.assertIn("'sinks' is a required property", stderr)
 
     def test_standard_reference_mismatch_is_reported(self) -> None:
         with TemporaryDirectory() as tmpdir:

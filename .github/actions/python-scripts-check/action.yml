@@ -15,6 +15,10 @@ runs:
       with:
         python-version: "3.12" # pinned for determinism
 
+    - name: Install repository tooling dependencies
+      shell: bash
+      run: python -m pip install --disable-pip-version-check -r requirements.txt
+
     - name: Install Ruff
       uses: astral-sh/ruff-action@278981a28ce3188b1e39527901f38254bf3aac89 # v4.1.0
       with:

@@ -28,31 +28,37 @@ class GuideToolsTests(TestCase):
                 [root / "guides/injection/xss/url-derived-input-to-html-sink-innerhtml.md"],
             )
 
-    def test_parse_yaml_rejects_unquoted_parser_sensitive_scalars(self) -> None:
+    def test_parse_yaml_supports_standard_yaml_features(self) -> None:
+        frontmatter = guide_tools.parse_yaml_mapping(
+            dedent(
+                """
+                title: >
+                  A title with a colon:
+                  and a folded line
+                tags: [xss, dom-xss]
+                defaults: &defaults
+                  severity: high
+                copied_defaults: *defaults
+                """
+            ).lstrip(),
+            Path("guide.md"),
+        )
+
+        self.assertEqual(frontmatter["title"], "A title with a colon: and a folded line\n")
+        self.assertEqual(frontmatter["tags"], ["xss", "dom-xss"])
+        self.assertEqual(frontmatter["copied_defaults"], {"severity": "high"})
+
+    def test_parse_yaml_rejects_invalid_yaml(self) -> None:
         with self.assertRaises(guide_tools.GuideValidationError) as error:
             guide_tools.parse_yaml_mapping("title: Foo: Bar", Path("guide.md"))
 
-        self.assertIn("unsupported plain YAML scalar", str(error.exception))
+        self.assertIn("invalid YAML frontmatter", str(error.exception))
 
-    def test_parse_yaml_rejects_unterminated_quoted_scalars(self) -> None:
+    def test_parse_yaml_rejects_duplicate_keys(self) -> None:
         with self.assertRaises(guide_tools.GuideValidationError) as error:
-            guide_tools.parse_yaml_mapping('title: "unterminated', Path("guide.md"))
+            guide_tools.parse_yaml_mapping("title: First\ntitle: Second", Path("guide.md"))
 
-        self.assertIn("unsupported quoted YAML scalar", str(error.exception))
-
-    def test_parse_yaml_rejects_indicator_prefixed_scalars(self) -> None:
-        for value in ("[Foo]", "*alias", "&anchor Foo", "| block", "> folded"):
-            with self.subTest(value=value):
-                with self.assertRaises(guide_tools.GuideValidationError) as error:
-                    guide_tools.parse_yaml_mapping(f"title: {value}", Path("guide.md"))
-
-                self.assertIn("unsupported plain YAML scalar", str(error.exception))
-
-    def test_parse_yaml_rejects_plain_scalar_ending_in_colon(self) -> None:
-        with self.assertRaises(guide_tools.GuideValidationError) as error:
-            guide_tools.parse_yaml_mapping("title: permissions:", Path("guide.md"))
-
-        self.assertIn("unsupported plain YAML scalar", str(error.exception))
+        self.assertIn("duplicate key 'title'", str(error.exception))
 
     def test_validate_frontmatter_rejects_empty_required_strings_and_entries(self) -> None:
         frontmatter = guide_tools.parse_yaml_mapping(
@@ -90,14 +96,18 @@ class GuideToolsTests(TestCase):
 
         errors = guide_tools.validate_frontmatter(frontmatter, Path("guide.md"))
 
-        self.assertIn("guide.md: id must be a non-empty string", errors)
-        self.assertIn("guide.md: title must be a non-empty string", errors)
-        self.assertIn("guide.md: kind must be a non-empty string", errors)
-        self.assertIn("guide.md: exploitability must be a non-empty string", errors)
-        self.assertIn("guide.md: languages entries must be non-empty strings", errors)
-        self.assertIn("guide.md: detection.methods entries must be non-empty strings", errors)
-        self.assertIn("guide.md: detection.candidate_tokens entries must be non-empty strings", errors)
-        self.assertIn("guide.md: indicators entries must be non-empty strings", errors)
+        for field in (
+            "id",
+            "title",
+            "kind",
+            "exploitability",
+            "languages",
+            "methods",
+            "candidate_tokens",
+            "indicators",
+        ):
+            with self.subTest(field=field):
+                self.assertTrue(any(f"{field}" in error for error in errors))
 
     def test_validate_frontmatter_rejects_empty_sources_and_sinks_entries(self) -> None:
         frontmatter = guide_tools.parse_yaml_mapping(
@@ -134,8 +144,8 @@ class GuideToolsTests(TestCase):
 
         errors = guide_tools.validate_frontmatter(frontmatter, Path("guide.md"))
 
-        self.assertIn("guide.md: sources entries must be non-empty strings", errors)
-        self.assertIn("guide.md: sinks entries must be non-empty strings", errors)
+        self.assertTrue(any("sources.0" in error for error in errors))
+        self.assertTrue(any("sinks.0" in error for error in errors))
 
     def test_validate_frontmatter_rejects_dataflow_guides_with_indicators(self) -> None:
         frontmatter = guide_tools.parse_yaml_mapping(
@@ -174,7 +184,7 @@ class GuideToolsTests(TestCase):
 
         errors = guide_tools.validate_frontmatter(frontmatter, Path("guide.md"))
 
-        self.assertIn("guide.md: dataflow guides must not declare indicators", errors)
+        self.assertTrue(any("innerHTML" in error for error in errors))
 
     def test_validate_frontmatter_rejects_semantic_pattern_guides_with_sources_and_sinks(self) -> None:
         frontmatter = guide_tools.parse_yaml_mapping(
@@ -213,8 +223,8 @@ class GuideToolsTests(TestCase):
 
         errors = guide_tools.validate_frontmatter(frontmatter, Path("guide.md"))
 
-        self.assertIn("guide.md: semantic-pattern guides must not declare sources", errors)
-        self.assertIn("guide.md: semantic-pattern guides must not declare sinks", errors)
+        self.assertTrue(any("MessageEvent.data" in error for error in errors))
+        self.assertTrue(any("fetch()" in error for error in errors))
 
     def test_validate_frontmatter_rejects_unexpected_detection_keys(self) -> None:
         frontmatter = guide_tools.parse_yaml_mapping(
@@ -254,7 +264,7 @@ class GuideToolsTests(TestCase):
 
         errors = guide_tools.validate_frontmatter(frontmatter, Path("guide.md"))
 
-        self.assertIn("guide.md: unexpected detection keys: query", errors)
+        self.assertTrue(any("query" in error for error in errors))
 
     def test_validate_frontmatter_rejects_invalid_standards_keys_and_values(self) -> None:
         frontmatter = guide_tools.parse_yaml_mapping(
@@ -291,9 +301,9 @@ class GuideToolsTests(TestCase):
 
         errors = guide_tools.validate_frontmatter(frontmatter, Path("guide.md"))
 
-        self.assertIn("guide.md: unexpected standards keys: whatever", errors)
-        self.assertIn("guide.md: CWE value 'banana' must match ^CWE-\\d+$", errors)
-        self.assertIn("guide.md: OWASP Top 10 value 'banana' must match ^A\\d{2}:\\d{4} .+$", errors)
+        self.assertTrue(any("whatever" in error for error in errors))
+        self.assertTrue(any("standards.cwe.0" in error for error in errors))
+        self.assertTrue(any("standards.owasp_top_10.0" in error for error in errors))
 
     def test_rendered_urls_matches_uppercase_schemes_and_ignores_tilde_fences(self) -> None:
         markdown = """

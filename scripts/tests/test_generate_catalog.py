@@ -200,8 +200,8 @@ class GenerateCatalogTests(TestCase):
             with self.assertRaises(guide_tools.GuideValidationError) as error:
                 generate_catalog.build_rules(root)
 
-            self.assertIn("unexpected standards keys: whatever", str(error.exception))
-            self.assertIn("OWASP Top 10 value 'banana' must match ^A\\d{2}:\\d{4} .+$", str(error.exception))
+            self.assertIn("whatever", str(error.exception))
+            self.assertIn("standards.owasp_top_10.0", str(error.exception))
 
     def test_main_sync_and_check_modes(self) -> None:
         with TemporaryDirectory() as tmpdir:
@@ -277,5 +277,5 @@ class GenerateCatalogTests(TestCase):
 
             self.assertEqual(code, 1)
             self.assertEqual(stdout, "")
-            self.assertIn("id must be a non-empty string", stderr)
+            self.assertIn("invalid frontmatter at id", stderr)
             self.assertIn("Catalog generation failed due to invalid guide metadata.", stderr)

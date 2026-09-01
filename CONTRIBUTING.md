@@ -563,6 +563,7 @@ python3 scripts/sync_guide_labels.py
 Before opening a pull request, run:
 
 ```bash
+python3 -m pip install -r requirements.txt
 markdownlint-cli2 "**/*.md"
 ruff check scripts
 ruff format --check scripts
