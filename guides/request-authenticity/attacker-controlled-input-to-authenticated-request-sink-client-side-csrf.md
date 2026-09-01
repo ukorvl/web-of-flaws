@@ -115,7 +115,8 @@ https://example.com/settings?endpoint=%2Fapi/account/email&email=attacker%40exam
 ## Safer Pattern
 
 Keep attacker-controlled inputs independent from authenticated request details.
-If URL input must influence behavior, map it to a fixed allowlist of safe read-only requests and keep state-changing endpoints hard-coded behind explicit user actions.
+If URL input must influence behavior, map it to a fixed allowlist of safe read-only requests and keep state-changing request details fixed in code.
+An explicit user action can confirm product intent, but it is not the security boundary because script can synthesize application behavior.
 
 ```html
 <meta name="csrf-token" content="{{ serverGeneratedToken }}" />
@@ -147,7 +148,7 @@ If URL input must influence behavior, map it to a fixed allowlist of safe read-o
   document.getElementById("save-email").addEventListener("click", async () => {
     const email = document.getElementById("email").value;
 
-    // State-changing request details are fixed in code and gated by a user gesture.
+    // State-changing request details are fixed in code; the click confirms user intent.
     await fetch("/api/account/email", {
       method: "POST",
       credentials: "same-origin",
