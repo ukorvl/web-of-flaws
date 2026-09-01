@@ -8,7 +8,8 @@ standards:
   cwe:
     - CWE-1321
   owasp_top_10:
-    - "A08:2025 Software or Data Integrity Failures"
+    - id: "A08:2025 Software or Data Integrity Failures"
+      relationship: related
 platforms:
   - browser
   - server

@@ -60,6 +60,40 @@ class GuideToolsTests(TestCase):
 
         self.assertIn("duplicate key 'title'", str(error.exception))
 
+    def test_validate_frontmatter_accepts_structured_owasp_relationship(self) -> None:
+        frontmatter = guide_tools.parse_yaml_mapping(
+            dedent(
+                """
+                id: WOF-XSS-001
+                title: DOM XSS
+                kind: vulnerability
+                default_severity: high
+                exploitability: high
+                standards:
+                  cwe:
+                    - CWE-79
+                  owasp_top_10:
+                    - id: "A05:2025 Injection"
+                      relationship: direct
+                platforms:
+                  - browser
+                languages:
+                  - javascript
+                detection:
+                  type: semantic-pattern
+                  methods:
+                    - grep
+                indicators:
+                  - innerHTML
+                tags:
+                  - xss
+                """
+            ).lstrip(),
+            Path("guide.md"),
+        )
+
+        self.assertEqual(guide_tools.validate_frontmatter(frontmatter, Path("guide.md")), [])
+
     def test_validate_frontmatter_rejects_empty_required_strings_and_entries(self) -> None:
         frontmatter = guide_tools.parse_yaml_mapping(
             dedent(

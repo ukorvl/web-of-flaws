@@ -45,6 +45,15 @@ def expected_owasp_top_10_reference(entry: str) -> str | None:
     return f"https://owasp.org/Top10/{year}/{category}_{year}-{title_slug}/"
 
 
+def owasp_top_10_id(entry: object) -> str | None:
+    if isinstance(entry, str):
+        return entry
+    if isinstance(entry, dict):
+        value = entry.get("id")
+        return value if isinstance(value, str) else None
+    return None
+
+
 def validate_standard_references(
     frontmatter: dict,
     references: list[dict[str, str]],
@@ -69,11 +78,12 @@ def validate_standard_references(
             errors.append(f"{path}: standards.cwe entry {cwe_id!r} must have matching reference {expected}")
 
     for entry in standards.get("owasp_top_10", []):
-        if not isinstance(entry, str):
+        owasp_id = owasp_top_10_id(entry)
+        if owasp_id is None:
             continue
-        expected = expected_owasp_top_10_reference(entry)
+        expected = expected_owasp_top_10_reference(owasp_id)
         if expected and expected not in reference_urls:
-            errors.append(f"{path}: standards.owasp_top_10 entry {entry!r} must have matching reference {expected}")
+            errors.append(f"{path}: standards.owasp_top_10 entry {owasp_id!r} must have matching reference {expected}")
 
     return errors
 

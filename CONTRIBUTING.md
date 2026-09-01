@@ -204,7 +204,8 @@ standards:
   cwe:
     - CWE-352
   owasp_top_10:
-    - "A01:2025 Broken Access Control"
+    - id: "A01:2025 Broken Access Control"
+      relationship: related
 
 platforms:
   - browser
@@ -241,6 +242,9 @@ tags:
 ```
 
 Keep metadata concise and machine-readable.
+
+Use a structured OWASP entry with `relationship: direct` only when the listed CWE has an authoritative direct mapping to that OWASP category. Use `relationship: related` when the category is conceptually relevant but does not formally map the listed CWE.
+Legacy string OWASP entries remain accepted for compatibility, but new and updated guides should use the structured form.
 
 Do not introduce new frontmatter fields without discussing whether they belong in the common rule schema.
 

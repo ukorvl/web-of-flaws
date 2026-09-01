@@ -145,7 +145,8 @@ def build_valid_repo(root: Path) -> None:
           cwe:
             - CWE-798
           owasp_top_10:
-            - "A07:2025 Authentication Failures"
+            - id: "A07:2025 Authentication Failures"
+              relationship: related
         platforms:
           - server
         languages:

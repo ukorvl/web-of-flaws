@@ -50,8 +50,26 @@
           "type": "array",
           "minItems": 1,
           "items": {
-            "type": "string",
-            "pattern": "^A[0-9]{2}:[0-9]{4} .+$"
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^A[0-9]{2}:[0-9]{4} .+$"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id", "relationship"],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^A[0-9]{2}:[0-9]{4} .+$"
+                  },
+                  "relationship": {
+                    "enum": ["direct", "related"]
+                  }
+                }
+              }
+            ]
           }
         }
       }
