@@ -107,7 +107,24 @@
       "type": "array",
       "minItems": 1,
       "items": {
-        "enum": ["html", "javascript", "typescript", "yaml", "dotenv", "json", "css", "python", "shell", "bash", "sql", "terraform"]
+        "enum": [
+          "html",
+          "javascript",
+          "typescript",
+          "yaml",
+          "dotenv",
+          "json",
+          "css",
+          "python",
+          "shell",
+          "bash",
+          "sql",
+          "terraform",
+          "dockerfile",
+          "java",
+          "kotlin",
+          "swift"
+        ]
       }
     },
     "detection": {

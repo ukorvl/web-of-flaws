@@ -23,13 +23,22 @@ standards:
 platforms:
   - server
   - browser
+  - mobile
   - ci-cd
   - infrastructure
+  - container
 languages:
   - javascript
   - typescript
   - yaml
   - dotenv
+  - json
+  - shell
+  - terraform
+  - dockerfile
+  - java
+  - kotlin
+  - swift
 detection:
   type: semantic-pattern
   methods:

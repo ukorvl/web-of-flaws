@@ -141,6 +141,45 @@ class GuideToolsTests(TestCase):
             errors,
         )
 
+    def test_validate_frontmatter_accepts_secret_scope_languages(self) -> None:
+        frontmatter = guide_tools.parse_yaml_mapping(
+            dedent(
+                """
+                id: WOF-SDE-001
+                title: Hard-coded Secrets
+                kind: vulnerability
+                default_severity: high
+                exploitability: medium
+                standards:
+                  cwe:
+                    - CWE-798
+                  owasp_top_10:
+                    - id: "A07:2025 Authentication Failures"
+                      relationship: related
+                platforms:
+                  - mobile
+                  - container
+                languages:
+                  - dockerfile
+                  - java
+                  - kotlin
+                  - swift
+                  - terraform
+                detection:
+                  type: semantic-pattern
+                  methods:
+                    - grep
+                indicators:
+                  - SECRET
+                tags:
+                  - secrets
+                """
+            ).lstrip(),
+            Path("guide.md"),
+        )
+
+        self.assertEqual(guide_tools.validate_frontmatter(frontmatter, Path("guide.md")), [])
+
     def test_validate_frontmatter_rejects_empty_required_strings_and_entries(self) -> None:
         frontmatter = guide_tools.parse_yaml_mapping(
             dedent(
