@@ -131,6 +131,7 @@ Detection type: `dataflow`.
 - Candidate collection: use grep or AST queries to find `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, and framework escape hatches such as `dangerouslySetInnerHTML` or `v-html`.
 - Candidate collection: find browser input sources such as URL values, message event payloads, `window.name`, and attacker-influenced storage.
 - Confirmation: trace whether attacker-controlled browser data can reach the sink without being converted to safe text or sanitized under a trusted policy.
+- Confirmation: for message event payloads, verify that the handler enforces an exact allowlist of expected `event.origin` values and, where applicable, the expected `event.source`; then determine whether an allowed sender can itself forward attacker-controlled data.
 - Higher-confidence findings usually show the source and sink in the same function, component, or render path.
 - A scanner should find candidates; the agent or reviewer should confirm that untrusted data can actually reach the sink without being converted to safe text or sanitized under a trusted policy.
 
@@ -139,6 +140,7 @@ Detection type: `dataflow`.
 - Writing a constant template string such as `element.innerHTML = "<b>Welcome</b>"` is not the same issue because no attacker-controlled input crosses the sink.
 - A sink that only accepts `TrustedHTML` or the output of a vetted sanitizer under an enforced Trusted Types policy may be acceptable, though the policy and sanitization still need review.
 - Server-generated HTML fragments can still be dangerous, but they are not this client-side DOM XSS rule unless attacker-controlled browser data can influence the fragment.
+- A message handler that validates an exact trusted origin and expected sender window before reading `event.data` is not this issue unless the allowed sender can independently forward attacker-controlled content.
 
 ## Framework Notes
 
