@@ -120,7 +120,10 @@
           "addEventListener(\"message\"",
           "event.data",
           "localStorage.getItem(",
-          "sessionStorage.getItem("
+          "sessionStorage.getItem(",
+          "fetch(",
+          "response.json()",
+          "response.text()"
         ]
       },
       "sources": [
@@ -132,7 +135,9 @@
         "window.name",
         "MessageEvent.data",
         "`localStorage.getItem()` values previously written from attacker-controlled input",
-        "`sessionStorage.getItem()` values previously written from attacker-controlled input"
+        "`sessionStorage.getItem()` values previously written from attacker-controlled input",
+        "`Response.json()` values from APIs that can return attacker-controlled data",
+        "`Response.text()` values from APIs that can return attacker-controlled data"
       ],
       "sinks": [
         "Element.innerHTML",

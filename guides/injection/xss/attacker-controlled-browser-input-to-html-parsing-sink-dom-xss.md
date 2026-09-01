@@ -39,6 +39,9 @@ detection:
     - event.data
     - localStorage.getItem(
     - sessionStorage.getItem(
+    - fetch(
+    - response.json()
+    - response.text()
 sources:
   - window.location.search
   - window.location.hash
@@ -49,6 +52,8 @@ sources:
   - MessageEvent.data
   - "`localStorage.getItem()` values previously written from attacker-controlled input"
   - "`sessionStorage.getItem()` values previously written from attacker-controlled input"
+  - "`Response.json()` values from APIs that can return attacker-controlled data"
+  - "`Response.text()` values from APIs that can return attacker-controlled data"
 sinks:
   - Element.innerHTML
   - Element.outerHTML
@@ -65,16 +70,16 @@ tags:
 ## Rule
 
 Treat attacker-controlled browser data as untrusted input.
-Do not pass URL values, cross-window messages, attacker-influenced client-side state, or equivalent browser input into HTML parsing sinks such as `innerHTML`, `outerHTML`, `insertAdjacentHTML`, or `document.write`.
+Do not pass URL values, cross-window messages, attacker-influenced client-side state, API response fields that can contain attacker-controlled data, or equivalent browser input into HTML parsing sinks such as `innerHTML`, `outerHTML`, `insertAdjacentHTML`, or `document.write`.
 
 ## Mental Model
 
 This is a client-side dataflow rule.
-An attacker controls browser-provided data, and HTML parsing sinks are execution boundaries: once untrusted data crosses that boundary as HTML instead of text, the browser may create executable DOM.
+An attacker controls client-side data, and HTML parsing sinks are execution boundaries: once untrusted data crosses that boundary as HTML instead of text, the browser may create executable DOM.
 
 ## Why This Matters
 
-Query strings, fragments, cross-window messages, and attacker-influenced client-side state can all carry attacker-controlled data.
+Query strings, fragments, cross-window messages, attacker-influenced client-side state, and API response fields can all carry attacker-controlled data.
 If an application inserts that data into the DOM as HTML, the browser may parse attacker markup and execute JavaScript in the victim's session.
 
 ## Vulnerable Pattern
@@ -130,6 +135,7 @@ Detection type: `dataflow`.
 
 - Candidate collection: use grep or AST queries to find `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, and framework escape hatches such as `dangerouslySetInnerHTML` or `v-html`.
 - Candidate collection: find browser input sources such as URL values, message event payloads, `window.name`, and client-side storage whose values can be traced to attacker-controlled writes.
+- Candidate collection: find API response reads such as `fetch(...)`, `response.json()`, and `response.text()` when the response can contain attacker-controlled values.
 - Confirmation: trace whether attacker-controlled browser data can reach the sink without being converted to safe text or sanitized under a trusted policy.
 - Confirmation: for message event payloads, first check whether the handler rejects all but exact allowlisted `event.origin` values and, where applicable, the expected `event.source`. Missing or ineffective validation makes `event.data` attacker-controlled; if validation works, determine whether an allowed sender can independently forward attacker-controlled data.
 - Higher-confidence findings usually show the source and sink in the same function, component, or render path.
