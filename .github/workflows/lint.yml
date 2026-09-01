@@ -35,7 +35,7 @@ jobs:
             --verbose
             --max-retries 6
             --retry-wait-time 2
-            --exclude 'https://coveralls\.io/github/ukorvl/web-of-flaws\?branch=master'
+            --exclude 'https://coveralls\.io/github/ukorvl/web-of-flaws\?branch=main'
             './*.md'
             './**/*.md'
           lycheeVersion: v0.24.2 # pinned for determinism
