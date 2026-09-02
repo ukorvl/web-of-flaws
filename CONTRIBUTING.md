@@ -61,17 +61,14 @@ Before submitting changes, run:
 markdownlint-cli2 "**/*.md"
 ruff check scripts
 ruff format --check scripts
-python3 scripts/lint_repo.py
-python3 scripts/generate_catalog.py --check
-python3 scripts/validate_standards.py
+python3 scripts/check.py
 python3 -m unittest discover -s scripts/tests -v
 ```
 
-If guide categories were added, removed, or renamed, also run:
-
-```bash
-python3 scripts/sync_guide_labels.py --check
-```
+Run a specific repository integrity check with `python3 scripts/check.py --check standards` or
+`python3 scripts/check.py --check catalog`. Use `python3 scripts/check.py --changed-only` to run only
+checks affected by modified or untracked working-tree files; it falls back to the full suite when no
+relevant files are detected.
 
 `prek` hooks are also available for staged-file checks and commit message linting.
 Commit messages should follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/), for example `docs: clarify catalog generation`.
@@ -567,10 +564,7 @@ Before opening a pull request, run:
 markdownlint-cli2 "**/*.md"
 ruff check scripts
 ruff format --check scripts
-python3 scripts/lint_repo.py
-python3 scripts/generate_catalog.py --check
-python3 scripts/sync_guide_labels.py --check
-python3 scripts/validate_standards.py
+python3 scripts/check.py
 python3 -m unittest discover -s scripts/tests -v
 ```
 
