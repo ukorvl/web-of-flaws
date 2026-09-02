@@ -24,6 +24,19 @@ def write(path: Path, content: str) -> None:
 
 def build_valid_repo(root: Path) -> None:
     write(
+        root / "catalog/standards/owasp-2025.json",
+        """
+        {
+          "A05:2025 Injection": {
+            "cwes": ["CWE-79"]
+          },
+          "A07:2025 Authentication Failures": {
+            "cwes": ["CWE-798"]
+          }
+        }
+        """,
+    )
+    write(
         root / "catalog/allowed-reference-domains.json",
         """
         {

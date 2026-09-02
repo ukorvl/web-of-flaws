@@ -63,6 +63,7 @@ ruff check scripts
 ruff format --check scripts
 python3 scripts/lint_repo.py
 python3 scripts/generate_catalog.py --check
+python3 scripts/validate_standards.py
 python3 -m unittest discover -s scripts/tests -v
 ```
 
@@ -569,6 +570,7 @@ ruff format --check scripts
 python3 scripts/lint_repo.py
 python3 scripts/generate_catalog.py --check
 python3 scripts/sync_guide_labels.py --check
+python3 scripts/validate_standards.py
 python3 -m unittest discover -s scripts/tests -v
 ```
 

@@ -62,6 +62,9 @@ jobs:
       - name: Check generated catalog
         run: python3 scripts/generate_catalog.py --check
 
+      - name: Validate standards integrity
+        run: python3 scripts/validate_standards.py
+
       - name: Lint guide metadata and allowlisted links
         run: python3 scripts/lint_repo.py
 
