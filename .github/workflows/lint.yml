@@ -17,10 +17,8 @@ jobs:
   code-quality:
     runs-on: ubuntu-24.04 # pinned for determinism
     steps:
-      - name: Check out repository
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          persist-credentials: false
+      - name: Set up CI runner
+        uses: ./.github/actions/setup
 
       - name: Run prek hooks
         uses: j178/prek-action@4e14d07f9231acabce116ccfca13b13dd9755ece # v3.0.0
@@ -30,10 +28,8 @@ jobs:
   link-health:
     runs-on: ubuntu-24.04 # pinned for determinism
     steps:
-      - name: Check out repository
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          persist-credentials: false
+      - name: Set up CI runner
+        uses: ./.github/actions/setup
 
       - name: Check Markdown links
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
@@ -51,10 +47,8 @@ jobs:
   zizmor:
     runs-on: ubuntu-24.04 # pinned for determinism
     steps:
-      - name: Check out repository
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          persist-credentials: false
+      - name: Set up CI runner
+        uses: ./.github/actions/setup
 
       - name: Run zizmor
         uses: zizmorcore/zizmor-action@71321a20a9ded102f6e9ce5718a2fcec2c4f70d8 # v0.5.2
@@ -67,10 +61,8 @@ jobs:
   repository-integrity:
     runs-on: ubuntu-24.04 # pinned for determinism
     steps:
-      - name: Check out repository
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          persist-credentials: false
+      - name: Set up CI runner
+        uses: ./.github/actions/setup
 
       - name: Check repository integrity
         run: python3 scripts/check.py
@@ -78,10 +70,8 @@ jobs:
   python-scripts-check:
     runs-on: ubuntu-24.04 # pinned for determinism
     steps:
-      - name: Check out repository
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          persist-credentials: false
+      - name: Set up CI runner
+        uses: ./.github/actions/setup
 
       - name: Run Python script checks
         uses: ./.github/actions/python-scripts-check

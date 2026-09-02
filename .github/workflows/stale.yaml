@@ -12,6 +12,12 @@ jobs:
       issues: write
       pull-requests: write
     steps:
+      # Audit runner network, file, and process activity before enforcing egress rules.
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
       - uses: actions/stale@1e223db275d687790206a7acac4d1a11bd6fe629 # v10.4.0
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
