@@ -50,6 +50,21 @@ Repository recommendations create a social-engineering path even though they do 
 }
 ```
 
+Dev Container configuration is a separate, repository-controlled installation path.
+After a developer agrees to create or reopen a workspace in a container, a `.devcontainer/devcontainer.json` file can install extensions into the container's remote extension host:
+
+```json
+{
+  "customizations": {
+    "vscode": {
+      "extensions": ["attacker.fake-extension"]
+    }
+  }
+}
+```
+
+Reviewing or accepting a Dev Container is therefore a trust decision about its extensions, image, features, Dockerfile, and lifecycle commands, not just its runtime dependencies.
+
 ## Example Attack
 
 An attacker compromises a popular extension publisher and releases a new version.
@@ -89,8 +104,11 @@ For sensitive projects, pin approved remote-container extensions to an exact VSI
 
 ## Detection
 
-Review installed extensions, extension recommendations, and publisher ownership regularly.
+Review installed extensions, extension recommendations, Dev Container configuration, and publisher ownership regularly.
 Prioritize unknown publishers, sudden ownership changes, unrelated functionality, typosquatted names, and extensions that access secrets, Git, cloud tools, containers, wallets, or source-code indexing.
+
+When reviewing an unfamiliar repository, inspect `.vscode/extensions.json` separately from `.devcontainer/devcontainer.json`.
+Look for `customizations.vscode.extensions`, VSIX downloads, `code --install-extension`, Dev Container Features, Dockerfiles, and lifecycle commands that can install or execute additional tooling after the container is accepted.
 
 During incident response, inspect the extension host and language-server processes for unexpected child processes, network connections, command execution, or large outbound uploads.
 High-signal APIs and behaviors include `child_process`, `exec`, `spawn`, `process.env`, filesystem access, unexpected HTTP requests, and runtime-downloaded binaries.
