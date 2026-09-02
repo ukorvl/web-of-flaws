@@ -12,3 +12,4 @@ Software supply chain guides focus on compromised or insufficiently trusted depe
 ## Notes
 
 - [Malicious Git Hooks](notes/malicious-git-hooks.md)
+- [Malicious IDE Extensions](notes/malicious-ide-extensions.md)
