@@ -58,6 +58,19 @@ jobs:
           min-confidence: medium
           version: v1.23.1 # pinned for determinism
 
+  actionlint:
+    runs-on: ubuntu-24.04 # pinned for determinism
+    steps:
+      - name: Set up CI runner
+        uses: ./.github/actions/setup
+
+      # Validate GitHub Actions workflow syntax, expressions, and action usage.
+      - name: Run actionlint
+        # actionlint v1.7.12.
+        uses: docker://rhysd/actionlint@sha256:9d36088643581e728c969f35141f88139fec77280b2be23c1f66f8e40e1025e7 # yamllint disable-line rule:line-length
+        with:
+          args: -color
+
   repository-integrity:
     runs-on: ubuntu-24.04 # pinned for determinism
     steps:
