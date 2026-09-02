@@ -1,0 +1,50 @@
+name: Scorecard
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "30 1 * * 6"
+
+permissions: read-all
+
+jobs:
+  analysis:
+    name: Scorecard analysis
+    runs-on: ubuntu-24.04 # pinned for determinism
+    permissions:
+      # Needed to upload results to Code Scanning.
+      security-events: write
+      # Needed to publish verified results for the Scorecard badge.
+      id-token: write
+    steps:
+      # Audit runner network, file, and process activity before enforcing egress rules.
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - name: Run analysis
+        uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          publish_results: true
+
+      - name: Upload SARIF artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: scorecard-results
+          path: results.sarif
+          retention-days: 5
+
+      - name: Upload results to Code Scanning
+        uses: github/codeql-action/upload-sarif@f205ea1c3313d32999d8d6a48b4f6530d4437b38 # v4.37.4
+        with:
+          sarif_file: results.sarif
