@@ -14,6 +14,8 @@ jobs:
     name: Scorecard analysis
     runs-on: ubuntu-24.04 # pinned for determinism
     permissions:
+      # Needed to check out the repository for analysis.
+      contents: read
       # Needed to upload results to Code Scanning.
       security-events: write
       # Needed to publish verified results for the Scorecard badge.
