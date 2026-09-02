@@ -103,6 +103,13 @@
       "purpose": "Official Git documentation for hooks, repository initialization, and configuration behavior."
     },
     {
+      "domain": "code.visualstudio.com",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official Visual Studio Code documentation for development containers and extension behavior."
+    },
+    {
       "domain": "example.com",
       "scopes": [
         "example-urls"
