@@ -1,0 +1,36 @@
+{
+  "A01:2025 Broken Access Control": {
+    "cwes": [
+      "CWE-201",
+      "CWE-352"
+    ]
+  },
+  "A03:2025 Software Supply Chain Failures": {
+    "cwes": [
+      "CWE-829"
+    ]
+  },
+  "A04:2025 Cryptographic Failures": {
+    "cwes": [
+      "CWE-321",
+      "CWE-798"
+    ]
+  },
+  "A05:2025 Injection": {
+    "cwes": [
+      "CWE-79"
+    ]
+  },
+  "A07:2025 Authentication Failures": {
+    "cwes": [
+      "CWE-321",
+      "CWE-798",
+      "CWE-940"
+    ]
+  },
+  "A08:2025 Software or Data Integrity Failures": {
+    "cwes": [
+      "CWE-1321"
+    ]
+  }
+}

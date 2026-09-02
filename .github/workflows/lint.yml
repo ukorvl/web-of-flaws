@@ -17,6 +17,12 @@ jobs:
   code-quality:
     runs-on: ubuntu-24.04 # pinned for determinism
     steps:
+      # Audit runner network, file, and process activity before enforcing egress rules.
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
       - name: Check out repository
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
@@ -27,18 +33,48 @@ jobs:
         with:
           prek-version: 0.4.13 # pinned for determinism
 
+  link-health:
+    runs-on: ubuntu-24.04 # pinned for determinism
+    steps:
+      # Audit runner network, file, and process activity before enforcing egress rules.
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
       - name: Check Markdown links
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
+          # TODO: Remove the Snyk exclusion once it restores a stable public project URL for this repository.
           args: >-
             --no-progress
             --verbose
             --max-retries 6
             --retry-wait-time 2
             --exclude 'https://coveralls\.io/github/ukorvl/web-of-flaws\?branch=main'
+            --exclude 'https://snyk\.io/.*'
             './*.md'
             './**/*.md'
           lycheeVersion: v0.24.2 # pinned for determinism
+
+  zizmor:
+    runs-on: ubuntu-24.04 # pinned for determinism
+    steps:
+      # Audit runner network, file, and process activity before enforcing egress rules.
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
 
       - name: Run zizmor
         uses: zizmorcore/zizmor-action@71321a20a9ded102f6e9ce5718a2fcec2c4f70d8 # v0.5.2
@@ -48,26 +84,53 @@ jobs:
           min-confidence: medium
           version: v1.23.1 # pinned for determinism
 
-  repo-structure:
+  actionlint:
     runs-on: ubuntu-24.04 # pinned for determinism
     steps:
+      # Audit runner network, file, and process activity before enforcing egress rules.
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
       - name: Check out repository
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           persist-credentials: false
 
-      - name: Check guide label configs
-        run: python3 scripts/sync_guide_labels.py --check
+      # Validate GitHub Actions workflow syntax, expressions, and action usage.
+      - name: Run actionlint
+        # actionlint v1.7.12.
+        uses: docker://rhysd/actionlint@sha256:9d36088643581e728c969f35141f88139fec77280b2be23c1f66f8e40e1025e7 # yamllint disable-line rule:line-length
+        with:
+          args: -color
 
-      - name: Check generated catalog
-        run: python3 scripts/generate_catalog.py --check
+  repository-integrity:
+    runs-on: ubuntu-24.04 # pinned for determinism
+    steps:
+      # Audit runner network, file, and process activity before enforcing egress rules.
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
 
-      - name: Lint guide metadata and allowlisted links
-        run: python3 scripts/lint_repo.py
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - name: Check repository integrity
+        run: python3 scripts/check.py
 
   python-scripts-check:
     runs-on: ubuntu-24.04 # pinned for determinism
     steps:
+      # Audit runner network, file, and process activity before enforcing egress rules.
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
       - name: Check out repository
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
