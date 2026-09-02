@@ -50,12 +50,14 @@ jobs:
       - name: Check Markdown links
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
+          # TODO: Remove the Snyk exclusion once it restores a stable public project URL for this repository.
           args: >-
             --no-progress
             --verbose
             --max-retries 6
             --retry-wait-time 2
             --exclude 'https://coveralls\.io/github/ukorvl/web-of-flaws\?branch=main'
+            --exclude 'https://snyk\.io/.*'
             './*.md'
             './**/*.md'
           lycheeVersion: v0.24.2 # pinned for determinism
