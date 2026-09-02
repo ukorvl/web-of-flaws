@@ -1,0 +1,30 @@
+name: OSV Scanner
+
+on:
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: "30 12 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  scan-pr:
+    if: github.event_name == 'pull_request'
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    # Google OSV Scanner v2.5.0.
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@8deb546fdb875b9996d27d4950be7312dac076a1 # yamllint disable-line rule:line-length
+
+  scan-scheduled:
+    if: github.event_name != 'pull_request'
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    # Google OSV Scanner v2.5.0.
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@8deb546fdb875b9996d27d4950be7312dac076a1 # yamllint disable-line rule:line-length
