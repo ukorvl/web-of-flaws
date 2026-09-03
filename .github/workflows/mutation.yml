@@ -40,6 +40,11 @@ jobs:
         with:
           python-version: "3.12" # pinned for determinism
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: "0.12.5" # pinned for determinism
+
       - name: Install locked mutation test dependencies
         run: uv sync --locked --only-group mutation
 
