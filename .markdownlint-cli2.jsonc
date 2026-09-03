@@ -37,7 +37,9 @@
       "html_elements": false
     }
   },
-  "globs": ["**/*.md", "!node_modules"],
+  // Respect repository ignore rules so dependency and generated directories are never linted.
+  "gitignore": true,
+  "globs": ["**/*.md"],
   "overrides": [
     {
       "combine": "merge",
