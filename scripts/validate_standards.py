@@ -4,7 +4,10 @@ import json
 import sys
 from pathlib import Path
 
-from guide_tools import CWE_ID_RE, OWASP_TOP_10_RE, GuideValidationError, iter_guide_rule_paths, load_guide
+if __package__:
+    from .guide_tools import CWE_ID_RE, OWASP_TOP_10_RE, GuideValidationError, iter_guide_rule_paths, load_guide
+else:
+    from guide_tools import CWE_ID_RE, OWASP_TOP_10_RE, GuideValidationError, iter_guide_rule_paths, load_guide
 
 ROOT = Path(__file__).resolve().parents[1]
 OWASP_2025_PATH = Path("catalog/standards/owasp-2025.json")

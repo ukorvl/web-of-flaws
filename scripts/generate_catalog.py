@@ -6,15 +6,26 @@ import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
-from guide_tools import (
-    CWE_ID_RE,
-    OWASP_TOP_10_RE,
-    GuideValidationError,
-    iter_guide_rule_paths,
-    load_guide,
-    parse_references,
-    validate_frontmatter,
-)
+if __package__:
+    from .guide_tools import (
+        CWE_ID_RE,
+        OWASP_TOP_10_RE,
+        GuideValidationError,
+        iter_guide_rule_paths,
+        load_guide,
+        parse_references,
+        validate_frontmatter,
+    )
+else:
+    from guide_tools import (
+        CWE_ID_RE,
+        OWASP_TOP_10_RE,
+        GuideValidationError,
+        iter_guide_rule_paths,
+        load_guide,
+        parse_references,
+        validate_frontmatter,
+    )
 
 ROOT = Path(__file__).resolve().parents[1]
 COMMAND = "python3 scripts/generate_catalog.py"

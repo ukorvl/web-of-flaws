@@ -6,15 +6,26 @@ import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
-from generate_catalog import build_rules
-from guide_tools import (
-    MARKDOWN_LINK_RE,
-    URL_RE,
-    GuideValidationError,
-    is_guide_note_path,
-    iter_guide_markdown_paths,
-    iter_rendered_lines,
-)
+if __package__:
+    from .generate_catalog import build_rules
+    from .guide_tools import (
+        MARKDOWN_LINK_RE,
+        URL_RE,
+        GuideValidationError,
+        is_guide_note_path,
+        iter_guide_markdown_paths,
+        iter_rendered_lines,
+    )
+else:
+    from generate_catalog import build_rules
+    from guide_tools import (
+        MARKDOWN_LINK_RE,
+        URL_RE,
+        GuideValidationError,
+        is_guide_note_path,
+        iter_guide_markdown_paths,
+        iter_rendered_lines,
+    )
 
 ROOT = Path(__file__).resolve().parents[1]
 COMMAND = "python3 scripts/lint_repo.py"

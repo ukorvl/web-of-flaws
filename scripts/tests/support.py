@@ -9,12 +9,14 @@ from textwrap import dedent
 from unittest import mock
 
 SCRIPTS_DIR = Path(__file__).resolve().parents[1]
-if str(SCRIPTS_DIR) not in sys.path:
-    sys.path.insert(0, str(SCRIPTS_DIR))
+ROOT = SCRIPTS_DIR.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 
 def load_module(name: str):
-    return import_module(name)
+    # Match mutmut's module paths so tests execute the mutated module, not the original script.
+    return import_module(f"scripts.{name}")
 
 
 def write(path: Path, content: str) -> None:
