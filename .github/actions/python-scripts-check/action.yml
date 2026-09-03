@@ -58,4 +58,4 @@ runs:
         format: cobertura
         github-token: ${{ github.token }}
         fail-on-error: false
-        coverage-reporter-version: v0.6.22
+        coverage-reporter-version: v0.6.22 # pinned for determinism
