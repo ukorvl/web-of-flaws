@@ -11,9 +11,10 @@ guide_tools = load_module("guide_tools")
 
 
 class GuideToolsTests(TestCase):
-    def test_iter_guide_rule_paths_excludes_note_files(self) -> None:
+    def test_iter_guide_rule_paths_excludes_non_rule_markdown_files(self) -> None:
         with TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
+            write(root / "guides/AGENTS.md", "# Guide instructions\n")
             write(root / "guides/injection/xss/README.md", "# XSS\n")
             write(
                 root / "guides/injection/xss/url-derived-input-to-html-sink-innerhtml.md",
@@ -22,10 +23,19 @@ class GuideToolsTests(TestCase):
             write(root / "guides/injection/xss/notes/self-xss.md", "# Note\n")
 
             paths = guide_tools.iter_guide_rule_paths(root)
+            markdown_paths = guide_tools.iter_guide_markdown_paths(root)
 
             self.assertEqual(
                 paths,
                 [root / "guides/injection/xss/url-derived-input-to-html-sink-innerhtml.md"],
+            )
+            self.assertEqual(
+                markdown_paths,
+                [
+                    root / "guides/injection/xss/README.md",
+                    root / "guides/injection/xss/notes/self-xss.md",
+                    root / "guides/injection/xss/url-derived-input-to-html-sink-innerhtml.md",
+                ],
             )
 
     def test_parse_yaml_rejects_unquoted_parser_sensitive_scalars(self) -> None:
