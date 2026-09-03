@@ -1,3 +1,18 @@
+[project]
+name = "web-of-flaws"
+version = "0.0.0"
+description = "A catalog of vulnerable web patterns and safer replacements."
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+mutation = [
+    "mutmut==3.7.0",
+]
+
+[tool.uv]
+package = false
+
 [tool.ruff]
 line-length = 120
 
@@ -11,3 +26,12 @@ omit = ["scripts/tests/*"]
 
 [tool.coverage.xml]
 output = "coverage.xml"
+
+[tool.mutmut]
+# Keep mutation testing focused on repository logic, not its test fixtures.
+source_paths = ["."]
+only_mutate = ["scripts/*.py"]
+do_not_mutate = ["scripts/tests/*"]
+also_copy = ["scripts/tests/"]
+pytest_add_cli_args_test_selection = ["scripts/tests/"]
+mutate_only_covered_lines = true

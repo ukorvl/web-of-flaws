@@ -19,6 +19,8 @@ node_modules/
 __pycache__/
 *.py[cod]
 .ruff_cache/
+.venv/
+mutants/
 
 # Logs
 npm-debug.log*

@@ -65,6 +65,20 @@ python3 scripts/check.py
 python3 -m unittest discover -s scripts/tests -v
 ```
 
+Mutation testing runs for script changes in pull requests and as a full weekly CI scan. To reproduce it locally,
+run its locked dependency group:
+
+```bash
+uv run --locked --only-group mutation mutmut run
+uv run --locked --only-group mutation mutmut results
+```
+
+Refresh `uv.lock` after intentionally updating dependencies in `pyproject.toml`:
+
+```bash
+uv lock
+```
+
 Run a specific repository integrity check with `python3 scripts/check.py --check standards` or
 `python3 scripts/check.py --check catalog`. Use `python3 scripts/check.py --changed-only` to run only
 checks affected by modified or untracked working-tree files; it falls back to the full suite when no
