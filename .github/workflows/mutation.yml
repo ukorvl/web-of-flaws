@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "scripts/**"
+      - ".github/scripts/**"
       - ".github/workflows/mutation.yml"
       - "pyproject.toml"
       - "uv.lock"
@@ -45,27 +46,10 @@ jobs:
       - name: Run mutation tests
         id: mutation-tests
         env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.sha }}
-        run: |
-          if [ "${{ github.event_name }}" != "pull_request" ]; then
-            uv run --locked --only-group mutation mutmut run
-            exit 0
-          fi
-
-          mapfile -t changed_modules < <(
-            git diff --name-only --diff-filter=ACMR "$BASE_SHA" "$HEAD_SHA" -- 'scripts/*.py' |
-              grep -v '^scripts/tests/' |
-              sed -e 's#\.py$##' -e 's#/#.#g' -e 's/$/*/'
-          )
-
-          if [ "${#changed_modules[@]}" -eq 0 ]; then
-            echo "No production script modules changed; running the full mutation suite."
-            uv run --locked --only-group mutation mutmut run
-          else
-            printf 'Mutating changed modules: %s\n' "${changed_modules[*]}"
-            uv run --locked --only-group mutation mutmut run "${changed_modules[@]}"
-          fi
+        run: bash .github/scripts/run-mutation-tests.sh
 
       # Keep the survivor report visible even when a mutation run fails.
       - name: Report mutation results

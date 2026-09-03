@@ -50,14 +50,12 @@ jobs:
       - name: Check Markdown links
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
-          # TODO: Remove the Snyk exclusion once it restores a stable public project URL for this repository.
           args: >-
             --no-progress
             --verbose
             --max-retries 6
             --retry-wait-time 2
             --exclude 'https://coveralls\.io/github/ukorvl/web-of-flaws\?branch=main'
-            --exclude 'https://snyk\.io/.*'
             './*.md'
             './**/*.md'
           lycheeVersion: v0.24.2 # pinned for determinism
@@ -104,6 +102,32 @@ jobs:
         uses: docker://rhysd/actionlint@sha256:9d36088643581e728c969f35141f88139fec77280b2be23c1f66f8e40e1025e7 # yamllint disable-line rule:line-length
         with:
           args: -color
+
+  bash-tests:
+    runs-on: ubuntu-24.04 # pinned for determinism
+    steps:
+      # Audit runner network, file, and process activity before enforcing egress rules.
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Bats
+        uses: bats-core/bats-action@77d6fb60505b4d0d1d73e48bd035b55074bbfb43 # v4.0.0
+        with:
+          bats-version: 1.14.0 # pinned for determinism
+          support-install: false
+          assert-install: false
+          detik-install: false
+          file-install: false
+
+      - name: Run Bats tests
+        run: bats .github/scripts/tests
 
   repository-integrity:
     runs-on: ubuntu-24.04 # pinned for determinism
