@@ -134,6 +134,7 @@ For changes under `.github/scripts/`, also run:
 
 ```bash
 bash -n .github/scripts/run-mutation-tests.sh
+prek run shellcheck --all-files
 bats .github/scripts/tests
 ```
 
