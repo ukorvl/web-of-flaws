@@ -1,37 +1,37 @@
-# Agents guide for Web of Flaws
+# Agent Instructions for Web of Flaws
 
-## Overview
+## Purpose
 
-This project is a catalog of vulnerable web patterns and safer replacements, designed for both humans and coding agents. Each guide shows the risky pattern, why it is exploitable, and how to fix it with concrete code. The core idea is to provide a structured and machine-readable format that allows agents to parse the guides and extract relevant information.
+Web of Flaws is a machine-readable catalog of vulnerable web patterns and safer replacements.
+Every rule must help a developer or coding agent understand the security boundary, exploitation
+conditions, and appropriate remediation.
 
-The repository is organized into categories based on security topics and vulnerability families. Each category contains guides that follow a consistent structure. Each category has a `README.md` file that provides an overview of the category and links to the individual guides.
+## Instruction Hierarchy
 
-A purpose of this repository is to enable coding agents to learn from the guides and apply the knowledge to identify and fix vulnerabilities in web applications. Humans also are supposed to benefit from it by learning about common web vulnerabilities and how to mitigate them. Consider this repository as a knowledge base for both humans and agents to improve web security.
+Read this file first, then read the closest nested `AGENTS.md` for every directory you modify.
+The closest instruction file takes precedence for its subtree.
 
-Each rule guide is exactly one Markdown file. Guide markdown files should start with YAML frontmatter that includes standard properties of each guide, followed by the standard heading structure. Dataflow rules should declare explicit `sources` and `sinks`; pattern rules should declare `indicators`. Look at `.markdownlint-cli2.jsonc`, `CONTRIBUTING.md`, `catalog/rules.json`, and `catalog/allowed-reference-domains.json` for the expected guide structure.
+- [`guides/AGENTS.md`](guides/AGENTS.md) defines the guide contract.
+- [`catalog/AGENTS.md`](catalog/AGENTS.md) defines catalog data and generated-file rules.
+- [`scripts/AGENTS.md`](scripts/AGENTS.md) defines repository tooling and its tests.
+- [`.github/AGENTS.md`](.github/AGENTS.md) defines CI, Actions, and workflow-script rules.
 
-All guides are divided into two main categories - rules and notes. Notes are for general information, best practices, or other relevant content that does not fit into the rules category and cannot be used to identify a vulnerability. Rules are for specific patterns that can be used to identify vulnerabilities in web applications.
+`CONTRIBUTING.md` is a concise guide for human contributors, not the source of truth for agent
+instructions. Keep durable, machine-actionable rules in the relevant `AGENTS.md`.
 
-## Environment
+## Repository-wide Rules
 
-This is a docs-first repository with no app runtime or build step. Run all validation commands defined in `CONTRIBUTING.md`. If a required tool is unavailable, report which check could not be executed rather than silently substituting another toolchain. Follow `.editorconfig` for whitespace and indentation, and keep in mind that CI checks Markdown style, links, and GitHub Actions security.
+- This is a documentation-first repository; do not introduce an application runtime or build step
+  without an explicit architectural decision.
+- Follow `.editorconfig` and preserve existing formatting and naming conventions.
+- Do not edit generated files by hand. The closest `AGENTS.md` identifies their generators.
+- Run the validations required by every applicable nested instruction file. If a required tool is
+  unavailable, report the missing check rather than substituting another tool.
+- Keep validation errors actionable: write them to stderr and return a nonzero exit status.
+- The primary branch is `main`; target pull requests there.
 
-## Workspace structure
+## Completion
 
-All guides are located in the `guides` directory. Each category has its own subdirectory, and each rule guide is a single Markdown file. Category directories and nested category directories may contain `README.md` index files, but rules themselves are not split across multiple files.
-
-Repository supports nested agent docs structure. If you encounter nested `AGENTS.md` always give preference to the closest `AGENTS.md` in the directory tree. If a category has no `AGENTS.md`, use the parent category's `AGENTS.md` instead.
-
-## Before marking things as done
-
-- Follow [CONTRIBUTING.md](CONTRIBUTING.md) for the canonical repository rules on guide structure, validation commands, generated files, labels, and contributor workflow.
-- If you change guides, generated files, or link allowlists, run the checks required by `CONTRIBUTING.md` before marking the task done and report anything you could not verify.
-- The generate code should be clean and human-readable with no unnecessary whitespace or formatting issues. Code should be structured in a way that is easy to understand and follow.
-- Repository primary branch is `main`. All pull requests should be made against the `main` branch. If you need to reference the primary branch in your code, use `main` instead of `master`.
-
-### Other resources
-
-- [Contributing guide](CONTRIBUTING.md)
-- [.markdownlint-cli2.jsonc](.markdownlint-cli2.jsonc)
-- [catalog/rules.json](catalog/rules.json)
-- [catalog/allowed-reference-domains.json](catalog/allowed-reference-domains.json)
+Before finishing, run the relevant focused checks and report the commands that could not run.
+For changes spanning repository data or guides, `python3 scripts/check.py` is the central integrity
+entry point.

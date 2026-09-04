@@ -35,6 +35,14 @@ repos:
       - id: ruff-format
         files: ^scripts/.*\.py$
 
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: 745eface02aef23e168a8afb6b5737818efbea95 # v0.11.0.1
+    hooks:
+      - id: shellcheck
+        files: \.sh$
+        # Prek runs tracked files, but keep generated and dependency directories out if present.
+        exclude: ^(?:\.agents/skills|\.npm|\.ruff_cache|\.venv|__pycache__|mutants|node_modules)/
+
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: 91ab4bf57e58b32adf1a122681f6ebe164d081c8 # v4.4.0
     hooks:
