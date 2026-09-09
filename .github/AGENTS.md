@@ -7,104 +7,81 @@ repository labels, Dependabot policy, and Copilot integration instructions.
 
 ## Coding Rules
 
-### General Guidelines
-
-#### Pin Every External Dependency To An Exact Version Whenever Possible
+### Pin Every External Dependency To An Exact Version Whenever Possible
 
 - For third-party GitHub Actions, pin to a full commit SHA.
-- Retain the human-readable release as a comment: uses: `owner/action@<sha> # vX.Y.Z`.
+- Retain the human-readable release as a comment: `uses: owner/action@<sha> # vX.Y.Z`.
 - Pin language-specific dependencies to exact versions.
-- Pin runtime versions such as Node.js, Python, Go, Java, etc.
+- Pin runtime versions such as Node.js, Python, Go, etc. Never use `latest` when specifying `runs-on` or `setup-<language>` actions.
 - Pin system-level packages and external CLI tools when possible.
 - Do not use mutable versions such as latest, main, master, next, or floating ranges.
 - If a dependency cannot be pinned, report it explicitly and add a TODO comment explaining why.
 
-#### Use Principle Of Least Privilege
+### Principle Of Least Privilege
 
 - Use the minimum required permissions for each workflow and action.
 - Prefer contents: read or no explicit write permissions for validation jobs.
 - Do not grant repository-wide write permissions for convenience.
 - Keep privileged operations isolated from validation and test logic.
+- Prefer contents: read or no explicit write permissions for validation jobs.
+- Never use `write-all`.
 
-#### Working With Secrets Rules
+### Secrets
 
 - Never print secrets.
 - Never pass secrets through command-line arguments when avoidable.
-- Never write secrets to outputs, logs, artifacts, or files.
+- Never write secrets to outputs, logs, caches, or artifacts.
+- Avoid writing secrets to files. If a tool requires it, use a temporary permission-restricted file and remove it immediately after use.
 - Secrets must be accessed only by authorized workflows/jobs and the steps that require them.
 - For greater control, prefer environment-specific secrets, which can be protected by manual approvals or specific branch conditions.
+- Never cache secrets or store them in a way that they can be retrieved by unauthorized workflows or jobs.
 
-#### Other General Rules
+### Timeouts And Network Access
+
+- Avoid unnecessary network access in workflows and don't rely on network access for validation unless it is the explicit purpose of the workflow. Always use timeouts for network operations to avoid hangs.
+- If you rely on external data, verify its integrity and authenticity. Don't assume its shape and always check for missing or unexpected fields.
+- Add timeout-minutes to jobs that can hang or access external systems.
+- Keep retry counts small and explicit.
+- Retry transient external failures, not deterministic validation failures.
+
+### Cache And Artifact Rules
+
+- Treat caches only as performance optimizations; correctness must not depend on cache presence.
+- Include relevant lockfile/configuration hashes in dependency cache keys.
+- Treat artifacts downloaded from untrusted workflow runs as untrusted input.
+- Upload only artifacts that are intentionally needed.
+- Do not upload credentials, environment dumps, or sensitive runner state.
+
+### Checkout Rules
+
+- Use `actions/checkout` only when repository contents are required.
+- Use `persist-credentials: false` unless later authenticated Git operations are explicitly required.
+- Fetch only the history required by the workflow.
+- Set `fetch-depth` explicitly when Git history or diff computation depends on it.
+- Never check out attacker-controlled refs in a privileged workflow context.
+
+### Other General Rules
 
 - Don't modify global runner state unless necessary.
 - Put complex shell/Python logic in `.github/scripts/`; keep YAML declarative.
 - Don't depend on commands that are not guaranteed to exist without installing them.
 - Avoid obscure third-party actions when a few shell lines or an official action suffice.
 - Prefer GitHub-authored or well-established actions and minimize the number of third-party actions. Review what every third-party action can access if you use it.
-- Do not use deprecated ::set-output.
+- Do not use deprecated ::set-output command.
 - Do not manually overwrite `GITHUB_*` / `RUNNER_*` variables.
-- Errors should identify the file/item that failed.
-- Avoid unnecessary network access in workflows and don't rely on network access for validation unless it is the explicit purpose of the workflow. Always use timeouts for network operations to avoid hangs.
-- If you rely on external data, verify its integrity and authenticity. Don't assume its shape and always check for missing or unexpected fields.
-- Always add a proper concurrency block to workflows to avoid race conditions and accidental double runs.
-- Avoid using pull_request_target when building or running code submitted from forks; reserve it strictly for safe, non-code metadata workflows
+- Treat artifacts and metadata originating from untrusted workflows as untrusted.
+- Never execute untrusted PR-controlled code or artifacts inside a privileged `workflow_run` or `pull_request_target` context.
 
-### Workflow Strcucture Guidelines
+### Workflow Structure Guidelines
 
-### Composite Action Guidelines
-
-- When you encounter a repeated workflow pattern, consider creating a composite action in `.github/actions/` to encapsulate it and keep the code DRY.
-- Extract an action when logic is reused or conceptually independent, not merely because YAML is long.
-- Composite actions must be fully self-contained and not depend on any external workflows.
-- Follow the principle: one composite action = one clear responsibility.
-- Prefer names like `.github/actions/python-scripts-check/action.yml`.
-- Always provide name and concise description.
-- Keep inputs minimal and don't add inputs that are not vitally necessary.
-- Use kebab-case input/output names.
-- Treat all action inputs as untrusted strings.
-- Avoid hidden behavior controlled by undocumented environment variables.
-- Define outputs only when callers actually need them.
-- Give steps meaningful names.
-- Always specify shell: bash for run: steps.
-- Never eval input.
-- Never execute input as a command.
-- Permissions belong in the workflow, not the composite action.
-- Never make a validation action mutate the repository.
-- Produce concise diagnostic output which is readable for humans and parsable by machines.
-
-### Bash Helper Script Guidelines
-
-- If a workflow needs to run a bash script that is not a "one-liner" command, put the script in `.github/scripts/` and call it from the workflow.
-- When you put a script in `.github/scripts/`, also add a Bats test in `.github/scripts/tests/` to verify that the script runs without syntax errors and returns expected exit codes.
-- When you change a script in `.github/scripts/`, also update its Bats test to cover the new behavior.
-- When you create/edit tests for a script, ensure that they are essential and cover all the important scenarios. Do not add tests that only follow the script's internal implementation details. Test various inputs, outputs, and error conditions.
-- Always test corner cases and unexpected inputs, including empty inputs, missing required environment variables, and malformed data.
-- Use `set -euo pipefail` at the top of every bash script to ensure that errors are not ignored and that the script exits on failure.
-- One script = one responsibility.
-- Use descriptive kebab-case filenames.
-- Bash scripts must start with #!/usr/bin/env bash.
-- Quote all variable expansions unless intentional splitting is required.
-- Prefer [[ ... ]] over [ ... ] in Bash.
-- Use "${array[@]}" when passing array arguments.
-- Never execute arbitrary input as shell code.
-- Treat environment variables, filenames, branch names, PR metadata, and GitHub context as untrusted input.
-- Scripts should not install their own runtimes unless installation is their explicit responsibility.
-- Never silently ignore command failures. If failure is intentionally ignored, document why.
-- Keep output concise but easily understandable by humans.
-- Prefer resolving repository root explicitly instead of assuming $PWD.
-- Use functions for meaningful logical units.
-- Keep main/top-level execution easy to read.
-- Prefer early exits over deeply nested conditionals.
-- Avoid dynamic imports from repository-controlled paths.
-- Keep scripts independently runnable locally where practical.
-- Required variables must fail immediately when missing.
-- Script behavior must not differ between local and CI without explicit reason.
-- Keep scripts small; split them when responsibilities diverge.
-- A script must never broaden workflow permissions.
-- Prefer read-only behavior by default.
-- Every script should be deterministic, testable, fail-safe, and locally reproducible.
-- Never interpolate untrusted ${{ ... }} directly into shell code.
-- Never build shell commands by string concatenation.
+- Workflows should be clear, modular, and easy to understand, promoting reusability and maintainability.
+- Always start with a descriptive name and appropriate `on` triggers. Suggest granular triggers for specific use cases (e.g., on: push: branches: [main] vs. on: pull_request).
+- Define jobs with clear name and appropriate `runs-on` (e.g., ubuntu-24.04).
+- Add `concurrency` when duplicate or stale runs can conflict, waste resources, or produce outdated results.
+- Prefer `cancel-in-progress: true` for replaceable PR validation.
+- Do not cancel releases, publishing, deployments, migrations, or other stateful operations unless cancellation is explicitly safe.
+- All steps should have descriptive names.
+- Always try to make code self-explanatory and avoid unnecessary comments. If a comment is needed, explain the "why" rather than the "what."
 
 ## Required Checks
 
@@ -113,14 +90,6 @@ yamllint .github
 zizmor .github
 actionlint
 shellcheck .github/scripts/*.sh
-```
-
-For changes under `.github/scripts/`, also run:
-
-```bash
-bash -n .github/scripts/run-mutation-tests.sh
-prek run shellcheck --all-files
-bats .github/scripts/tests
 ```
 
 If label generation changes, run `python3 scripts/check.py --check labels`.
