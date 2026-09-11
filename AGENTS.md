@@ -19,15 +19,26 @@ The closest instruction file takes precedence for its subtree and may override o
 - Keep root instructions limited to rules that apply repo-wide.
 - If you add a new module consider to add a new AGENTS.md file in that module to define its own rules if it has any specific requirements valuable for code generation.
 - If you change repository structure, update the instruction hierarchy accordingly.
+- Keep agent instructions in sync with the repository's actual structure and behavior when you make changes.
 
 ## Stack and Environment
 
 - This is a documentation-first repository with Python tooling for validation, generation, and repository maintenance.
-- Python code targets the version declared in pyproject.toml.
+- Python code targets the version declared in `pyproject.toml`.
 - Repository dependency and tool versions are defined by their existing configuration and lockfiles; do not introduce alternative package-management or build systems without an explicit architectural reason.
 - Use repository-provided scripts and configuration as the source of truth for validation behavior.
 - Do not assume tools are installed globally when the repository defines a reproducible way to invoke them.
 - Use paths relative to the repository root unless a local instruction explicitly defines another convention.
+
+## Repository Structure
+
+The repository is organized into the following top-level directories:
+
+- `catalog/`: machine-readable rule catalog and reference allowlist
+- `guides/`: human-readable rule guides with YAML frontmatter
+- `scripts/`: Python tooling for validation, generation, and repository maintenance
+
+For more infromation about particular directories, read the closest nested `AGENTS.md` or `README.md` in that directory.
 
 ## Repository-wide Rules
 

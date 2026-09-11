@@ -2,13 +2,11 @@
 
 Web of Flaws is a catalog of vulnerable web patterns and their safer replacements. Contributions
 should be technically accurate, concise, and useful both to developers and security-review tools.
-
-This guide is for human contributors. The repository's detailed automation contract lives in
-[`AGENTS.md`](AGENTS.md) and its directory-specific instruction files.
+This guide is for human contributors.
 
 ## Getting Started
 
-You need Python 3.12, `markdownlint-cli2`, Ruff, and Git. Install `uv` for mutation testing and
+You need Python >=3.12, `markdownlint-cli2`, Ruff, and Git. Install `uv` for mutation testing and
 Bats when working on workflow shell scripts.
 
 Before opening a pull request, run:
@@ -37,9 +35,6 @@ repository's staged-file and commit-message hooks.
 6. Cite authoritative references. External guide URLs must be allowlisted in
    `catalog/allowed-reference-domains.json`.
 7. Update the nearest category `README.md`.
-
-Rule headings and frontmatter are validated automatically. Read
-[`guides/AGENTS.md`](guides/AGENTS.md) for the complete guide contract before editing a guide.
 
 ## Generated Data
 
