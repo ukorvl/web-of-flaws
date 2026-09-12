@@ -38,7 +38,7 @@ The repository is organized into the following top-level directories:
 - `guides/`: human-readable rule guides with YAML frontmatter
 - `scripts/`: Python tooling for validation, generation, and repository maintenance
 
-For more infromation about particular directories, read the closest nested `AGENTS.md` or `README.md` in that directory.
+For more information about particular directories, read the closest nested `AGENTS.md` or `README.md` in that directory.
 
 ## Repository-wide Rules
 
