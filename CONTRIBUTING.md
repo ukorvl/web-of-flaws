@@ -66,7 +66,7 @@ uv run --locked --only-group mutation mutmut results
 ```
 
 Workflow changes must keep Actions SHA-pinned and pass `yamllint .github`, `zizmor .github`, and
-`actionlint -color`. Shell workflow scripts also require `bats .github/scripts/tests`.
+`actionlint -color`. Shell workflow scripts also require `shellcheck .github/scripts/*.sh` and `bats .github/scripts/tests`.
 
 ## Pull Requests
 
