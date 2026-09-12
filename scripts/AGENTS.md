@@ -10,7 +10,6 @@ generated catalog data, CI validation, and downstream machine-readable consumers
 
 ## Python Rules
 
-- Target the Python version declared in `pyproject.toml`.
 - Prefer the Python standard library unless an external dependency provides substantial value.
 - Add type annotations to function parameters and return values.
 - Prefer precise types over `Any`.
@@ -26,17 +25,6 @@ generated catalog data, CI validation, and downstream machine-readable consumers
 - Prefer explicit control flow over clever or overly compact implementations.
 - Catch only exceptions that can be handled meaningfully.
 - Do not silently swallow parsing, validation, filesystem, or subprocess errors.
-
-## CLI Rules
-
-- Use `argparse` for scripts with command-line options.
-- Prefer `main(argv: list[str] | None = None) -> int`.
-- Finish executable scripts with `raise SystemExit(main())`.
-- Return `0` only for successful execution.
-- Send validation and failure diagnostics to stderr where appropriate.
-- Error messages should identify the affected file, field, or value whenever possible.
-- Required inputs must fail clearly when missing.
-- Keep CLI behavior deterministic and suitable for both local execution and CI.
 
 ## Filesystem and Generated Data
 
