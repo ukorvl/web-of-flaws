@@ -1,37 +1,76 @@
-# Agents guide for Web of Flaws
+# Agent Instructions for Web of Flaws
 
-## Overview
+## Purpose
 
-This project is a catalog of vulnerable web patterns and safer replacements, designed for both humans and coding agents. Each guide shows the risky pattern, why it is exploitable, and how to fix it with concrete code. The core idea is to provide a structured and machine-readable format that allows agents to parse the guides and extract relevant information.
+Web of Flaws is a machine-readable catalog of vulnerable web patterns and safer replacements.
+Every rule must help a developer or coding agent understand the security boundary, exploitation
+conditions, and appropriate remediation.
 
-The repository is organized into categories based on security topics and vulnerability families. Each category contains guides that follow a consistent structure. Each category has a `README.md` file that provides an overview of the category and links to the individual guides.
+The goal of the project is to serve both humans and machines. It means, all guides should be written in a way that is understandable by humans, but also structured and formatted in a way that can be parsed and processed by machines.
 
-A purpose of this repository is to enable coding agents to learn from the guides and apply the knowledge to identify and fix vulnerabilities in web applications. Humans also are supposed to benefit from it by learning about common web vulnerabilities and how to mitigate them. Consider this repository as a knowledge base for both humans and agents to improve web security.
+Technical correctness, clear security reasoning, and machine-readable consistency take priority over brevity or stylistic preference.
 
-Each rule guide is exactly one Markdown file. Guide markdown files should start with YAML frontmatter that includes standard properties of each guide, followed by the standard heading structure. Dataflow rules should declare explicit `sources` and `sinks`; pattern rules should declare `indicators`. Look at `.markdownlint-cli2.jsonc`, `CONTRIBUTING.md`, `catalog/rules.json`, and `catalog/allowed-reference-domains.json` for the expected guide structure.
+## Instruction Hierarchy
 
-All guides are divided into two main categories - rules and notes. Notes are for general information, best practices, or other relevant content that does not fit into the rules category and cannot be used to identify a vulnerability. Rules are for specific patterns that can be used to identify vulnerabilities in web applications.
+Read this file first, then read the closest nested `AGENTS.md` for every directory you modify before you start.
+The closest instruction file takes precedence for its subtree and may override or extend the rules in this file.
 
-## Environment
+- Do not duplicate parent rules in nested AGENTS.md files.
+- Keep root instructions limited to rules that apply repo-wide.
+- If you add a new module consider to add a new AGENTS.md file in that module to define its own rules if it has any specific requirements valuable for code generation.
+- If you change repository structure, update the instruction hierarchy accordingly.
+- Keep agent instructions in sync with the repository's actual structure and behavior when you make changes.
 
-This is a docs-first repository with no app runtime or build step. Run all validation commands defined in `CONTRIBUTING.md`. If a required tool is unavailable, report which check could not be executed rather than silently substituting another toolchain. Follow `.editorconfig` for whitespace and indentation, and keep in mind that CI checks Markdown style, links, and GitHub Actions security.
+## Stack and Environment
 
-## Workspace structure
+- This is a documentation-first repository with Python tooling for validation, generation, and repository maintenance.
+- Python code targets the version declared in `pyproject.toml`.
+- Repository dependency and tool versions are defined by their existing configuration and lockfiles; do not introduce alternative package-management or build systems without an explicit architectural reason.
+- Use repository-provided scripts and configuration as the source of truth for validation behavior.
+- Do not assume tools are installed globally when the repository defines a reproducible way to invoke them.
+- Use paths relative to the repository root unless a local instruction explicitly defines another convention.
 
-All guides are located in the `guides` directory. Each category has its own subdirectory, and each rule guide is a single Markdown file. Category directories and nested category directories may contain `README.md` index files, but rules themselves are not split across multiple files.
+## Repository Structure
 
-Repository supports nested agent docs structure. If you encounter nested `AGENTS.md` always give preference to the closest `AGENTS.md` in the directory tree. If a category has no `AGENTS.md`, use the parent category's `AGENTS.md` instead.
+The repository is organized into the following top-level directories:
 
-## Before marking things as done
+- `catalog/`: machine-readable rule catalog and reference allowlist
+- `.github/`: GitHub automation, workflow-local scripts, and Copilot integration instructions
+- `guides/`: human-readable rule guides with YAML frontmatter
+- `scripts/`: Python tooling for validation, generation, and repository maintenance
 
-- Follow [CONTRIBUTING.md](CONTRIBUTING.md) for the canonical repository rules on guide structure, validation commands, generated files, labels, and contributor workflow.
-- If you change guides, generated files, or link allowlists, run the checks required by `CONTRIBUTING.md` before marking the task done and report anything you could not verify.
-- The generate code should be clean and human-readable with no unnecessary whitespace or formatting issues. Code should be structured in a way that is easy to understand and follow.
-- Repository primary branch is `main`. All pull requests should be made against the `main` branch. If you need to reference the primary branch in your code, use `main` instead of `master`.
+For more information about particular directories, read the closest nested `AGENTS.md` or `README.md` in that directory.
 
-### Other resources
+## Repository-wide Rules
 
-- [Contributing guide](CONTRIBUTING.md)
-- [.markdownlint-cli2.jsonc](.markdownlint-cli2.jsonc)
-- [catalog/rules.json](catalog/rules.json)
-- [catalog/allowed-reference-domains.json](catalog/allowed-reference-domains.json)
+- This is a documentation-first repository; do not introduce an application runtime or build step
+  without an explicit architectural decision.
+- Follow `.editorconfig` and preserve existing formatting and naming conventions.
+- Do not edit generated files by hand.
+- Run the validations required by every applicable nested instruction file. If a required tool is
+  unavailable, report the missing check rather than substituting another tool.
+- Keep validation errors actionable: write them to stderr and return a nonzero exit status.
+- The primary branch is `main`; use this name when you need to reference the default repository branch in your code or documentation.
+- Prefer existing repository conventions over introducing new abstractions, dependencies, or tooling.
+- Make the smallest change that fully solves the requested problem.
+- Do not perform unrelated cleanup or refactoring.
+- Preserve backward compatibility unless the task explicitly requires a breaking change.
+
+## Security and Correctness
+
+- Treat security content as technical documentation, not opinionated advice.
+- Do not overstate vulnerability impact, exploitability, detection confidence, or mitigation guarantees.
+- Distinguish candidate detection from confirmed exploitability.
+- Prefer primary or authoritative technical sources over secondary summaries when verifying security behavior.
+- Do not introduce intentionally insecure behavior outside examples whose purpose is to demonstrate a vulnerability.
+- Never add real secrets, credentials, private keys, access tokens, or sensitive production data.
+- Treat external inputs and repository-controlled data as untrusted when they cross an execution or trust boundary.
+
+## Completion
+
+Before finishing, run the relevant focused checks and report the commands that could not run.
+For changes spanning repository data or guides, `python3 scripts/check.py` is the central integrity
+entry point.
+Any nested `AGENTS.md` may define additional required checks.
+
+Do not claim that a change is complete, fixed, valid, or passing without fresh verification from the checks relevant to that change.

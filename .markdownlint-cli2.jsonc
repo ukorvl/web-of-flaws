@@ -46,7 +46,8 @@
       "filter": [
         "guides/**/*.md",
         "!guides/**/README.md",
-        "!guides/**/notes/**/*.md"
+        "!guides/**/notes/**/*.md",
+        "!guides/**/AGENTS.md"
       ],
       "config": {
         // Asserts stable heading structure for guides which is important to keep the doc machine and human readable.

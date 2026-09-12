@@ -74,12 +74,12 @@ def iter_guide_rule_paths(root: Path) -> list[Path]:
     return sorted(
         path
         for path in guides_root.rglob("*.md")
-        if path.name != "README.md" and not is_guide_note_path(path, guides_root)
+        if path.name not in {"AGENTS.md", "README.md"} and not is_guide_note_path(path, guides_root)
     )
 
 
 def iter_guide_markdown_paths(root: Path) -> list[Path]:
-    return sorted((root / "guides").rglob("*.md"))
+    return sorted(path for path in (root / "guides").rglob("*.md") if path.name != "AGENTS.md")
 
 
 def load_guide(path: Path) -> tuple[dict, str]:
