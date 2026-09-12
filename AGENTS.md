@@ -35,6 +35,7 @@ The closest instruction file takes precedence for its subtree and may override o
 The repository is organized into the following top-level directories:
 
 - `catalog/`: machine-readable rule catalog and reference allowlist
+- `.github/`: GitHub automation, workflow-local scripts, and Copilot integration instructions
 - `guides/`: human-readable rule guides with YAML frontmatter
 - `scripts/`: Python tooling for validation, generation, and repository maintenance
 
