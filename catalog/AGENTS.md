@@ -11,8 +11,7 @@ mappings consumed by the validation scripts.
   `python3 scripts/generate_catalog.py` after changing guide metadata.
 - `allowed-reference-domains.json` is maintained source data. Add only authoritative domains, with
   a narrow scope and a clear purpose. Do not add broad exceptions merely to silence link validation.
-- `standards/owasp-2025.json` is trusted semantic data. Each OWASP entry must use valid, unique CWE
-  identifiers. A guide's direct CWE/OWASP relationship must exist in this mapping.
+- `standards/*` sets a list of security standards.
 
 ## Required Checks
 
