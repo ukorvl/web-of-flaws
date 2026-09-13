@@ -38,7 +38,9 @@ repository's staged-file and commit-message hooks.
 
 ## Generated Data
 
-Guides are the source of truth. Do not edit `catalog/rules.json` or `catalog/standards/owasp-2025.json` by hand. Synchronize reference domains with the dedicated script so existing reviewed purpose text is preserved.
+Guides are the source of truth. Do not edit `catalog/rules.json`,
+`catalog/standards/owasp-2025.json`, `.github/labeler.yaml`, or `.github/labels.yaml` by hand.
+Synchronize reference domains with the dedicated script so existing reviewed purpose text is preserved.
 
 After changing guide metadata, run:
 
