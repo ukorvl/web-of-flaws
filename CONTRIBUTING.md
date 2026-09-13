@@ -32,14 +32,13 @@ repository's staged-file and commit-message hooks.
    These models are mutually exclusive.
 5. Explain the trust boundary, the conditions that make the pattern exploitable, safer alternatives,
    and meaningful false positives.
-6. Cite authoritative references. External guide URLs must be allowlisted in
-   `catalog/allowed-reference-domains.json`.
+6. Cite authoritative references. After changing external guide domains, run
+   `python3 scripts/sync_reference_domains.py` and review the generated allowlist changes.
 7. Update the nearest category `README.md`.
 
 ## Generated Data
 
-Guides are the source of truth. Do not edit `catalog/rules.json`, `.github/labeler.yaml`, or
-`.github/labels.yaml` by hand.
+Guides are the source of truth. Do not edit `catalog/rules.json` or `catalog/standards/owasp-2025.json` by hand. Synchronize reference domains with the dedicated script so existing reviewed purpose text is preserved.
 
 After changing guide metadata, run:
 
@@ -51,6 +50,13 @@ After changing guide groups, run:
 
 ```bash
 python3 scripts/sync_guide_labels.py
+```
+
+After changing guide standards or external domains, run:
+
+```bash
+python3 scripts/validate_standards.py
+python3 scripts/sync_reference_domains.py
 ```
 
 `python3 scripts/check.py` verifies that generated data, references, standards mappings, and labels

@@ -5,6 +5,11 @@
       "CWE-352"
     ]
   },
+  "A02:2025 Security Misconfiguration": {
+    "cwes": [
+      "CWE-942"
+    ]
+  },
   "A03:2025 Software Supply Chain Failures": {
     "cwes": [
       "CWE-829"
