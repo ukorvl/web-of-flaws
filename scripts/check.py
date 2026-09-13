@@ -26,6 +26,17 @@ CHECKS = (
         ("catalog/rules.json", "guides/", "scripts/generate_catalog.py", "scripts/guide_tools.py"),
     ),
     Check(
+        "domains",
+        "scripts/sync_reference_domains.py",
+        ("--check",),
+        (
+            "catalog/allowed-reference-domains.json",
+            "guides/",
+            "scripts/guide_tools.py",
+            "scripts/sync_reference_domains.py",
+        ),
+    ),
+    Check(
         "guides",
         "scripts/lint_repo.py",
         (),
@@ -35,12 +46,13 @@ CHECKS = (
             "scripts/generate_catalog.py",
             "scripts/guide_tools.py",
             "scripts/lint_repo.py",
+            "scripts/sync_reference_domains.py",
         ),
     ),
     Check(
         "standards",
         "scripts/validate_standards.py",
-        (),
+        ("--check",),
         ("catalog/standards/", "guides/", "scripts/guide_tools.py", "scripts/validate_standards.py"),
     ),
     Check(

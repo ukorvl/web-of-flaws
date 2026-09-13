@@ -9,14 +9,18 @@ mappings consumed by the validation scripts.
 
 - `rules.json` is generated from `guides/`; never edit it by hand. Regenerate it with
   `python3 scripts/generate_catalog.py` after changing guide metadata.
-- `allowed-reference-domains.json` is maintained source data. Add only authoritative domains, with
-  a narrow scope and a clear purpose. Do not add broad exceptions merely to silence link validation.
-- `standards/*` sets a list of security standards.
+- `allowed-reference-domains.json` is synchronized from rendered URLs under `guides/`; run
+  `python3 scripts/sync_reference_domains.py` after changing referenced domains. Review every added
+  domain for authority and scope, and refine its generated purpose when useful. Do not keep broad
+  exceptions merely to silence link validation.
+- `standards/*` is generated from guide frontmatter; run `python3 scripts/validate_standards.py`
+  after changing `standards` metadata.
 
 ## Required Checks
 
 ```bash
 python3 scripts/check.py --check catalog
+python3 scripts/check.py --check domains
 python3 scripts/check.py --check guides
 python3 scripts/check.py --check standards
 ```

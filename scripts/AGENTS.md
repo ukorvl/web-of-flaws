@@ -67,6 +67,10 @@ generated catalog data, CI validation, and downstream machine-readable consumers
 - Prefer running extra validation over silently missing an affected repository invariant.
 - Validation scripts should detect invalid state, not automatically repair it unless repair is the explicit
   purpose of the script.
+- When you add or change a script that lints repository content or performs some checks, follow the
+  "write by default, verify with --check" pattern. The script should be able to run without any
+  arguments and perform all the necessary checks. If you add a new check, make sure to update the
+  relevant `AGENTS.md` file with the required command to run it.
 
 ## Dependencies
 
