@@ -5,25 +5,18 @@
     "default_action": "deny",
     "requirements": [
       "Every new external link added under guides/ must use an allowlisted domain.",
-      "If a new guide-reference domain is necessary, add it here with scope and rationale before using it in guides/.",
+      "Review every generated domain addition and keep only authoritative sources or reserved example hosts.",
       "Every new or changed external URL added under guides/ must be opened and verified to resolve to the intended document.",
       "Prefer canonical destination URLs for guide references over links that only work through redirects."
     ]
   },
   "domains": [
     {
-      "domain": "cwe.mitre.org",
+      "domain": "bun.sh",
       "scopes": [
         "guide-references"
       ],
-      "purpose": "Official MITRE CWE definitions and mappings."
-    },
-    {
-      "domain": "owasp.org",
-      "scopes": [
-        "guide-references"
-      ],
-      "purpose": "Official OWASP Top 10, ASVS, and project documentation."
+      "purpose": "Official Bun documentation for lifecycle-script controls and trusted dependency behavior."
     },
     {
       "domain": "cheatsheetseries.owasp.org",
@@ -33,11 +26,67 @@
       "purpose": "Official OWASP Cheat Sheet Series guidance."
     },
     {
+      "domain": "code.visualstudio.com",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official Visual Studio Code documentation for development containers and extension behavior."
+    },
+    {
+      "domain": "cwe.mitre.org",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official MITRE CWE definitions and mappings."
+    },
+    {
       "domain": "developer.mozilla.org",
       "scopes": [
         "guide-references"
       ],
       "purpose": "Official MDN Web Docs for browser and web platform behavior."
+    },
+    {
+      "domain": "docs.github.com",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official GitHub documentation for Actions security, immutable releases, and workflow policy controls."
+    },
+    {
+      "domain": "docs.npmjs.com",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official npm documentation for lifecycle scripts, lockfiles, and package installation behavior."
+    },
+    {
+      "domain": "getsops.io",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official SOPS documentation for encrypted secret-management workflows."
+    },
+    {
+      "domain": "git-scm.com",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official Git documentation for hooks, repository initialization, and configuration behavior."
+    },
+    {
+      "domain": "owasp.org",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official OWASP Top 10, ASVS, and project documentation."
+    },
+    {
+      "domain": "pnpm.io",
+      "scopes": [
+        "guide-references"
+      ],
+      "purpose": "Official pnpm documentation for supply-chain protections and package installation behavior."
     },
     {
       "domain": "react.dev",
@@ -54,67 +103,11 @@
       "purpose": "Official Vue documentation when framework-specific behavior matters."
     },
     {
-      "domain": "getsops.io",
-      "scopes": [
-        "guide-references"
-      ],
-      "purpose": "Official SOPS documentation for encrypted secret-management workflows."
-    },
-    {
-      "domain": "docs.npmjs.com",
-      "scopes": [
-        "guide-references"
-      ],
-      "purpose": "Official npm documentation for lifecycle scripts, lockfiles, and package installation behavior."
-    },
-    {
-      "domain": "pnpm.io",
-      "scopes": [
-        "guide-references"
-      ],
-      "purpose": "Official pnpm documentation for supply-chain protections and package installation behavior."
-    },
-    {
       "domain": "yarnpkg.com",
       "scopes": [
         "guide-references"
       ],
       "purpose": "Official Yarn Berry documentation for install-script controls and package-manager settings."
-    },
-    {
-      "domain": "bun.sh",
-      "scopes": [
-        "guide-references"
-      ],
-      "purpose": "Official Bun documentation for lifecycle-script controls and trusted dependency behavior."
-    },
-    {
-      "domain": "docs.github.com",
-      "scopes": [
-        "guide-references"
-      ],
-      "purpose": "Official GitHub documentation for Actions security, immutable releases, and workflow policy controls."
-    },
-    {
-      "domain": "git-scm.com",
-      "scopes": [
-        "guide-references"
-      ],
-      "purpose": "Official Git documentation for hooks, repository initialization, and configuration behavior."
-    },
-    {
-      "domain": "code.visualstudio.com",
-      "scopes": [
-        "guide-references"
-      ],
-      "purpose": "Official Visual Studio Code documentation for development containers and extension behavior."
-    },
-    {
-      "domain": "example.com",
-      "scopes": [
-        "example-urls"
-      ],
-      "purpose": "Reserved host for non-live sample URLs in attack or demo examples."
     }
   ]
 }

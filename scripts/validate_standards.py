@@ -5,16 +5,69 @@ import sys
 from pathlib import Path
 
 if __package__:
-    from .guide_tools import CWE_ID_RE, OWASP_TOP_10_RE, GuideValidationError, iter_guide_rule_paths, load_guide
+    from .guide_tools import (
+        CWE_ID_RE,
+        OWASP_TOP_10_RE,
+        GuideValidationError,
+        iter_guide_rule_paths,
+        load_guide,
+        validate_frontmatter,
+    )
 else:
-    from guide_tools import CWE_ID_RE, OWASP_TOP_10_RE, GuideValidationError, iter_guide_rule_paths, load_guide
+    from guide_tools import (
+        CWE_ID_RE,
+        OWASP_TOP_10_RE,
+        GuideValidationError,
+        iter_guide_rule_paths,
+        load_guide,
+        validate_frontmatter,
+    )
 
 ROOT = Path(__file__).resolve().parents[1]
+COMMAND = "python3 scripts/validate_standards.py"
 OWASP_2025_PATH = Path("catalog/standards/owasp-2025.json")
 
 
 class StandardsValidationError(ValueError):
     pass
+
+
+def build_owasp_2025(root: Path) -> dict[str, dict[str, list[str]]]:
+    errors: list[str] = []
+    mappings: dict[str, set[str]] = {}
+
+    for path in iter_guide_rule_paths(root):
+        try:
+            frontmatter, _body = load_guide(path)
+        except GuideValidationError as error:
+            errors.extend(str(error).splitlines())
+            continue
+
+        errors.extend(validate_frontmatter(frontmatter, path))
+        standards = frontmatter.get("standards")
+        if not isinstance(standards, dict):
+            continue
+
+        cwes = standards.get("cwe")
+        owasp_entries = standards.get("owasp_top_10")
+        if not isinstance(cwes, list) or not isinstance(owasp_entries, list):
+            continue
+
+        valid_cwes = {cwe for cwe in cwes if isinstance(cwe, str) and CWE_ID_RE.fullmatch(cwe)}
+        valid_owasp_entries = {
+            entry for entry in owasp_entries if isinstance(entry, str) and OWASP_TOP_10_RE.fullmatch(entry)
+        }
+        for owasp in valid_owasp_entries:
+            mappings.setdefault(owasp, set()).update(valid_cwes)
+
+    if errors:
+        raise GuideValidationError("\n".join(sorted(set(errors))))
+
+    return {owasp: {"cwes": sorted(cwes)} for owasp, cwes in sorted(mappings.items())}
+
+
+def render_owasp_2025(root: Path) -> str:
+    return f"{json.dumps(build_owasp_2025(root), indent=2, ensure_ascii=False)}\n"
 
 
 def load_owasp_2025(root: Path) -> dict[str, set[str]]:
@@ -109,14 +162,34 @@ def validate(root: Path) -> list[str]:
 
 
 def main() -> int:
-    print("Validating guide standards integrity.")
-    errors = validate(ROOT)
-    if errors:
-        for error in errors:
-            print(error, file=sys.stderr)
-        print(f"Standards validation failed with {len(errors)} error(s).", file=sys.stderr)
+    check = "--check" in sys.argv
+    destination = ROOT / OWASP_2025_PATH
+    current = destination.read_text(encoding="utf-8") if destination.exists() else ""
+
+    try:
+        rendered = render_owasp_2025(ROOT)
+    except GuideValidationError as error:
+        print(str(error), file=sys.stderr)
+        print("Standards synchronization failed due to invalid guide metadata.", file=sys.stderr)
         return 1
-    print("Standards validation passed.")
+
+    entry_count = len(json.loads(rendered))
+    mode = "Checking" if check else "Syncing"
+    print(f"{mode} {OWASP_2025_PATH} for {entry_count} OWASP entries.")
+
+    if check:
+        if current != rendered:
+            print(f"{OWASP_2025_PATH} is out of date. Run: {COMMAND}", file=sys.stderr)
+            return 1
+        print(f"{OWASP_2025_PATH} is up to date.")
+        return 0
+
+    if current != rendered:
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_text(rendered, encoding="utf-8")
+        print(f"Updated {OWASP_2025_PATH}.")
+    else:
+        print(f"{OWASP_2025_PATH} is already up to date.")
     return 0
 
 
