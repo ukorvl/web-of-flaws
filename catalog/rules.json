@@ -3,8 +3,8 @@
   "rules": [
     {
       "id": "WOF-CORS-001",
-      "path": "guides/cross-origin-communication/untrusted-origin-reflected-into-credentialed-cors-response.md",
-      "title": "Untrusted Origin Reflected into Credentialed CORS Response",
+      "path": "guides/cross-origin-communication/untrusted-origin-allowed-to-read-credential-backed-responses.md",
+      "title": "Untrusted Origin Allowed to Read Credential-Backed Responses",
       "kind": "vulnerability",
       "default_severity": "high",
       "exploitability": "medium",

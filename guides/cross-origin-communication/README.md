@@ -4,5 +4,5 @@ Cross-origin communication guides focus on trust boundaries between origins, win
 
 ## Rules
 
-- [Untrusted Origin Reflected into Credentialed CORS Response](untrusted-origin-reflected-into-credentialed-cors-response.md)
+- [Untrusted Origin Allowed to Read Credential-Backed Responses](untrusted-origin-allowed-to-read-credential-backed-responses.md)
 - [Untrusted postMessage sender to privileged handler](untrusted-postmessage-sender-to-privileged-handler.md)
