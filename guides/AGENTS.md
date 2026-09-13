@@ -25,7 +25,6 @@ files are indexes; every rule *is exactly one Markdown file*.
 - Never add code blocks with an example that can be executed as a real attack as-is. If you need to demonstrate an exploit, use a safe, non-exploitable example or a mockup. On the other hand, never invent a vulnerability or weakness that does not exist in real-world software and make code examples close to real-world scenarios.
 - Always ensure that a guide is easy to understand and follow by human readers. Use clear and concise language, and provide context for why the rule is important and how it can be applied in practice.
 - There should be a clear separation between guides, never duplicate content across guides. If you find that a guide is too long or complex, consider breaking it into multiple guides with clear relationships and references. If you are unsure about the best way to structure a guide, report it directly and don't make assumptions about the best way to structure it.
-- When you add or change a script that lints repository content or performs some checks follow the "write by default, verify with --check" pattern. The script should be able to run without any arguments and perform all the necessary checks. If you add a new check, make sure to update the relevant `AGENTS.md` file with the required command to run it.
 
 ## Generated Data
 
