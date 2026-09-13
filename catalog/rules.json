@@ -2,6 +2,95 @@
   "schema_version": 1,
   "rules": [
     {
+      "id": "WOF-CORS-001",
+      "path": "guides/cross-origin-communication/untrusted-origin-reflected-into-credentialed-cors-response.md",
+      "title": "Untrusted Origin Reflected into Credentialed CORS Response",
+      "kind": "vulnerability",
+      "default_severity": "high",
+      "exploitability": "medium",
+      "standards": {
+        "cwe": [
+          "CWE-942"
+        ],
+        "owasp_top_10": [
+          "A02:2025 Security Misconfiguration"
+        ]
+      },
+      "platforms": [
+        "browser",
+        "server"
+      ],
+      "languages": [
+        "javascript",
+        "typescript"
+      ],
+      "detection": {
+        "type": "dataflow",
+        "methods": [
+          "grep",
+          "ast",
+          "taint-analysis",
+          "semantic-review"
+        ],
+        "candidate_tokens": [
+          "Access-Control-Allow-Origin",
+          "Access-Control-Allow-Credentials",
+          "req.headers.origin",
+          "request.headers.get(\"origin\")",
+          "ctx.get(\"Origin\")",
+          "cors({",
+          "origin: true",
+          "credentials: true"
+        ]
+      },
+      "sources": [
+        "Origin request header",
+        "req.headers.origin",
+        "request.headers.get(\"origin\")",
+        "ctx.get(\"Origin\")"
+      ],
+      "sinks": [
+        "Access-Control-Allow-Origin response header",
+        "res.setHeader(\"Access-Control-Allow-Origin\", origin)",
+        "response.headers.set(\"Access-Control-Allow-Origin\", origin)",
+        "ctx.set(\"Access-Control-Allow-Origin\", origin)"
+      ],
+      "tags": [
+        "cors",
+        "origin-reflection",
+        "access-control-allow-origin",
+        "access-control-allow-credentials",
+        "same-origin-policy",
+        "authenticated-data"
+      ],
+      "references": [
+        {
+          "label": "MITRE CWE-942: Permissive Cross-domain Security Policy with Untrusted Domains",
+          "url": "https://cwe.mitre.org/data/definitions/942.html"
+        },
+        {
+          "label": "OWASP Top 10 2025 A02: Security Misconfiguration",
+          "url": "https://owasp.org/Top10/2025/A02_2025-Security_Misconfiguration/"
+        },
+        {
+          "label": "MDN: Cross-Origin Resource Sharing (CORS)",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS"
+        },
+        {
+          "label": "MDN: Cross-Origin Resource Sharing (CORS) configuration",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/Security/Practical_implementation_guides/CORS"
+        },
+        {
+          "label": "MDN: `Access-Control-Allow-Credentials` header",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Credentials"
+        },
+        {
+          "label": "MDN: `Access-Control-Allow-Origin` header",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Origin"
+        }
+      ]
+    },
+    {
       "id": "WOF-PM-001",
       "path": "guides/cross-origin-communication/untrusted-postmessage-sender-to-privileged-handler.md",
       "title": "Untrusted postMessage Sender to Privileged Handler",

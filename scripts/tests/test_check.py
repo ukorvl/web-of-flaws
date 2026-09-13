@@ -15,7 +15,7 @@ class CheckTests(TestCase):
     def test_selected_checks_defaults_to_all_checks(self) -> None:
         selected = check.selected_checks([], False, Path("."))
 
-        self.assertEqual([entry.name for entry in selected], ["catalog", "guides", "standards", "labels"])
+        self.assertEqual([entry.name for entry in selected], ["catalog", "domains", "guides", "standards", "labels"])
 
     def test_selected_checks_filters_to_changed_paths(self) -> None:
         with (
@@ -25,6 +25,19 @@ class CheckTests(TestCase):
             selected = check.selected_checks([], True, Path(tmpdir))
 
         self.assertEqual([entry.name for entry in selected], ["standards"])
+
+    def test_selected_checks_runs_domain_sync_and_guide_lint_for_allowlist_changes(self) -> None:
+        with (
+            TemporaryDirectory() as tmpdir,
+            mock.patch.object(
+                check,
+                "changed_paths",
+                return_value={"catalog/allowed-reference-domains.json"},
+            ),
+        ):
+            selected = check.selected_checks([], True, Path(tmpdir))
+
+        self.assertEqual([entry.name for entry in selected], ["domains", "guides"])
 
     def test_selected_checks_runs_requested_check_when_no_paths_match(self) -> None:
         with TemporaryDirectory() as tmpdir, mock.patch.object(check, "changed_paths", return_value={"README.md"}):
