@@ -1,5 +1,22 @@
 version: 2
 updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    versioning-strategy: increase
+    cooldown:
+      default-days: 7
+    groups:
+      vitest:
+        patterns: ["vitest", "@vitest/*"]
+      stryker:
+        patterns: ["@stryker-mutator/*"]
+      commitlint:
+        patterns: ["@commitlint/*"]
+    commit-message:
+      prefix: "chore"
+      include: "scope"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

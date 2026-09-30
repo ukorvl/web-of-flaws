@@ -1,0 +1,19 @@
+packages:
+  - packages/*
+
+sharedWorkspaceLockfile: true
+linkWorkspacePackages: false
+saveWorkspaceProtocol: rolling
+saveExact: true
+nodeLinker: isolated
+strictPeerDependencies: true
+engineStrict: true
+pmOnFail: error
+verifyDepsBeforeRun: error
+minimumReleaseAge: 10080
+blockExoticSubdeps: true
+strictDepBuilds: true
+# Platform binaries are provided as optional packages; hooks are installed explicitly.
+allowBuilds:
+  esbuild: false
+  simple-git-hooks: false

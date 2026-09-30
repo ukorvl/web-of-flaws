@@ -28,15 +28,15 @@ files are indexes; every rule *is exactly one Markdown file*.
 ## Generated Data
 
 Guides are the source of truth. Never edit `catalog/rules.json` manually. After changing guide
-metadata, run `python3 scripts/generate_catalog.py`. After changing guide groups, run
-`python3 scripts/sync_guide_labels.py`.
+metadata, run `pnpm generate:catalog`. After changing guide groups, run
+`pnpm generate:labels`.
 
 ## Required Checks
 
 ```bash
-markdownlint-cli2
-python3 scripts/check.py
+pnpm lint:markdown
+pnpm check
 ```
 
-Use `python3 scripts/check.py --check guides`, `--check catalog`, or `--check standards` only when
+Use `pnpm check --check guides`, `--check catalog`, or `--check standards` only when
 the change is deliberately limited to that invariant. Run the full command for a normal guide change.

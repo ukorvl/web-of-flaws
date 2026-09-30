@@ -19,12 +19,13 @@ jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-24.04 # pinned for determinism
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
         language:
           - actions
-          - python
+          - javascript-typescript
     steps:
       # Audit runner network, file, and process activity before enforcing egress rules.
       - name: Harden runner

@@ -16,6 +16,7 @@ concurrency:
 jobs:
   code-quality:
     runs-on: ubuntu-24.04 # pinned for determinism
+    timeout-minutes: 15
     steps:
       # Audit runner network, file, and process activity before enforcing egress rules.
       - name: Harden runner
@@ -28,13 +29,15 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Run prek hooks
-        uses: j178/prek-action@4e14d07f9231acabce116ccfca13b13dd9755ece # v3.0.0
-        with:
-          prek-version: 0.4.13 # pinned for determinism
+      - name: Set up repository tooling
+        uses: ./.github/actions/setup-tooling
+
+      - name: Validate formatting, types, tests, and repository integrity
+        run: pnpm validate
 
   link-health:
     runs-on: ubuntu-24.04 # pinned for determinism
+    timeout-minutes: 15
     steps:
       # Audit runner network, file, and process activity before enforcing egress rules.
       - name: Harden runner
@@ -62,6 +65,7 @@ jobs:
 
   zizmor:
     runs-on: ubuntu-24.04 # pinned for determinism
+    timeout-minutes: 15
     steps:
       # Audit runner network, file, and process activity before enforcing egress rules.
       - name: Harden runner
@@ -84,6 +88,7 @@ jobs:
 
   actionlint:
     runs-on: ubuntu-24.04 # pinned for determinism
+    timeout-minutes: 15
     steps:
       # Audit runner network, file, and process activity before enforcing egress rules.
       - name: Harden runner
@@ -99,66 +104,6 @@ jobs:
       # Validate GitHub Actions workflow syntax, expressions, and action usage.
       - name: Run actionlint
         # actionlint v1.7.12.
-        uses: docker://rhysd/actionlint@sha256:9d36088643581e728c969f35141f88139fec77280b2be23c1f66f8e40e1025e7 # yamllint disable-line rule:line-length
+        uses: docker://rhysd/actionlint@sha256:9d36088643581e728c969f35141f88139fec77280b2be23c1f66f8e40e1025e7
         with:
           args: -color
-
-  bash-tests:
-    runs-on: ubuntu-24.04 # pinned for determinism
-    steps:
-      # Audit runner network, file, and process activity before enforcing egress rules.
-      - name: Harden runner
-        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
-        with:
-          egress-policy: audit
-
-      - name: Check out repository
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          persist-credentials: false
-
-      - name: Set up Bats
-        uses: bats-core/bats-action@77d6fb60505b4d0d1d73e48bd035b55074bbfb43 # v4.0.0
-        with:
-          bats-version: 1.14.0 # pinned for determinism
-          support-install: false
-          assert-install: false
-          detik-install: false
-          file-install: false
-
-      - name: Run Bats tests
-        run: bats .github/scripts/tests
-
-  repository-integrity:
-    runs-on: ubuntu-24.04 # pinned for determinism
-    steps:
-      # Audit runner network, file, and process activity before enforcing egress rules.
-      - name: Harden runner
-        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
-        with:
-          egress-policy: audit
-
-      - name: Check out repository
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          persist-credentials: false
-
-      - name: Check repository integrity
-        run: python3 scripts/check.py
-
-  python-scripts-check:
-    runs-on: ubuntu-24.04 # pinned for determinism
-    steps:
-      # Audit runner network, file, and process activity before enforcing egress rules.
-      - name: Harden runner
-        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
-        with:
-          egress-policy: audit
-
-      - name: Check out repository
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          persist-credentials: false
-
-      - name: Run Python script checks
-        uses: ./.github/actions/python-scripts-check

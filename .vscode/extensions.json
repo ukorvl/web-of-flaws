@@ -1,7 +1,3 @@
 {
-  "recommendations": [
-    "DavidAnson.vscode-markdownlint",
-    "ms-python.python",
-    "yzhang.markdown-all-in-one"
-  ]
+  "recommendations": ["DavidAnson.vscode-markdownlint", "biomejs.biome", "yzhang.markdown-all-in-one"]
 }

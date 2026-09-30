@@ -23,8 +23,8 @@ The closest instruction file takes precedence for its subtree and may override o
 
 ## Stack and Environment
 
-- This is a documentation-first repository with Python tooling for validation, generation, and repository maintenance.
-- Python code targets the version declared in `pyproject.toml`.
+- This is a documentation-first repository with TypeScript tooling for validation, generation, and repository maintenance.
+- Node.js is pinned in `.node-version`; TypeScript and pnpm versions are pinned in `package.json`.
 - Repository dependency and tool versions are defined by their existing configuration and lockfiles; do not introduce alternative package-management or build systems without an explicit architectural reason.
 - Use repository-provided scripts and configuration as the source of truth for validation behavior.
 - Do not assume tools are installed globally when the repository defines a reproducible way to invoke them.
@@ -35,9 +35,9 @@ The closest instruction file takes precedence for its subtree and may override o
 The repository is organized into the following top-level directories:
 
 - `catalog/`: machine-readable rule catalog and reference allowlist
-- `.github/`: GitHub automation, workflow-local scripts, and Copilot integration instructions
+- `.github/`: GitHub automation, reusable setup actions, and Copilot integration instructions
 - `guides/`: human-readable rule guides with YAML frontmatter
-- `scripts/`: Python tooling for validation, generation, and repository maintenance
+- `scripts/`: TypeScript tooling for validation, generation, and repository maintenance
 
 For more information about particular directories, read the closest nested `AGENTS.md` or `README.md` in that directory.
 
@@ -69,7 +69,7 @@ For more information about particular directories, read the closest nested `AGEN
 ## Completion
 
 Before finishing, run the relevant focused checks and report the commands that could not run.
-For changes spanning repository data or guides, `python3 scripts/check.py` is the central integrity
+For changes spanning repository data or guides, `pnpm check` is the central integrity
 entry point.
 Any nested `AGENTS.md` may define additional required checks.
 

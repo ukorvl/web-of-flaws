@@ -8,7 +8,7 @@ mappings consumed by the validation scripts.
 ## Data Ownership
 
 - `rules.json` is generated from `guides/`; never edit it by hand. Regenerate it with
-  `python3 scripts/generate_catalog.py` after changing guide metadata.
+  `pnpm generate:catalog` after changing guide metadata.
 - `allowed-reference-domains.json` is maintained source data. Add only authoritative domains, with
   a narrow scope and a clear purpose. Do not add broad exceptions merely to silence link validation.
 - `standards/*` sets a list of security standards.
@@ -16,9 +16,9 @@ mappings consumed by the validation scripts.
 ## Required Checks
 
 ```bash
-python3 scripts/check.py --check catalog
-python3 scripts/check.py --check guides
-python3 scripts/check.py --check standards
+pnpm check --check catalog
+pnpm check --check guides
+pnpm check --check standards
 ```
 
-When changing catalog validation behavior, also run `python3 -m unittest discover -s scripts/tests -v`.
+When changing catalog validation behavior, also run `pnpm test`.

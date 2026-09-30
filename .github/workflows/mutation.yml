@@ -4,10 +4,15 @@ on:
   pull_request:
     paths:
       - "scripts/**"
-      - ".github/scripts/**"
+      - ".github/actions/setup-tooling/**"
       - ".github/workflows/mutation.yml"
-      - "pyproject.toml"
-      - "uv.lock"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - ".node-version"
+      - "tsconfig*.json"
+      - "vitest.config.ts"
+      - "stryker.config.json"
   schedule:
     - cron: "17 3 * * 0"
   workflow_dispatch:
@@ -22,6 +27,7 @@ concurrency:
 jobs:
   mutation-test:
     runs-on: ubuntu-24.04 # pinned for determinism
+    timeout-minutes: 30
     steps:
       # Audit runner network, file, and process activity before enforcing egress rules.
       - name: Harden runner
@@ -35,28 +41,16 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Set up Python
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        with:
-          python-version: "3.12" # pinned for determinism
-
-      - name: Set up uv
-        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
-        with:
-          version: "0.12.5" # pinned for determinism
-
-      - name: Install locked mutation test dependencies
-        run: uv sync --locked --only-group mutation
+      - name: Set up repository tooling
+        uses: ./.github/actions/setup-tooling
 
       - name: Run mutation tests
         id: mutation-tests
         env:
-          GITHUB_EVENT_NAME: ${{ github.event_name }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.sha }}
-        run: bash .github/scripts/run-mutation-tests.sh
+        run: node scripts/run-mutation-tests.ts
 
-      # Keep the survivor report visible even when a mutation run fails.
-      - name: Report mutation results
+      - name: Summarize mutation results
         if: always()
-        run: uv run --locked --only-group mutation mutmut results
+        run: node scripts/summarize-mutations.ts

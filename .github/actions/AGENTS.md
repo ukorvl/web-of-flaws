@@ -12,7 +12,7 @@ This directory contains reusable composite actions that encapsulate common workf
 - Do not rely on undocumented caller state.
 - Use `$GITHUB_ACTION_PATH` when referencing files owned by the composite action. Do not assume the caller's working directory.
 - Follow the principle: one composite action = one clear responsibility.
-- Prefer names like `.github/actions/python-scripts-check/action.yml`.
+- Prefer names like `.github/actions/setup-tooling/action.yml`.
 - Always provide name and concise description.
 - Keep inputs minimal and don't add inputs that are not vitally necessary.
 - Use kebab-case input/output names.
@@ -30,8 +30,7 @@ This directory contains reusable composite actions that encapsulate common workf
 ## Required Checks
 
 ```bash
-yamllint .github
+pnpm lint:config
 zizmor .github
 actionlint
-shellcheck .github/scripts/*.sh
 ```

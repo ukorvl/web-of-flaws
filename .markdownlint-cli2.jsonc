@@ -24,15 +24,7 @@
     },
     // Enforce the proper names of technologies and libraries used in the project. This helps maintain consistency and clarity in documentation.
     "proper-names": {
-      "names": [
-        "GitHub",
-        "JavaScript",
-        "TypeScript",
-        "Node.js",
-        "React",
-        "Vue",
-        "WebAssembly"
-      ],
+      "names": ["GitHub", "JavaScript", "TypeScript", "Node.js", "React", "Vue", "WebAssembly"],
       "code_blocks": false,
       "html_elements": false
     }
@@ -43,12 +35,7 @@
   "overrides": [
     {
       "combine": "merge",
-      "filter": [
-        "guides/**/*.md",
-        "!guides/**/README.md",
-        "!guides/**/notes/**/*.md",
-        "!guides/**/AGENTS.md"
-      ],
+      "filter": ["guides/**/*.md", "!guides/**/README.md", "!guides/**/notes/**/*.md", "!guides/**/AGENTS.md"],
       "config": {
         // Asserts stable heading structure for guides which is important to keep the doc machine and human readable.
         "required-headings": {

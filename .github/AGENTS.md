@@ -2,8 +2,8 @@
 
 ## Scope
 
-This directory contains GitHub Actions workflows, workflow-local shell scripts and tests,
-repository labels, Dependabot policy, and Copilot integration instructions.
+This directory contains GitHub Actions workflows, reusable setup actions, repository labels,
+Dependabot policy, and Copilot integration instructions. Workflow helpers and tests live in root `scripts/`.
 
 ## Coding Rules
 
@@ -12,7 +12,7 @@ repository labels, Dependabot policy, and Copilot integration instructions.
 - For third-party GitHub Actions, pin to a full commit SHA.
 - Retain the human-readable release as a comment: `uses: owner/action@<sha> # vX.Y.Z`.
 - Pin language-specific dependencies to exact versions.
-- Pin runtime versions such as Node.js, Python, Go, etc. Never use `latest` when specifying `runs-on` or `setup-<language>` actions.
+- Pin runtime versions such as Node.js, Rust, Go, etc. Never use `latest` when specifying `runs-on` or `setup-<language>` actions.
 - Pin system-level packages and external CLI tools when possible.
 - Do not use mutable versions such as latest, main, master, next, or floating ranges.
 - If a dependency cannot be pinned, report it explicitly and add a TODO comment explaining why.
@@ -63,7 +63,7 @@ repository labels, Dependabot policy, and Copilot integration instructions.
 ### Other General Rules
 
 - Don't modify global runner state unless necessary.
-- Put complex shell/Python logic in `.github/scripts/`; keep YAML declarative.
+- Put complex TypeScript workflow logic in `scripts/`; keep YAML declarative.
 - Don't depend on commands that are not guaranteed to exist without installing them.
 - Avoid obscure third-party actions when a few shell lines or an official action suffice.
 - Prefer GitHub-authored or well-established actions and minimize the number of third-party actions. Review what every third-party action can access if you use it.
@@ -86,10 +86,9 @@ repository labels, Dependabot policy, and Copilot integration instructions.
 ## Required Checks
 
 ```bash
-yamllint .github
+pnpm lint:config
 zizmor .github
 actionlint
-shellcheck .github/scripts/*.sh
 ```
 
-If label generation changes, run `python3 scripts/check.py --check labels`.
+If label generation changes, run `pnpm check --check labels`.

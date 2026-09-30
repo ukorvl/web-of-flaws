@@ -14,13 +14,15 @@ Thumbs.db
 # Node/tool caches
 node_modules/
 .npm/
+.pnpm-store/
+coverage/
+reports/
+.stryker-tmp/
+*.tsbuildinfo
+dist/
 
-# Python caches
-__pycache__/
-*.py[cod]
-.ruff_cache/
-.venv/
-mutants/
+# Future Rust CLI build output
+target/
 
 # Logs
 npm-debug.log*

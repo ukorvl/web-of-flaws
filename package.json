@@ -1,0 +1,47 @@
+{
+  "name": "web-of-flaws",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A catalog of vulnerable web patterns and safer replacements.",
+  "license": "MIT",
+  "packageManager": "pnpm@12.6.0",
+  "engines": {
+    "node": ">=24.12.0 <25",
+    "pnpm": "12.6.0"
+  },
+  "scripts": {
+    "check": "node scripts/check.ts",
+    "generate:catalog": "node scripts/generate-catalog.ts",
+    "generate:labels": "node scripts/sync-guide-labels.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check . && pnpm lint:markdown && pnpm lint:config",
+    "lint:markdown": "markdownlint-cli2",
+    "lint:config": "node scripts/lint-config.ts",
+    "format": "biome format --write .",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:mutation": "stryker run",
+    "validate": "pnpm lint && pnpm typecheck && pnpm test && pnpm check",
+    "hooks:install": "simple-git-hooks"
+  },
+  "simple-git-hooks": {
+    "preserveUnused": true,
+    "pre-commit": "pnpm validate",
+    "commit-msg": "pnpm exec commitlint --edit \"$1\""
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "@commitlint/cli": "21.2.2",
+    "@commitlint/config-conventional": "21.2.2",
+    "@stryker-mutator/core": "10.0.0",
+    "@stryker-mutator/vitest-runner": "10.0.0",
+    "@types/node": "24.13.6",
+    "@vitest/coverage-v8": "4.1.0",
+    "markdownlint-cli2": "0.23.2",
+    "simple-git-hooks": "2.14.0",
+    "typescript": "6.0.3",
+    "vitest": "4.1.0",
+    "yaml": "2.9.1"
+  }
+}

@@ -13,8 +13,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  python-scripts-check:
+  typescript-coverage:
     runs-on: ubuntu-24.04 # pinned for determinism
+    timeout-minutes: 15
     steps:
       # Audit runner network, file, and process activity before enforcing egress rules.
       - name: Harden runner
@@ -27,7 +28,17 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Run Python script checks and upload coverage
-        uses: ./.github/actions/python-scripts-check
+      - name: Set up repository tooling
+        uses: ./.github/actions/setup-tooling
+
+      - name: Collect TypeScript coverage
+        run: pnpm test:coverage
+
+      - name: Upload coverage to Coveralls
+        uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2.3.8
         with:
-          upload-coverage: "true"
+          file: coverage/lcov.info
+          format: lcov
+          github-token: ${{ github.token }}
+          fail-on-error: false
+          coverage-reporter-version: v0.6.22 # pinned for determinism
