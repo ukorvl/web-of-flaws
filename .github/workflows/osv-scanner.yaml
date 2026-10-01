@@ -18,7 +18,7 @@ jobs:
       contents: read
       security-events: write
     # Google OSV Scanner v2.5.0.
-    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@8deb546fdb875b9996d27d4950be7312dac076a1 # yamllint disable-line rule:line-length
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@a345acffa64b0eaede81a3d9aae6141214d9c8fc # yamllint disable-line rule:line-length
 
   scan-scheduled:
     if: github.event_name != 'pull_request'
