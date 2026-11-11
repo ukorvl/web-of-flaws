@@ -23,12 +23,7 @@
     "test:coverage": "vitest run --coverage",
     "test:mutation": "stryker run",
     "validate": "pnpm lint && pnpm typecheck && pnpm test && pnpm check",
-    "hooks:install": "simple-git-hooks"
-  },
-  "simple-git-hooks": {
-    "preserveUnused": true,
-    "pre-commit": "pnpm validate",
-    "commit-msg": "pnpm exec commitlint --edit \"$1\""
+    "hooks:install": "prek install"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.14",
@@ -39,7 +34,6 @@
     "@types/node": "24.13.6",
     "@vitest/coverage-v8": "4.1.0",
     "markdownlint-cli2": "0.23.2",
-    "simple-git-hooks": "2.14.0",
     "typescript": "6.0.3",
     "vitest": "4.1.0",
     "yaml": "2.9.1"

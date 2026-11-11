@@ -13,7 +13,6 @@ verifyDepsBeforeRun: error
 minimumReleaseAge: 10080
 blockExoticSubdeps: true
 strictDepBuilds: true
-# Platform binaries are provided as optional packages; hooks are installed explicitly.
+# Platform binaries are provided as optional packages.
 allowBuilds:
   esbuild: false
-  simple-git-hooks: false

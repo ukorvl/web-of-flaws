@@ -5,7 +5,7 @@ should be technically accurate and useful both to developers and security-review
 
 ## Getting Started
 
-Install the exact Node.js version in `.node-version` (currently 24.21.0), pnpm 12.6.0, and Git.
+Install the exact Node.js version in `.node-version` (currently 24.21.0), pnpm 12.6.0, prek 0.4.13, and Git.
 The private root package contains repository development tools; it is never published.
 
 ```bash
@@ -33,11 +33,13 @@ not a PR diff. A clean tree, missing Git metadata, or no matching changes runs t
 CI always runs the full integrity checks.
 
 Use `pnpm format` for TypeScript/JSON formatting and `pnpm exec markdownlint-cli2 --fix` for Markdown.
-Enable hooks explicitly with `pnpm hooks:install`; installation does not automatically modify Git hooks.
-When migrating an existing checkout, this replaces the old pre-commit and commit-msg hooks.
-The pre-commit hook validates the working tree without rewriting or staging files; commit-msg uses
-conventional commits. Review existing custom hooks before replacing them.
-If your Git configuration sets `core.hooksPath`, reconcile that setting with your hook manager first.
+Enable prek's pre-commit and commit-msg hooks explicitly with `prek install` (or `pnpm hooks:install`).
+Run `prek run --all-files` to use the same hooks as CI. The built-in whitespace and final-newline hooks
+can fix files; the local validation hook runs `pnpm validate`, and commit-msg runs the locked commitlint.
+All hooks use prek built-ins or `language: system` with pnpm tools; no separate language environment
+is downloaded. Run `pnpm install --frozen-lockfile` before running hooks.
+When switching an existing checkout from a different hook manager, use `prek install --force` to
+replace its shims after reviewing them. Dependency installation does not modify Git hooks.
 
 ## Workspace Layout and Dependencies
 

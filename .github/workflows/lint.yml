@@ -32,8 +32,10 @@ jobs:
       - name: Set up repository tooling
         uses: ./.github/actions/setup-tooling
 
-      - name: Validate formatting, types, tests, and repository integrity
-        run: pnpm validate
+      - name: Run prek hooks
+        uses: j178/prek-action@4e14d07f9231acabce116ccfca13b13dd9755ece # v3.0.0
+        with:
+          prek-version: 0.4.13 # pinned for determinism
 
   link-health:
     runs-on: ubuntu-24.04 # pinned for determinism
